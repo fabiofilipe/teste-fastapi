@@ -12,3 +12,5 @@ __pycache__/
 # Outros
 .DS_Store
 anotações.txt
+alembic.ini
+alembic
