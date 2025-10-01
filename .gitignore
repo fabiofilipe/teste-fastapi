@@ -14,3 +14,6 @@ __pycache__/
 anotações.txt
 alembic.ini
 alembic
+.venv_velho/
+.venv_velho
+.env
