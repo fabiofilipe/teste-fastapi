@@ -9,7 +9,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from jose.exceptions import JWTError
 
 from app.database import engine, Base
-from app.routers import auth_router, orders_router, products_router
+from app.routers import auth_router, orders_router, products_router, health_router
 from app.exceptions import PizzariaException
 from app.error_handlers import (
     pizzaria_exception_handler,
@@ -48,6 +48,7 @@ app.add_exception_handler(JWTError, jwt_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 
 # Registrar routers
+app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(orders_router)
 app.include_router(products_router)
@@ -58,12 +59,19 @@ async def root():
     """Endpoint raiz da API"""
     return {
         "mensagem": "Bem-vindo à API da Pizzaria!",
-        "documentacao": "/docs",
-        "versao": "1.0.0"
+        "versao": "1.0.0",
+        "documentacao": {
+            "swagger": "/docs",
+            "redoc": "/redoc"
+        },
+        "endpoints_uteis": {
+            "health": "/health",
+            "metrics": "/metrics",
+            "info": "/info"
+        },
+        "recursos": {
+            "autenticacao": "/auth",
+            "produtos": "/produtos",
+            "pedidos": "/pedidos"
+        }
     }
-
-
-@app.get("/health", tags=["Health"])
-async def health_check():
-    """Verificação de saúde da API"""
-    return {"status": "healthy"}
