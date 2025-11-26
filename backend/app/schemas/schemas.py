@@ -116,7 +116,6 @@ class ItemPedidoResponse(BaseModel):
 # Schemas de Pedido
 class PedidoCreate(BaseModel):
     """Schema para criação de pedido"""
-    usuario_id: int
     itens: Optional[List[ItemPedidoCreate]] = []
 
     class Config:

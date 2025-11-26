@@ -6,14 +6,18 @@ from typing import List
 from app.database import get_db
 from app.models import Pedido, ItemPedido, Usuario
 from app.schemas import PedidoCreate, PedidoResponse, ItemPedidoCreate
+from app.dependencies import obter_usuario_atual, obter_usuario_admin
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
 
 @router.get("/", summary="Listar todos os pedidos")
-async def listar_pedidos(db: Session = Depends(get_db)):
+async def listar_pedidos(
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(obter_usuario_admin)
+):
     """
-    Lista todos os pedidos da pizzaria
+    Lista todos os pedidos da pizzaria (apenas admin)
 
     Retorna todos os pedidos com seus itens
     """
@@ -22,7 +26,11 @@ async def listar_pedidos(db: Session = Depends(get_db)):
 
 
 @router.get("/{pedido_id}", response_model=PedidoResponse, summary="Buscar pedido por ID")
-async def buscar_pedido(pedido_id: int, db: Session = Depends(get_db)):
+async def buscar_pedido(
+    pedido_id: int,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
     """
     Busca um pedido específico pelo ID
 
@@ -36,27 +44,31 @@ async def buscar_pedido(pedido_id: int, db: Session = Depends(get_db)):
             detail=f"Pedido {pedido_id} não encontrado"
         )
 
+    # Verificar se o usuário é dono do pedido ou admin
+    if pedido.usuario_id != usuario_atual.id and not usuario_atual.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para acessar este pedido"
+        )
+
     return pedido
 
 
 @router.post("/", response_model=PedidoResponse, status_code=status.HTTP_201_CREATED, summary="Criar novo pedido")
-async def criar_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
+async def criar_pedido(
+    pedido: PedidoCreate,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
     """
     Cria um novo pedido para a pizzaria
 
-    - **usuario_id**: ID do usuário que está fazendo o pedido
     - **itens**: Lista de itens do pedido (pizzas)
-    """
-    # Verifica se o usuário existe
-    usuario = db.query(Usuario).filter(Usuario.id == pedido.usuario_id).first()
-    if not usuario:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Usuário {pedido.usuario_id} não encontrado"
-        )
 
-    # Cria o pedido
-    novo_pedido = Pedido(usuario_id=pedido.usuario_id)
+    O pedido será criado para o usuário autenticado
+    """
+    # Cria o pedido para o usuário autenticado
+    novo_pedido = Pedido(usuario_id=usuario_atual.id)
     db.add(novo_pedido)
     db.flush()  # Flush para obter o ID do pedido
 
@@ -87,7 +99,8 @@ async def criar_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
 async def atualizar_status(
     pedido_id: int,
     novo_status: str,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(obter_usuario_admin)
 ):
     """
     Atualiza o status de um pedido
@@ -122,7 +135,11 @@ async def atualizar_status(
 
 
 @router.delete("/{pedido_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Cancelar pedido")
-async def cancelar_pedido(pedido_id: int, db: Session = Depends(get_db)):
+async def cancelar_pedido(
+    pedido_id: int,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
     """
     Cancela um pedido (deleta do banco de dados)
 
@@ -134,6 +151,13 @@ async def cancelar_pedido(pedido_id: int, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Pedido {pedido_id} não encontrado"
+        )
+
+    # Verificar se o usuário é dono do pedido ou admin
+    if pedido.usuario_id != usuario_atual.id and not usuario_atual.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para cancelar este pedido"
         )
 
     db.delete(pedido)

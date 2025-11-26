@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.models.models import Produto
+from app.models.models import Produto, Usuario
 from app.schemas.schemas import ProdutoCreate, ProdutoUpdate, ProdutoResponse
+from app.dependencies import obter_usuario_admin
 
 
 router = APIRouter(
@@ -15,7 +16,11 @@ router = APIRouter(
 
 
 @router.post("/", response_model=ProdutoResponse, status_code=status.HTTP_201_CREATED)
-def criar_produto(produto: ProdutoCreate, db: Session = Depends(get_db)):
+def criar_produto(
+    produto: ProdutoCreate,
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(obter_usuario_admin)
+):
     """Cria um novo produto no cardápio"""
     # Verificar se já existe produto com mesmo nome e tamanho
     produto_existente = db.query(Produto).filter(
@@ -84,7 +89,8 @@ def buscar_produto(produto_id: int, db: Session = Depends(get_db)):
 def atualizar_produto(
     produto_id: int,
     produto_update: ProdutoUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(obter_usuario_admin)
 ):
     """Atualiza um produto existente"""
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
@@ -108,7 +114,11 @@ def atualizar_produto(
 
 
 @router.delete("/{produto_id}", status_code=status.HTTP_204_NO_CONTENT)
-def deletar_produto(produto_id: int, db: Session = Depends(get_db)):
+def deletar_produto(
+    produto_id: int,
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(obter_usuario_admin)
+):
     """Remove um produto do cardápio"""
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
 
@@ -125,7 +135,11 @@ def deletar_produto(produto_id: int, db: Session = Depends(get_db)):
 
 
 @router.patch("/{produto_id}/disponibilidade", response_model=ProdutoResponse)
-def alternar_disponibilidade(produto_id: int, db: Session = Depends(get_db)):
+def alternar_disponibilidade(
+    produto_id: int,
+    db: Session = Depends(get_db),
+    _: Usuario = Depends(obter_usuario_admin)
+):
     """Alterna a disponibilidade de um produto"""
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
 
