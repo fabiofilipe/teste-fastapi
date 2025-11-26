@@ -11,6 +11,72 @@ from app.dependencies import obter_usuario_atual, obter_usuario_admin
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
 
+@router.get("/meus/estatisticas", summary="Estatísticas dos meus pedidos")
+async def estatisticas_meus_pedidos(
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    """
+    Retorna estatísticas dos pedidos do usuário autenticado
+
+    Inclui total de pedidos, valor total gasto e contagem por status
+    """
+    pedidos = db.query(Pedido).filter(Pedido.usuario_id == usuario_atual.id).all()
+
+    # Calcular estatísticas
+    total_pedidos = len(pedidos)
+    valor_total = sum(p.preco_total for p in pedidos)
+
+    # Contar por status
+    status_count = {
+        "PENDENTE": 0,
+        "EM_PREPARO": 0,
+        "PRONTO": 0,
+        "ENTREGUE": 0,
+        "CANCELADO": 0
+    }
+
+    for pedido in pedidos:
+        if pedido.status in status_count:
+            status_count[pedido.status] += 1
+
+    return {
+        "total_pedidos": total_pedidos,
+        "valor_total_gasto": round(valor_total, 2),
+        "pedidos_por_status": status_count,
+        "valor_medio_pedido": round(valor_total / total_pedidos, 2) if total_pedidos > 0 else 0
+    }
+
+
+@router.get("/meus", response_model=List[PedidoResponse], summary="Listar meus pedidos")
+async def listar_meus_pedidos(
+    status_pedido: str = None,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    """
+    Lista todos os pedidos do usuário autenticado
+
+    - **status_pedido**: Filtro opcional por status (PENDENTE, EM_PREPARO, PRONTO, ENTREGUE, CANCELADO)
+
+    Retorna apenas os pedidos pertencentes ao usuário que fez a requisição
+    """
+    query = db.query(Pedido).filter(Pedido.usuario_id == usuario_atual.id)
+
+    # Filtrar por status se fornecido
+    if status_pedido:
+        status_validos = ["PENDENTE", "EM_PREPARO", "PRONTO", "ENTREGUE", "CANCELADO"]
+        if status_pedido.upper() not in status_validos:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Status inválido. Use um dos seguintes: {', '.join(status_validos)}"
+            )
+        query = query.filter(Pedido.status == status_pedido.upper())
+
+    pedidos = query.all()
+    return pedidos
+
+
 @router.get("/", summary="Listar todos os pedidos")
 async def listar_pedidos(
     db: Session = Depends(get_db),
