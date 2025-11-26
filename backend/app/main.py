@@ -4,9 +4,20 @@ FastAPI application para gerenciamento de pedidos de pizzaria
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import SQLAlchemyError
+from jose.exceptions import JWTError
 
 from app.database import engine, Base
 from app.routers import auth_router, orders_router, products_router
+from app.exceptions import PizzariaException
+from app.error_handlers import (
+    pizzaria_exception_handler,
+    validation_exception_handler,
+    sqlalchemy_exception_handler,
+    jwt_exception_handler,
+    generic_exception_handler
+)
 
 # Criar tabelas no banco de dados
 Base.metadata.create_all(bind=engine)
@@ -28,6 +39,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Registrar exception handlers
+app.add_exception_handler(PizzariaException, pizzaria_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
+app.add_exception_handler(JWTError, jwt_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 # Registrar routers
 app.include_router(auth_router)

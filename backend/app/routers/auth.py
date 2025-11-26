@@ -9,6 +9,7 @@ from app.database import get_db
 from app.models import Usuario
 from app.schemas import UsuarioSchema, UsuarioResponse, LoginSchema, TokenResponse, RefreshTokenRequest
 from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
+from app.exceptions import EmailJaCadastrado, CredenciaisInvalidas, UsuarioInativo
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
@@ -78,10 +79,7 @@ async def criar_conta(usuario: UsuarioSchema, db: Session = Depends(get_db)):
     # Verifica se o email já existe
     usuario_existente = db.query(Usuario).filter(Usuario.email == usuario.email).first()
     if usuario_existente:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Email {usuario.email} já está cadastrado"
-        )
+        raise EmailJaCadastrado(usuario.email)
 
     # Criptografa a senha
     senha_hash = bcrypt_context.hash(usuario.senha)
@@ -115,17 +113,10 @@ async def login(credenciais: LoginSchema, db: Session = Depends(get_db)):
     usuario = autenticar_usuario(credenciais.email, credenciais.senha, db)
 
     if not usuario:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email ou senha incorretos",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise CredenciaisInvalidas()
 
     if not usuario.ativo:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Usuário inativo. Entre em contato com o administrador."
-        )
+        raise UsuarioInativo()
 
     # Cria tokens
     access_token = criar_token(
@@ -184,10 +175,7 @@ async def refresh_access_token(
 
     # Verificar se usuário está ativo
     if not usuario.ativo:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Usuário inativo. Entre em contato com o administrador."
-        )
+        raise UsuarioInativo()
 
     # Gerar novos tokens
     new_access_token = criar_token(

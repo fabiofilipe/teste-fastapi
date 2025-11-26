@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.models import Usuario
 from app.config import SECRET_KEY, ALGORITHM
+from app.exceptions import UsuarioInativo, SemPermissao
 
 
 # Schema de segurança Bearer
@@ -57,10 +58,7 @@ def obter_usuario_atual(
 
     # Verificar se usuário está ativo
     if not usuario.ativo:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Usuário inativo"
-        )
+        raise UsuarioInativo()
 
     return usuario
 
@@ -78,12 +76,9 @@ def obter_usuario_admin(
         Usuario administrador
 
     Raises:
-        HTTPException: Se usuário não for administrador
+        SemPermissao: Se usuário não for administrador
     """
     if not usuario_atual.admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Acesso negado. Apenas administradores podem realizar esta ação."
-        )
+        raise SemPermissao("realizar esta ação. Apenas administradores")
 
     return usuario_atual
