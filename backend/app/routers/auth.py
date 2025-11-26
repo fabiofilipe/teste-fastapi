@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 
 from app.database import get_db
 from app.models import Usuario
-from app.schemas import UsuarioSchema, UsuarioResponse, LoginSchema, TokenResponse
+from app.schemas import UsuarioSchema, UsuarioResponse, LoginSchema, TokenResponse, RefreshTokenRequest
 from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
@@ -60,7 +60,7 @@ async def home():
     """Rota inicial para verificar disponibilidade do serviço de autenticação"""
     return {
         "mensagem": "Serviço de autenticação da Pizzaria",
-        "endpoints": ["/auth/criar_conta", "/auth/login"]
+        "endpoints": ["/auth/criar_conta", "/auth/login", "/auth/refresh"]
     }
 
 
@@ -140,4 +140,66 @@ async def login(credenciais: LoginSchema, db: Session = Depends(get_db)):
     return TokenResponse(
         access_token=access_token,
         refresh_token=refresh_token
+    )
+
+
+@router.post("/refresh", response_model=TokenResponse, summary="Renovar token de acesso")
+async def refresh_access_token(
+    token_request: RefreshTokenRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Renova o access token usando um refresh token válido
+
+    - **refresh_token**: Refresh token obtido no login
+
+    Retorna novos access_token e refresh_token
+    """
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Refresh token inválido ou expirado",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        # Decodificar refresh token
+        payload = jwt.decode(
+            token_request.refresh_token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+        usuario_id: str = payload.get("sub")
+
+        if usuario_id is None:
+            raise credentials_exception
+
+    except JWTError:
+        raise credentials_exception
+
+    # Buscar usuário no banco
+    usuario = db.query(Usuario).filter(Usuario.id == int(usuario_id)).first()
+
+    if not usuario:
+        raise credentials_exception
+
+    # Verificar se usuário está ativo
+    if not usuario.ativo:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Usuário inativo. Entre em contato com o administrador."
+        )
+
+    # Gerar novos tokens
+    new_access_token = criar_token(
+        usuario.id,
+        timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    new_refresh_token = criar_token(
+        usuario.id,
+        timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    )
+
+    return TokenResponse(
+        access_token=new_access_token,
+        refresh_token=new_refresh_token
     )

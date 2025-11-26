@@ -46,6 +46,14 @@ class TokenResponse(BaseModel):
     token_type: str = "Bearer"
 
 
+class RefreshTokenRequest(BaseModel):
+    """Schema para requisição de refresh token"""
+    refresh_token: str
+
+    class Config:
+        from_attributes = True
+
+
 # Schemas de Produto
 class ProdutoCreate(BaseModel):
     """Schema para criação de produto"""
