@@ -45,6 +45,27 @@ class Pedido(Base):
         self.preco_total = preco_total
 
 
+class Produto(Base):
+    """Modelo de produto do cardápio"""
+    __tablename__ = "produtos"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False, unique=True, index=True)
+    descricao = Column(String, nullable=True)
+    categoria = Column(String, nullable=False)  # PIZZA, BEBIDA, SOBREMESA, etc
+    tamanho = Column(String, nullable=False)  # PEQUENA, MEDIA, GRANDE, GIGANTE (para pizzas)
+    preco = Column(Float, nullable=False)
+    disponivel = Column(Boolean, default=True)
+
+    def __init__(self, nome, categoria, tamanho, preco, descricao=None, disponivel=True):
+        self.nome = nome
+        self.descricao = descricao
+        self.categoria = categoria
+        self.tamanho = tamanho
+        self.preco = preco
+        self.disponivel = disponivel
+
+
 class ItemPedido(Base):
     """Modelo de item do pedido (pizza)"""
     __tablename__ = "itens_pedidos"
