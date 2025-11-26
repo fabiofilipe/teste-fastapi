@@ -98,10 +98,8 @@ class ProdutoResponse(BaseModel):
 # Schemas de Item do Pedido
 class ItemPedidoCreate(BaseModel):
     """Schema para criação de item do pedido"""
+    produto_id: int = Field(..., gt=0, description="ID do produto no cardápio")
     quantidade: int = Field(..., ge=1)
-    sabor: str = Field(..., min_length=3)
-    tamanho: str = Field(..., pattern="^(PEQUENA|MEDIA|GRANDE|GIGANTE)$")
-    preco_unitario: float = Field(..., ge=0)
     observacoes: Optional[str] = None
 
     class Config:
