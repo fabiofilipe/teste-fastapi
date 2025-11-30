@@ -10,7 +10,9 @@ class TestAuthEndpoints:
         """Testa GET /auth/"""
         response = client.get("/auth/")
         assert response.status_code == status.HTTP_200_OK
-        assert "message" in response.json()
+        data = response.json()
+        assert "mensagem" in data or "message" in data
+        assert "endpoints" in data
 
     def test_criar_conta_sucesso(self, client):
         """Testa criação de conta com sucesso"""

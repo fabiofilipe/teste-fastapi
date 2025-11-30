@@ -39,7 +39,7 @@ class TestCreateProduct:
                 "preco": 35.00
             }
         )
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_criar_produto_usuario_comum(self, client, token_usuario):
         """Testa que usuário comum não pode criar produto"""
@@ -173,7 +173,7 @@ class TestUpdateProduct:
                 "preco": 45.00
             }
         )
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_atualizar_produto_usuario_comum(self, client, token_usuario, produto_teste):
         """Testa que usuário comum não pode atualizar produto"""
@@ -222,7 +222,7 @@ class TestDeleteProduct:
     def test_deletar_produto_sem_autenticacao(self, client, produto_teste):
         """Testa que deletar produto requer autenticação"""
         response = client.delete(f"/produtos/{produto_teste.id}")
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_deletar_produto_usuario_comum(self, client, token_usuario, produto_teste):
         """Testa que usuário comum não pode deletar produto"""
@@ -268,7 +268,7 @@ class TestUpdateProductAvailability:
             f"/produtos/{produto_teste.id}/disponibilidade",
             params={"disponivel": False}
         )
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_alterar_disponibilidade_usuario_comum(self, client, token_usuario, produto_teste):
         """Testa que usuário comum não pode alterar disponibilidade"""

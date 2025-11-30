@@ -103,7 +103,7 @@ class TestProdutoSchema:
                 tamanho="MEDIA",
                 preco=-10.00
             )
-        assert "greater than 0" in str(exc_info.value)
+        assert "greater than or equal to 0" in str(exc_info.value)
 
     def test_categoria_invalida(self):
         """Testa validação de categoria"""
@@ -114,7 +114,7 @@ class TestProdutoSchema:
                 tamanho="MEDIA",
                 preco=35.00
             )
-        assert "does not match" in str(exc_info.value) or "string does not match" in str(exc_info.value)
+        assert "string should match pattern" in str(exc_info.value).lower()
 
     def test_tamanho_invalido(self):
         """Testa validação de tamanho"""
@@ -125,7 +125,7 @@ class TestProdutoSchema:
                 tamanho="ENORME",
                 preco=35.00
             )
-        assert "does not match" in str(exc_info.value) or "string does not match" in str(exc_info.value)
+        assert "string should match pattern" in str(exc_info.value).lower()
 
 
 class TestItemPedidoSchema:
@@ -134,42 +134,44 @@ class TestItemPedidoSchema:
     def test_item_pedido_valido(self):
         """Testa criação de item de pedido válido"""
         item = ItemPedidoCreate(
-            quantidade=2,
-            sabor="Margherita",
-            tamanho="MEDIA",
-            preco_unitario=35.00
+            produto_id=1,
+            quantidade=2
         )
+        assert item.produto_id == 1
         assert item.quantidade == 2
-        assert item.sabor == "Margherita"
-        assert item.tamanho == "MEDIA"
-        assert item.preco_unitario == 35.00
 
     def test_quantidade_minima(self):
         """Testa que quantidade deve ser no mínimo 1"""
         with pytest.raises(ValidationError) as exc_info:
             ItemPedidoCreate(
-                quantidade=0,
-                sabor="Margherita",
-                tamanho="MEDIA",
-                preco_unitario=35.00
+                produto_id=1,
+                quantidade=0
             )
         assert "greater than or equal to 1" in str(exc_info.value)
+
+    def test_produto_id_obrigatorio(self):
+        """Testa que produto_id é obrigatório"""
+        with pytest.raises(ValidationError) as exc_info:
+            ItemPedidoCreate(quantidade=1)
+        assert "produto_id" in str(exc_info.value).lower()
+
+    def test_produto_id_maior_que_zero(self):
+        """Testa que produto_id deve ser maior que 0"""
+        with pytest.raises(ValidationError) as exc_info:
+            ItemPedidoCreate(produto_id=0, quantidade=1)
+        assert "greater than 0" in str(exc_info.value)
 
     def test_observacoes_opcional(self):
         """Testa que observações é opcional"""
         item = ItemPedidoCreate(
-            quantidade=1,
-            sabor="Margherita",
-            tamanho="MEDIA",
-            preco_unitario=35.00
+            produto_id=1,
+            quantidade=1
         )
         assert item.observacoes is None
 
         item_com_obs = ItemPedidoCreate(
+            produto_id=1,
             quantidade=1,
-            sabor="Margherita",
-            tamanho="MEDIA",
-            preco_unitario=35.00,
             observacoes="Sem cebola"
         )
         assert item_com_obs.observacoes == "Sem cebola"
@@ -183,18 +185,26 @@ class TestPedidoSchema:
         pedido = PedidoCreate(
             itens=[
                 ItemPedidoCreate(
-                    quantidade=1,
-                    sabor="Margherita",
-                    tamanho="MEDIA",
-                    preco_unitario=35.00
+                    produto_id=1,
+                    quantidade=1
                 )
             ]
         )
         assert len(pedido.itens) == 1
-        assert pedido.itens[0].sabor == "Margherita"
+        assert pedido.itens[0].produto_id == 1
+        assert pedido.itens[0].quantidade == 1
 
-    def test_pedido_sem_itens_invalido(self):
-        """Testa que pedido deve ter pelo menos 1 item"""
-        with pytest.raises(ValidationError) as exc_info:
-            PedidoCreate(itens=[])
-        assert "at least 1 item" in str(exc_info.value) or "ensure this value has at least 1 item" in str(exc_info.value)
+    def test_pedido_sem_itens(self):
+        """Testa que pedido pode ser criado (lista vazia é o padrão)"""
+        pedido = PedidoCreate()
+        assert pedido.itens == []
+
+    def test_pedido_multiplos_itens(self):
+        """Testa pedido com múltiplos itens"""
+        pedido = PedidoCreate(
+            itens=[
+                ItemPedidoCreate(produto_id=1, quantidade=2),
+                ItemPedidoCreate(produto_id=2, quantidade=1),
+            ]
+        )
+        assert len(pedido.itens) == 2

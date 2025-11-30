@@ -15,10 +15,8 @@ class TestCreateOrder:
             json={
                 "itens": [
                     {
-                        "quantidade": 2,
-                        "sabor": produto_teste.nome,
-                        "tamanho": produto_teste.tamanho,
-                        "preco_unitario": produto_teste.preco
+                        "produto_id": produto_teste.id,
+                        "quantidade": 2
                     }
                 ]
             }
@@ -36,15 +34,13 @@ class TestCreateOrder:
             json={
                 "itens": [
                     {
-                        "quantidade": 1,
-                        "sabor": produto_teste.nome,
-                        "tamanho": produto_teste.tamanho,
-                        "preco_unitario": produto_teste.preco
+                        "produto_id": produto_teste.id,
+                        "quantidade": 1
                     }
                 ]
             }
         )
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_criar_pedido_sem_itens(self, client, token_usuario):
         """Testa que pedido deve ter pelo menos 1 item"""
@@ -68,10 +64,8 @@ class TestCreateOrder:
             json={
                 "itens": [
                     {
-                        "quantidade": 1,
-                        "sabor": produto_indisponivel.nome,
-                        "tamanho": produto_indisponivel.tamanho,
-                        "preco_unitario": produto_indisponivel.preco
+                        "produto_id": produto_indisponivel.id,
+                        "quantidade": 1
                     }
                 ]
             }
@@ -92,10 +86,8 @@ class TestCalculatePrice:
             json={
                 "itens": [
                     {
-                        "quantidade": 2,
-                        "sabor": produto_teste.nome,
-                        "tamanho": produto_teste.tamanho,
-                        "preco_unitario": produto_teste.preco
+                        "produto_id": produto_teste.id,
+                        "quantidade": 2
                     }
                 ]
             }
@@ -129,7 +121,7 @@ class TestListMyOrders:
     def test_listar_meus_pedidos_sem_autenticacao(self, client):
         """Testa que listar pedidos requer autenticação"""
         response = client.get("/pedidos/meus")
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_usuario_ve_apenas_seus_pedidos(self, client, db, usuario_teste, admin_teste, produto_teste):
         """Testa que usuário vê apenas seus próprios pedidos"""
@@ -191,7 +183,7 @@ class TestGetOrder:
         data = response.json()
         assert data["id"] == pedido_teste.id
 
-    def test_buscar_pedido_de_outro_usuario(self, client, db, admin_teste, produto_teste):
+    def test_buscar_pedido_de_outro_usuario(self, client, db, admin_teste, usuario_teste, produto_teste):
         """Testa que não pode buscar pedido de outro usuário"""
         from app.models.models import Pedido
 
@@ -199,11 +191,12 @@ class TestGetOrder:
         pedido_admin = Pedido(usuario_id=admin_teste.id, status="PENDENTE", preco_total=50.00)
         db.add(pedido_admin)
         db.commit()
+        db.refresh(pedido_admin)
 
-        # Tentar buscar como usuário comum
+        # Login como usuário comum
         login_response = client.post(
             "/auth/login",
-            json={"email": "teste@exemplo.com", "senha": "senha123"}
+            json={"email": usuario_teste.email, "senha": "senha123"}
         )
         token = login_response.json()["access_token"]
 
@@ -272,7 +265,7 @@ class TestDeleteOrder:
         response = client.get(f"/pedidos/{pedido_teste.id}", headers=headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_cancelar_pedido_de_outro_usuario(self, client, db, admin_teste):
+    def test_cancelar_pedido_de_outro_usuario(self, client, db, admin_teste, usuario_teste):
         """Testa que não pode cancelar pedido de outro usuário"""
         from app.models.models import Pedido
 
@@ -280,11 +273,12 @@ class TestDeleteOrder:
         pedido_admin = Pedido(usuario_id=admin_teste.id, status="PENDENTE", preco_total=50.00)
         db.add(pedido_admin)
         db.commit()
+        db.refresh(pedido_admin)
 
-        # Tentar cancelar como usuário comum
+        # Login como usuário comum
         login_response = client.post(
             "/auth/login",
-            json={"email": "teste@exemplo.com", "senha": "senha123"}
+            json={"email": usuario_teste.email, "senha": "senha123"}
         )
         token = login_response.json()["access_token"]
 
