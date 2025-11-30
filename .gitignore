@@ -1,10 +1,10 @@
 
-
+atualizações_26-11.md
 # Ambiente Virtual
 venv/
 .venv/
 env/
-
+melhorias.md
 # Cache do Python
 __pycache__/
 *.pyc
