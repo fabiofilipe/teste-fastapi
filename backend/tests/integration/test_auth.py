@@ -1,10 +1,10 @@
-"""Testes de integraÁ„o para autenticaÁ„o"""
+"""Testes de integra√ß√£o para autentica√ß√£o"""
 import pytest
 from fastapi import status
 
 
 class TestAuthEndpoints:
-    """Testes dos endpoints de autenticaÁ„o"""
+    """Testes dos endpoints de autentica√ß√£o"""
 
     def test_rota_inicial_auth(self, client):
         """Testa GET /auth/"""
@@ -13,7 +13,7 @@ class TestAuthEndpoints:
         assert "message" in response.json()
 
     def test_criar_conta_sucesso(self, client):
-        """Testa criaÁ„o de conta com sucesso"""
+        """Testa cria√ß√£o de conta com sucesso"""
         response = client.post(
             "/auth/criar_conta",
             json={
@@ -32,7 +32,7 @@ class TestAuthEndpoints:
         assert data["admin"] is False
 
     def test_criar_conta_email_duplicado(self, client, usuario_teste):
-        """Testa que n„o È possÌvel criar conta com email duplicado"""
+        """Testa que n√£o √© poss√≠vel criar conta com email duplicado"""
         response = client.post(
             "/auth/criar_conta",
             json={
@@ -42,10 +42,10 @@ class TestAuthEndpoints:
             }
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "j· est· cadastrado" in response.json()["message"]
+        assert "j√° est√° cadastrado" in response.json()["message"]
 
     def test_criar_conta_email_invalido(self, client):
-        """Testa validaÁ„o de email inv·lido"""
+        """Testa valida√ß√£o de email inv√°lido"""
         response = client.post(
             "/auth/criar_conta",
             json={
@@ -57,7 +57,7 @@ class TestAuthEndpoints:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_criar_conta_senha_curta(self, client):
-        """Testa validaÁ„o de senha muito curta"""
+        """Testa valida√ß√£o de senha muito curta"""
         response = client.post(
             "/auth/criar_conta",
             json={
@@ -69,7 +69,7 @@ class TestAuthEndpoints:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_criar_conta_nome_curto(self, client):
-        """Testa validaÁ„o de nome muito curto"""
+        """Testa valida√ß√£o de nome muito curto"""
         response = client.post(
             "/auth/criar_conta",
             json={
@@ -85,7 +85,7 @@ class TestLoginEndpoint:
     """Testes do endpoint de login"""
 
     def test_login_sucesso(self, client, usuario_teste):
-        """Testa login com credenciais v·lidas"""
+        """Testa login com credenciais v√°lidas"""
         response = client.post(
             "/auth/login",
             json={
@@ -100,7 +100,7 @@ class TestLoginEndpoint:
         assert data["token_type"] == "Bearer"
 
     def test_login_email_inexistente(self, client):
-        """Testa login com email que n„o existe"""
+        """Testa login com email que n√£o existe"""
         response = client.post(
             "/auth/login",
             json={
@@ -124,8 +124,8 @@ class TestLoginEndpoint:
         assert "Email ou senha incorretos" in response.json()["message"]
 
     def test_login_usuario_inativo(self, client, db, usuario_teste):
-        """Testa login com usu·rio inativo"""
-        # Desativar usu·rio
+        """Testa login com usu√°rio inativo"""
+        # Desativar usu√°rio
         usuario_teste.ativo = False
         db.commit()
 
@@ -140,7 +140,7 @@ class TestLoginEndpoint:
         assert "inativo" in response.json()["message"].lower()
 
     def test_login_campos_obrigatorios(self, client):
-        """Testa que email e senha s„o obrigatÛrios"""
+        """Testa que email e senha s√£o obrigat√≥rios"""
         response = client.post("/auth/login", json={})
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
@@ -155,7 +155,7 @@ class TestRefreshTokenEndpoint:
     """Testes do endpoint de refresh token"""
 
     def test_refresh_token_sucesso(self, client, usuario_teste):
-        """Testa renovaÁ„o de token com refresh token v·lido"""
+        """Testa renova√ß√£o de token com refresh token v√°lido"""
         # Fazer login para obter tokens
         login_response = client.post(
             "/auth/login",
@@ -178,7 +178,7 @@ class TestRefreshTokenEndpoint:
         assert data["token_type"] == "Bearer"
 
     def test_refresh_token_invalido(self, client):
-        """Testa renovaÁ„o com token inv·lido"""
+        """Testa renova√ß√£o com token inv√°lido"""
         response = client.post(
             "/auth/refresh",
             json={"refresh_token": "token_invalido_xyz"}
@@ -186,7 +186,7 @@ class TestRefreshTokenEndpoint:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_refresh_token_expirado(self, client):
-        """Testa renovaÁ„o com token expirado"""
+        """Testa renova√ß√£o com token expirado"""
         from jose import jwt
         from datetime import datetime, timedelta, timezone
         from app.config import SECRET_KEY, ALGORITHM
@@ -203,12 +203,12 @@ class TestRefreshTokenEndpoint:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_refresh_token_usuario_inexistente(self, client):
-        """Testa renovaÁ„o com token de usu·rio que n„o existe"""
+        """Testa renova√ß√£o com token de usu√°rio que n√£o existe"""
         from jose import jwt
         from datetime import datetime, timedelta, timezone
         from app.config import SECRET_KEY, ALGORITHM
 
-        # Criar token para usu·rio inexistente
+        # Criar token para usu√°rio inexistente
         data_expiracao = datetime.now(timezone.utc) + timedelta(days=7)
         claims = {"sub": "99999", "exp": data_expiracao}
         token = jwt.encode(claims, SECRET_KEY, algorithm=ALGORITHM)
@@ -221,7 +221,7 @@ class TestRefreshTokenEndpoint:
 
 
 class TestAuthenticationFlow:
-    """Testes de fluxo completo de autenticaÁ„o"""
+    """Testes de fluxo completo de autentica√ß√£o"""
 
     def test_fluxo_completo_registro_login_refresh(self, client):
         """Testa fluxo completo: registro -> login -> refresh"""
@@ -270,7 +270,7 @@ class TestAuthenticationFlow:
         assert produtos_response2.status_code == status.HTTP_200_OK
 
     def test_token_contem_usuario_id_correto(self, client, usuario_teste):
-        """Testa que token JWT contÈm o ID correto do usu·rio"""
+        """Testa que token JWT cont√©m o ID correto do usu√°rio"""
         from jose import jwt
         from app.config import SECRET_KEY, ALGORITHM
 

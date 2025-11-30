@@ -1,13 +1,13 @@
-"""Testes de integraÁ„o para pedidos"""
+"""Testes de integra√ß√£o para pedidos"""
 import pytest
 from fastapi import status
 
 
 class TestCreateOrder:
-    """Testes de criaÁ„o de pedidos"""
+    """Testes de cria√ß√£o de pedidos"""
 
     def test_criar_pedido_sucesso(self, client, token_usuario, produto_teste):
-        """Testa criaÁ„o de pedido com sucesso"""
+        """Testa cria√ß√£o de pedido com sucesso"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.post(
             "/pedidos/",
@@ -30,7 +30,7 @@ class TestCreateOrder:
         assert data["preco_total"] == produto_teste.preco * 2
 
     def test_criar_pedido_sem_autenticacao(self, client, produto_teste):
-        """Testa que criar pedido requer autenticaÁ„o"""
+        """Testa que criar pedido requer autentica√ß√£o"""
         response = client.post(
             "/pedidos/",
             json={
@@ -57,8 +57,8 @@ class TestCreateOrder:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_criar_pedido_produto_indisponivel(self, client, token_usuario, db, produtos_diversos):
-        """Testa que n„o pode criar pedido com produto indisponÌvel"""
-        # produtos_diversos[3] È o Brownie que est· indisponÌvel
+        """Testa que n√£o pode criar pedido com produto indispon√≠vel"""
+        # produtos_diversos[3] √© o Brownie que est√° indispon√≠vel
         produto_indisponivel = produtos_diversos[3]
 
         headers = {"Authorization": f"Bearer {token_usuario}"}
@@ -77,14 +77,14 @@ class TestCreateOrder:
             }
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "n„o est· disponÌvel" in response.json()["message"]
+        assert "n√£o est√° dispon√≠vel" in response.json()["message"]
 
 
 class TestCalculatePrice:
-    """Testes de c·lculo de preÁo"""
+    """Testes de c√°lculo de pre√ßo"""
 
     def test_calcular_preco_sucesso(self, client, token_usuario, produto_teste):
-        """Testa c·lculo de preÁo antes de criar pedido"""
+        """Testa c√°lculo de pre√ßo antes de criar pedido"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.post(
             "/pedidos/calcular-preco",
@@ -107,10 +107,10 @@ class TestCalculatePrice:
 
 
 class TestListMyOrders:
-    """Testes de listagem de pedidos do usu·rio"""
+    """Testes de listagem de pedidos do usu√°rio"""
 
     def test_listar_meus_pedidos(self, client, token_usuario, pedido_teste):
-        """Testa listagem de pedidos do prÛprio usu·rio"""
+        """Testa listagem de pedidos do pr√≥prio usu√°rio"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.get("/pedidos/meus", headers=headers)
         assert response.status_code == status.HTTP_200_OK
@@ -127,15 +127,15 @@ class TestListMyOrders:
         assert all(pedido["status"] == "PENDENTE" for pedido in data)
 
     def test_listar_meus_pedidos_sem_autenticacao(self, client):
-        """Testa que listar pedidos requer autenticaÁ„o"""
+        """Testa que listar pedidos requer autentica√ß√£o"""
         response = client.get("/pedidos/meus")
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_usuario_ve_apenas_seus_pedidos(self, client, db, usuario_teste, admin_teste, produto_teste):
-        """Testa que usu·rio vÍ apenas seus prÛprios pedidos"""
+        """Testa que usu√°rio v√™ apenas seus pr√≥prios pedidos"""
         from app.models.models import Pedido, ItemPedido
 
-        # Criar pedido para usu·rio
+        # Criar pedido para usu√°rio
         pedido_usuario = Pedido(usuario_id=usuario_teste.id, status="PENDENTE", preco_total=35.00)
         db.add(pedido_usuario)
         db.commit()
@@ -145,19 +145,19 @@ class TestListMyOrders:
         db.add(pedido_admin)
         db.commit()
 
-        # Login como usu·rio
+        # Login como usu√°rio
         login_response = client.post(
             "/auth/login",
             json={"email": "teste@exemplo.com", "senha": "senha123"}
         )
         token = login_response.json()["access_token"]
 
-        # Listar pedidos do usu·rio
+        # Listar pedidos do usu√°rio
         headers = {"Authorization": f"Bearer {token}"}
         response = client.get("/pedidos/meus", headers=headers)
         data = response.json()
 
-        # Verificar que sÛ vÍ seus pedidos
+        # Verificar que s√≥ v√™ seus pedidos
         assert all(pedido["usuario_id"] == usuario_teste.id for pedido in data)
         assert not any(pedido["usuario_id"] == admin_teste.id for pedido in data)
 
@@ -174,17 +174,17 @@ class TestListAllOrders:
         assert isinstance(data, list)
 
     def test_listar_todos_pedidos_usuario_comum(self, client, token_usuario):
-        """Testa que usu·rio comum n„o pode listar todos os pedidos"""
+        """Testa que usu√°rio comum n√£o pode listar todos os pedidos"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.get("/pedidos/", headers=headers)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 class TestGetOrder:
-    """Testes de busca de pedido especÌfico"""
+    """Testes de busca de pedido espec√≠fico"""
 
     def test_buscar_pedido_proprio(self, client, token_usuario, pedido_teste):
-        """Testa busca do prÛprio pedido"""
+        """Testa busca do pr√≥prio pedido"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.get(f"/pedidos/{pedido_teste.id}", headers=headers)
         assert response.status_code == status.HTTP_200_OK
@@ -192,7 +192,7 @@ class TestGetOrder:
         assert data["id"] == pedido_teste.id
 
     def test_buscar_pedido_de_outro_usuario(self, client, db, admin_teste, produto_teste):
-        """Testa que n„o pode buscar pedido de outro usu·rio"""
+        """Testa que n√£o pode buscar pedido de outro usu√°rio"""
         from app.models.models import Pedido
 
         # Criar pedido para admin
@@ -200,7 +200,7 @@ class TestGetOrder:
         db.add(pedido_admin)
         db.commit()
 
-        # Tentar buscar como usu·rio comum
+        # Tentar buscar como usu√°rio comum
         login_response = client.post(
             "/auth/login",
             json={"email": "teste@exemplo.com", "senha": "senha123"}
@@ -218,17 +218,17 @@ class TestGetOrder:
         assert response.status_code == status.HTTP_200_OK
 
     def test_buscar_pedido_inexistente(self, client, token_usuario):
-        """Testa busca de pedido que n„o existe"""
+        """Testa busca de pedido que n√£o existe"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.get("/pedidos/99999", headers=headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 class TestUpdateOrderStatus:
-    """Testes de atualizaÁ„o de status de pedido"""
+    """Testes de atualiza√ß√£o de status de pedido"""
 
     def test_atualizar_status_como_admin(self, client, token_admin, pedido_teste):
-        """Testa atualizaÁ„o de status por admin"""
+        """Testa atualiza√ß√£o de status por admin"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.patch(
             f"/pedidos/{pedido_teste.id}/status",
@@ -239,7 +239,7 @@ class TestUpdateOrderStatus:
         assert response.json()["status"] == "EM_PREPARO"
 
     def test_atualizar_status_usuario_comum(self, client, token_usuario, pedido_teste):
-        """Testa que usu·rio comum n„o pode atualizar status"""
+        """Testa que usu√°rio comum n√£o pode atualizar status"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.patch(
             f"/pedidos/{pedido_teste.id}/status",
@@ -249,7 +249,7 @@ class TestUpdateOrderStatus:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_atualizar_status_invalido(self, client, token_admin, pedido_teste):
-        """Testa que n„o aceita status inv·lido"""
+        """Testa que n√£o aceita status inv√°lido"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.patch(
             f"/pedidos/{pedido_teste.id}/status",
@@ -263,7 +263,7 @@ class TestDeleteOrder:
     """Testes de cancelamento de pedido"""
 
     def test_cancelar_pedido_proprio(self, client, token_usuario, pedido_teste):
-        """Testa cancelamento do prÛprio pedido"""
+        """Testa cancelamento do pr√≥prio pedido"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.delete(f"/pedidos/{pedido_teste.id}", headers=headers)
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -273,7 +273,7 @@ class TestDeleteOrder:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_cancelar_pedido_de_outro_usuario(self, client, db, admin_teste):
-        """Testa que n„o pode cancelar pedido de outro usu·rio"""
+        """Testa que n√£o pode cancelar pedido de outro usu√°rio"""
         from app.models.models import Pedido
 
         # Criar pedido para admin
@@ -281,7 +281,7 @@ class TestDeleteOrder:
         db.add(pedido_admin)
         db.commit()
 
-        # Tentar cancelar como usu·rio comum
+        # Tentar cancelar como usu√°rio comum
         login_response = client.post(
             "/auth/login",
             json={"email": "teste@exemplo.com", "senha": "senha123"}
@@ -300,10 +300,10 @@ class TestDeleteOrder:
 
 
 class TestOrderStatistics:
-    """Testes de estatÌsticas de pedidos"""
+    """Testes de estat√≠sticas de pedidos"""
 
     def test_obter_estatisticas(self, client, token_usuario, pedido_teste):
-        """Testa obtenÁ„o de estatÌsticas dos pedidos"""
+        """Testa obten√ß√£o de estat√≠sticas dos pedidos"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.get("/pedidos/meus/estatisticas", headers=headers)
         assert response.status_code == status.HTTP_200_OK

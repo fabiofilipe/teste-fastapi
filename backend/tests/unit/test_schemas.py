@@ -1,4 +1,4 @@
-"""Testes unit·rios para schemas Pydantic"""
+"""Testes unit√°rios para schemas Pydantic"""
 import pytest
 from pydantic import ValidationError
 from app.schemas.schemas import (
@@ -16,19 +16,19 @@ class TestUsuarioSchema:
     """Testes do schema UsuarioSchema"""
 
     def test_usuario_valido(self):
-        """Testa criaÁ„o de usu·rio v·lido"""
+        """Testa cria√ß√£o de usu√°rio v√°lido"""
         usuario = UsuarioSchema(
-            nome="Jo„o Silva",
+            nome="Jo√£o Silva",
             email="joao@exemplo.com",
             senha="senha123"
         )
-        assert usuario.nome == "Jo„o Silva"
+        assert usuario.nome == "Jo√£o Silva"
         assert usuario.email == "joao@exemplo.com"
         assert usuario.ativo is True
         assert usuario.admin is False
 
     def test_nome_muito_curto(self):
-        """Testa que nome deve ter no mÌnimo 3 caracteres"""
+        """Testa que nome deve ter no m√≠nimo 3 caracteres"""
         with pytest.raises(ValidationError) as exc_info:
             UsuarioSchema(
                 nome="Jo",
@@ -38,20 +38,20 @@ class TestUsuarioSchema:
         assert "at least 3 characters" in str(exc_info.value)
 
     def test_email_invalido(self):
-        """Testa validaÁ„o de email inv·lido"""
+        """Testa valida√ß√£o de email inv√°lido"""
         with pytest.raises(ValidationError) as exc_info:
             UsuarioSchema(
-                nome="Jo„o Silva",
+                nome="Jo√£o Silva",
                 email="email-invalido",
                 senha="senha123"
             )
         assert "value is not a valid email address" in str(exc_info.value)
 
     def test_senha_muito_curta(self):
-        """Testa que senha deve ter no mÌnimo 6 caracteres"""
+        """Testa que senha deve ter no m√≠nimo 6 caracteres"""
         with pytest.raises(ValidationError) as exc_info:
             UsuarioSchema(
-                nome="Jo„o Silva",
+                nome="Jo√£o Silva",
                 email="joao@exemplo.com",
                 senha="12345"
             )
@@ -62,7 +62,7 @@ class TestLoginSchema:
     """Testes do schema LoginSchema"""
 
     def test_login_valido(self):
-        """Testa criaÁ„o de login v·lido"""
+        """Testa cria√ß√£o de login v√°lido"""
         login = LoginSchema(
             email="joao@exemplo.com",
             senha="senha123"
@@ -71,7 +71,7 @@ class TestLoginSchema:
         assert login.senha == "senha123"
 
     def test_email_obrigatorio(self):
-        """Testa que email È obrigatÛrio"""
+        """Testa que email √© obrigat√≥rio"""
         with pytest.raises(ValidationError) as exc_info:
             LoginSchema(senha="senha123")
         assert "email" in str(exc_info.value).lower()
@@ -81,10 +81,10 @@ class TestProdutoSchema:
     """Testes dos schemas de Produto"""
 
     def test_produto_create_valido(self):
-        """Testa criaÁ„o de produto v·lido"""
+        """Testa cria√ß√£o de produto v√°lido"""
         produto = ProdutoCreate(
             nome="Pizza Margherita",
-            descricao="Molho, mussarela e manjeric„o",
+            descricao="Molho, mussarela e manjeric√£o",
             categoria="PIZZA",
             tamanho="MEDIA",
             preco=35.00
@@ -95,7 +95,7 @@ class TestProdutoSchema:
         assert produto.preco == 35.00
 
     def test_preco_negativo_invalido(self):
-        """Testa que preÁo n„o pode ser negativo"""
+        """Testa que pre√ßo n√£o pode ser negativo"""
         with pytest.raises(ValidationError) as exc_info:
             ProdutoCreate(
                 nome="Pizza Margherita",
@@ -106,7 +106,7 @@ class TestProdutoSchema:
         assert "greater than 0" in str(exc_info.value)
 
     def test_categoria_invalida(self):
-        """Testa validaÁ„o de categoria"""
+        """Testa valida√ß√£o de categoria"""
         with pytest.raises(ValidationError) as exc_info:
             ProdutoCreate(
                 nome="Pizza Margherita",
@@ -117,7 +117,7 @@ class TestProdutoSchema:
         assert "does not match" in str(exc_info.value) or "string does not match" in str(exc_info.value)
 
     def test_tamanho_invalido(self):
-        """Testa validaÁ„o de tamanho"""
+        """Testa valida√ß√£o de tamanho"""
         with pytest.raises(ValidationError) as exc_info:
             ProdutoCreate(
                 nome="Pizza Margherita",
@@ -132,7 +132,7 @@ class TestItemPedidoSchema:
     """Testes do schema ItemPedidoCreate"""
 
     def test_item_pedido_valido(self):
-        """Testa criaÁ„o de item de pedido v·lido"""
+        """Testa cria√ß√£o de item de pedido v√°lido"""
         item = ItemPedidoCreate(
             quantidade=2,
             sabor="Margherita",
@@ -145,7 +145,7 @@ class TestItemPedidoSchema:
         assert item.preco_unitario == 35.00
 
     def test_quantidade_minima(self):
-        """Testa que quantidade deve ser no mÌnimo 1"""
+        """Testa que quantidade deve ser no m√≠nimo 1"""
         with pytest.raises(ValidationError) as exc_info:
             ItemPedidoCreate(
                 quantidade=0,
@@ -156,7 +156,7 @@ class TestItemPedidoSchema:
         assert "greater than or equal to 1" in str(exc_info.value)
 
     def test_observacoes_opcional(self):
-        """Testa que observaÁıes È opcional"""
+        """Testa que observa√ß√µes √© opcional"""
         item = ItemPedidoCreate(
             quantidade=1,
             sabor="Margherita",
@@ -179,7 +179,7 @@ class TestPedidoSchema:
     """Testes do schema PedidoCreate"""
 
     def test_pedido_com_itens_valido(self):
-        """Testa criaÁ„o de pedido com itens"""
+        """Testa cria√ß√£o de pedido com itens"""
         pedido = PedidoCreate(
             itens=[
                 ItemPedidoCreate(

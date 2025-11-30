@@ -1,20 +1,20 @@
-"""Testes de integraÁ„o para produtos"""
+"""Testes de integra√ß√£o para produtos"""
 import pytest
 from fastapi import status
 
 
 class TestCreateProduct:
-    """Testes de criaÁ„o de produtos"""
+    """Testes de cria√ß√£o de produtos"""
 
     def test_criar_produto_como_admin(self, client, token_admin):
-        """Testa criaÁ„o de produto por admin"""
+        """Testa cria√ß√£o de produto por admin"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.post(
             "/produtos/",
             headers=headers,
             json={
                 "nome": "Pizza Margherita",
-                "descricao": "Molho, mussarela e manjeric„o",
+                "descricao": "Molho, mussarela e manjeric√£o",
                 "categoria": "PIZZA",
                 "tamanho": "MEDIA",
                 "preco": 35.00
@@ -29,7 +29,7 @@ class TestCreateProduct:
         assert data["disponivel"] is True
 
     def test_criar_produto_sem_autenticacao(self, client):
-        """Testa que criar produto requer autenticaÁ„o"""
+        """Testa que criar produto requer autentica√ß√£o"""
         response = client.post(
             "/produtos/",
             json={
@@ -42,7 +42,7 @@ class TestCreateProduct:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_criar_produto_usuario_comum(self, client, token_usuario):
-        """Testa que usu·rio comum n„o pode criar produto"""
+        """Testa que usu√°rio comum n√£o pode criar produto"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.post(
             "/produtos/",
@@ -57,7 +57,7 @@ class TestCreateProduct:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_criar_produto_duplicado(self, client, token_admin, produto_teste):
-        """Testa que n„o pode criar produto duplicado (mesmo nome e tamanho)"""
+        """Testa que n√£o pode criar produto duplicado (mesmo nome e tamanho)"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.post(
             "/produtos/",
@@ -70,7 +70,7 @@ class TestCreateProduct:
             }
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "j· existe" in response.json()["message"]
+        assert "j√° existe" in response.json()["message"]
 
 
 class TestListProducts:
@@ -85,14 +85,14 @@ class TestListProducts:
         assert len(data) == len(produtos_diversos)
 
     def test_listar_produtos_disponiveis(self, client, produtos_diversos):
-        """Testa filtro por produtos disponÌveis"""
+        """Testa filtro por produtos dispon√≠veis"""
         response = client.get("/produtos/?disponivel=true")
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert all(produto["disponivel"] is True for produto in data)
 
     def test_listar_produtos_indisponiveis(self, client, produtos_diversos):
-        """Testa filtro por produtos indisponÌveis"""
+        """Testa filtro por produtos indispon√≠veis"""
         response = client.get("/produtos/?disponivel=false")
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -122,7 +122,7 @@ class TestListProducts:
 
 
 class TestGetProduct:
-    """Testes de busca de produto especÌfico"""
+    """Testes de busca de produto espec√≠fico"""
 
     def test_buscar_produto_existente(self, client, produto_teste):
         """Testa busca de produto por ID"""
@@ -133,24 +133,24 @@ class TestGetProduct:
         assert data["nome"] == produto_teste.nome
 
     def test_buscar_produto_inexistente(self, client):
-        """Testa busca de produto que n„o existe"""
+        """Testa busca de produto que n√£o existe"""
         response = client.get("/produtos/99999")
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert "n„o encontrado" in response.json()["message"]
+        assert "n√£o encontrado" in response.json()["message"]
 
 
 class TestUpdateProduct:
-    """Testes de atualizaÁ„o de produtos"""
+    """Testes de atualiza√ß√£o de produtos"""
 
     def test_atualizar_produto_como_admin(self, client, token_admin, produto_teste):
-        """Testa atualizaÁ„o de produto por admin"""
+        """Testa atualiza√ß√£o de produto por admin"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.put(
             f"/produtos/{produto_teste.id}",
             headers=headers,
             json={
                 "nome": "Pizza Margherita Premium",
-                "descricao": "Agora com mussarela de b˙fala",
+                "descricao": "Agora com mussarela de b√∫fala",
                 "categoria": "PIZZA",
                 "tamanho": "MEDIA",
                 "preco": 45.00
@@ -160,10 +160,10 @@ class TestUpdateProduct:
         data = response.json()
         assert data["nome"] == "Pizza Margherita Premium"
         assert data["preco"] == 45.00
-        assert data["descricao"] == "Agora com mussarela de b˙fala"
+        assert data["descricao"] == "Agora com mussarela de b√∫fala"
 
     def test_atualizar_produto_sem_autenticacao(self, client, produto_teste):
-        """Testa que atualizar produto requer autenticaÁ„o"""
+        """Testa que atualizar produto requer autentica√ß√£o"""
         response = client.put(
             f"/produtos/{produto_teste.id}",
             json={
@@ -176,7 +176,7 @@ class TestUpdateProduct:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_atualizar_produto_usuario_comum(self, client, token_usuario, produto_teste):
-        """Testa que usu·rio comum n„o pode atualizar produto"""
+        """Testa que usu√°rio comum n√£o pode atualizar produto"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.put(
             f"/produtos/{produto_teste.id}",
@@ -191,7 +191,7 @@ class TestUpdateProduct:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_atualizar_produto_inexistente(self, client, token_admin):
-        """Testa atualizaÁ„o de produto que n„o existe"""
+        """Testa atualiza√ß√£o de produto que n√£o existe"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.put(
             "/produtos/99999",
@@ -207,10 +207,10 @@ class TestUpdateProduct:
 
 
 class TestDeleteProduct:
-    """Testes de exclus„o de produtos"""
+    """Testes de exclus√£o de produtos"""
 
     def test_deletar_produto_como_admin(self, client, token_admin, produto_teste):
-        """Testa exclus„o de produto por admin"""
+        """Testa exclus√£o de produto por admin"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.delete(f"/produtos/{produto_teste.id}", headers=headers)
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -220,31 +220,31 @@ class TestDeleteProduct:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_deletar_produto_sem_autenticacao(self, client, produto_teste):
-        """Testa que deletar produto requer autenticaÁ„o"""
+        """Testa que deletar produto requer autentica√ß√£o"""
         response = client.delete(f"/produtos/{produto_teste.id}")
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_deletar_produto_usuario_comum(self, client, token_usuario, produto_teste):
-        """Testa que usu·rio comum n„o pode deletar produto"""
+        """Testa que usu√°rio comum n√£o pode deletar produto"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.delete(f"/produtos/{produto_teste.id}", headers=headers)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_deletar_produto_inexistente(self, client, token_admin):
-        """Testa exclus„o de produto que n„o existe"""
+        """Testa exclus√£o de produto que n√£o existe"""
         headers = {"Authorization": f"Bearer {token_admin}"}
         response = client.delete("/produtos/99999", headers=headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 class TestUpdateProductAvailability:
-    """Testes de atualizaÁ„o de disponibilidade"""
+    """Testes de atualiza√ß√£o de disponibilidade"""
 
     def test_alterar_disponibilidade_como_admin(self, client, token_admin, produto_teste):
-        """Testa alteraÁ„o de disponibilidade por admin"""
+        """Testa altera√ß√£o de disponibilidade por admin"""
         headers = {"Authorization": f"Bearer {token_admin}"}
 
-        # Tornar indisponÌvel
+        # Tornar indispon√≠vel
         response = client.patch(
             f"/produtos/{produto_teste.id}/disponibilidade",
             headers=headers,
@@ -253,7 +253,7 @@ class TestUpdateProductAvailability:
         assert response.status_code == status.HTTP_200_OK
         assert response.json()["disponivel"] is False
 
-        # Tornar disponÌvel novamente
+        # Tornar dispon√≠vel novamente
         response = client.patch(
             f"/produtos/{produto_teste.id}/disponibilidade",
             headers=headers,
@@ -263,7 +263,7 @@ class TestUpdateProductAvailability:
         assert response.json()["disponivel"] is True
 
     def test_alterar_disponibilidade_sem_autenticacao(self, client, produto_teste):
-        """Testa que alterar disponibilidade requer autenticaÁ„o"""
+        """Testa que alterar disponibilidade requer autentica√ß√£o"""
         response = client.patch(
             f"/produtos/{produto_teste.id}/disponibilidade",
             params={"disponivel": False}
@@ -271,7 +271,7 @@ class TestUpdateProductAvailability:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_alterar_disponibilidade_usuario_comum(self, client, token_usuario, produto_teste):
-        """Testa que usu·rio comum n„o pode alterar disponibilidade"""
+        """Testa que usu√°rio comum n√£o pode alterar disponibilidade"""
         headers = {"Authorization": f"Bearer {token_usuario}"}
         response = client.patch(
             f"/produtos/{produto_teste.id}/disponibilidade",

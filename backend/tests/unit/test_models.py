@@ -1,4 +1,4 @@
-"""Testes unit·rios para modelos"""
+"""Testes unit√°rios para modelos"""
 import pytest
 import bcrypt
 from app.models.models import Usuario, Produto, Pedido, ItemPedido
@@ -8,10 +8,10 @@ class TestUsuarioModel:
     """Testes do modelo Usuario"""
 
     def test_criar_usuario(self, db):
-        """Testa criaÁ„o de usu·rio"""
+        """Testa cria√ß√£o de usu√°rio"""
         senha_hash = bcrypt.hashpw("senha123".encode(), bcrypt.gensalt()).decode()
         usuario = Usuario(
-            nome="Jo„o Silva",
+            nome="Jo√£o Silva",
             email="joao@exemplo.com",
             senha=senha_hash,
             ativo=True,
@@ -22,13 +22,13 @@ class TestUsuarioModel:
         db.refresh(usuario)
 
         assert usuario.id is not None
-        assert usuario.nome == "Jo„o Silva"
+        assert usuario.nome == "Jo√£o Silva"
         assert usuario.email == "joao@exemplo.com"
         assert usuario.ativo is True
         assert usuario.admin is False
 
     def test_usuario_email_unico(self, db, usuario_teste):
-        """Testa que email deve ser ˙nico"""
+        """Testa que email deve ser √∫nico"""
         from sqlalchemy.exc import IntegrityError
 
         usuario_duplicado = Usuario(
@@ -62,10 +62,10 @@ class TestProdutoModel:
     """Testes do modelo Produto"""
 
     def test_criar_produto(self, db):
-        """Testa criaÁ„o de produto"""
+        """Testa cria√ß√£o de produto"""
         produto = Produto(
             nome="Pizza Margherita",
-            descricao="Molho, mussarela e manjeric„o",
+            descricao="Molho, mussarela e manjeric√£o",
             categoria="PIZZA",
             tamanho="MEDIA",
             preco=35.00,
@@ -83,7 +83,7 @@ class TestProdutoModel:
         assert produto.disponivel is True
 
     def test_produto_nome_tamanho_unico(self, db, produto_teste):
-        """Testa que combinaÁ„o nome+tamanho deve ser ˙nica"""
+        """Testa que combina√ß√£o nome+tamanho deve ser √∫nica"""
         from sqlalchemy.exc import IntegrityError
 
         produto_duplicado = Produto(
@@ -99,7 +99,7 @@ class TestProdutoModel:
             db.commit()
 
     def test_produto_disponibilidade_padrao(self, db):
-        """Testa que disponÌvel È True por padr„o"""
+        """Testa que dispon√≠vel √© True por padr√£o"""
         produto = Produto(
             nome="Pizza Calabresa",
             categoria="PIZZA",
@@ -117,7 +117,7 @@ class TestPedidoModel:
     """Testes do modelo Pedido"""
 
     def test_criar_pedido(self, db, usuario_teste):
-        """Testa criaÁ„o de pedido"""
+        """Testa cria√ß√£o de pedido"""
         pedido = Pedido(
             usuario_id=usuario_teste.id,
             status="PENDENTE",
@@ -133,7 +133,7 @@ class TestPedidoModel:
         assert pedido.usuario_id == usuario_teste.id
 
     def test_pedido_relacionamento_usuario(self, db, pedido_teste, usuario_teste):
-        """Testa relacionamento com usu·rio"""
+        """Testa relacionamento com usu√°rio"""
         assert pedido_teste.usuario.id == usuario_teste.id
         assert pedido_teste.usuario.nome == usuario_teste.nome
 
@@ -143,7 +143,7 @@ class TestPedidoModel:
         assert pedido_teste.itens[0].sabor == "Margherita"
 
     def test_pedido_status_padrao(self, db, usuario_teste):
-        """Testa que status padr„o È PENDENTE"""
+        """Testa que status padr√£o √© PENDENTE"""
         pedido = Pedido(
             usuario_id=usuario_teste.id,
             preco_total=30.00
@@ -155,7 +155,7 @@ class TestPedidoModel:
         assert pedido.status == "PENDENTE"
 
     def test_pedido_preco_total_padrao(self, db, usuario_teste):
-        """Testa que preÁo total padr„o È 0.0"""
+        """Testa que pre√ßo total padr√£o √© 0.0"""
         pedido = Pedido(
             usuario_id=usuario_teste.id,
             status="PENDENTE"
@@ -171,7 +171,7 @@ class TestItemPedidoModel:
     """Testes do modelo ItemPedido"""
 
     def test_criar_item_pedido(self, db, pedido_teste):
-        """Testa criaÁ„o de item de pedido"""
+        """Testa cria√ß√£o de item de pedido"""
         item = ItemPedido(
             pedido_id=pedido_teste.id,
             quantidade=2,
@@ -198,7 +198,7 @@ class TestItemPedidoModel:
         assert item.pedido.usuario_id == pedido_teste.usuario_id
 
     def test_item_observacoes_opcional(self, db, pedido_teste):
-        """Testa que observaÁıes È opcional"""
+        """Testa que observa√ß√µes √© opcional"""
         item = ItemPedido(
             pedido_id=pedido_teste.id,
             quantidade=1,
