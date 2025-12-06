@@ -1,10 +1,13 @@
-"""Schemas Pydantic para validação de dados"""
+"""Schemas Pydantic para validacao de dados"""
 from app.schemas.schemas import (
     UsuarioSchema,
     UsuarioResponse,
     LoginSchema,
     TokenResponse,
     RefreshTokenRequest,
+    EnderecoCreate,
+    EnderecoUpdate,
+    EnderecoResponse,
     ProdutoCreate,
     ProdutoUpdate,
     ProdutoResponse,
@@ -20,6 +23,9 @@ __all__ = [
     "LoginSchema",
     "TokenResponse",
     "RefreshTokenRequest",
+    "EnderecoCreate",
+    "EnderecoUpdate",
+    "EnderecoResponse",
     "ProdutoCreate",
     "ProdutoUpdate",
     "ProdutoResponse",
@@ -28,3 +34,4 @@ __all__ = [
     "ItemPedidoCreate",
     "ItemPedidoResponse"
 ]
+

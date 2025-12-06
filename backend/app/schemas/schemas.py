@@ -1,12 +1,12 @@
-"""Schemas Pydantic para validação e serialização"""
+"""Schemas Pydantic para validacao e serializacao"""
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 from datetime import datetime
 
 
-# Schemas de Usuário
+# Schemas de Usuario
 class UsuarioSchema(BaseModel):
-    """Schema para criação de usuário"""
+    """Schema para criacao de usuario"""
     nome: str = Field(..., min_length=3, max_length=100)
     email: EmailStr
     senha: str = Field(..., min_length=6)
@@ -18,7 +18,7 @@ class UsuarioSchema(BaseModel):
 
 
 class UsuarioResponse(BaseModel):
-    """Schema para resposta de usuário (sem senha)"""
+    """Schema para resposta de usuario (sem senha)"""
     id: int
     nome: str
     email: str
@@ -29,7 +29,7 @@ class UsuarioResponse(BaseModel):
         from_attributes = True
 
 
-# Schemas de Autenticação
+# Schemas de Autenticacao
 class LoginSchema(BaseModel):
     """Schema para login"""
     email: EmailStr
@@ -47,8 +47,55 @@ class TokenResponse(BaseModel):
 
 
 class RefreshTokenRequest(BaseModel):
-    """Schema para requisição de refresh token"""
+    """Schema para requisicao de refresh token"""
     refresh_token: str
+
+    class Config:
+        from_attributes = True
+
+
+# Schemas de Endereco
+class EnderecoCreate(BaseModel):
+    """Schema para criacao de endereco"""
+    rua: str = Field(..., min_length=3, max_length=200)
+    numero: str = Field(..., min_length=1, max_length=20)
+    complemento: Optional[str] = Field(None, max_length=100)
+    bairro: str = Field(..., min_length=2, max_length=100)
+    cidade: str = Field(..., min_length=2, max_length=100)
+    estado: str = Field(..., min_length=2, max_length=2)
+    cep: str = Field(..., pattern=r"^\d{5}-?\d{3}$")
+    is_default: Optional[bool] = False
+
+    class Config:
+        from_attributes = True
+
+
+class EnderecoUpdate(BaseModel):
+    """Schema para atualizacao de endereco"""
+    rua: Optional[str] = Field(None, min_length=3, max_length=200)
+    numero: Optional[str] = Field(None, min_length=1, max_length=20)
+    complemento: Optional[str] = Field(None, max_length=100)
+    bairro: Optional[str] = Field(None, min_length=2, max_length=100)
+    cidade: Optional[str] = Field(None, min_length=2, max_length=100)
+    estado: Optional[str] = Field(None, min_length=2, max_length=2)
+    cep: Optional[str] = Field(None, pattern=r"^\d{5}-?\d{3}$")
+    is_default: Optional[bool] = None
+
+    class Config:
+        from_attributes = True
+
+
+class EnderecoResponse(BaseModel):
+    """Schema para resposta de endereco"""
+    id: int
+    rua: str
+    numero: str
+    complemento: Optional[str]
+    bairro: str
+    cidade: str
+    estado: str
+    cep: str
+    is_default: bool
 
     class Config:
         from_attributes = True
@@ -56,7 +103,7 @@ class RefreshTokenRequest(BaseModel):
 
 # Schemas de Produto
 class ProdutoCreate(BaseModel):
-    """Schema para criação de produto"""
+    """Schema para criacao de produto"""
     nome: str = Field(..., min_length=3, max_length=100)
     descricao: Optional[str] = None
     categoria: str = Field(..., pattern="^(PIZZA|BEBIDA|SOBREMESA|ADICIONAL)$")
@@ -69,7 +116,7 @@ class ProdutoCreate(BaseModel):
 
 
 class ProdutoUpdate(BaseModel):
-    """Schema para atualização de produto"""
+    """Schema para atualizacao de produto"""
     nome: Optional[str] = Field(None, min_length=3, max_length=100)
     descricao: Optional[str] = None
     categoria: Optional[str] = Field(None, pattern="^(PIZZA|BEBIDA|SOBREMESA|ADICIONAL)$")
@@ -97,8 +144,8 @@ class ProdutoResponse(BaseModel):
 
 # Schemas de Item do Pedido
 class ItemPedidoCreate(BaseModel):
-    """Schema para criação de item do pedido"""
-    produto_id: int = Field(..., gt=0, description="ID do produto no cardápio")
+    """Schema para criacao de item do pedido"""
+    produto_id: int = Field(..., gt=0, description="ID do produto no cardapio")
     quantidade: int = Field(..., ge=1)
     observacoes: Optional[str] = None
 
@@ -121,8 +168,9 @@ class ItemPedidoResponse(BaseModel):
 
 # Schemas de Pedido
 class PedidoCreate(BaseModel):
-    """Schema para criação de pedido"""
+    """Schema para criacao de pedido"""
     itens: Optional[List[ItemPedidoCreate]] = []
+    endereco_entrega_id: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -135,6 +183,8 @@ class PedidoResponse(BaseModel):
     usuario_id: int
     preco_total: float
     itens: List[ItemPedidoResponse] = []
+    endereco_entrega: Optional[EnderecoResponse] = None
 
     class Config:
         from_attributes = True
+
