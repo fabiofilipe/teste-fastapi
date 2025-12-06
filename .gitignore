@@ -1,5 +1,5 @@
 
-atualizações_26-11.md
+
 # Ambiente Virtual
 venv/
 .venv/
@@ -14,6 +14,5 @@ __pycache__/
 anotações.txt
 alembic.ini
 alembic
-.venv_velho/
-.venv_velho
+
 .env

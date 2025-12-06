@@ -90,7 +90,7 @@ def token_usuario(client, usuario_teste):
         "/auth/login",
         json={
             "email": "teste@exemplo.com",
-            "password": "senha123"
+            "senha": "senha123"
         }
     )
     return response.json()["access_token"]
@@ -103,7 +103,7 @@ def token_admin(client, admin_teste):
         "/auth/login",
         json={
             "email": "admin@exemplo.com",
-            "password": "admin123"
+            "senha": "admin123"
         }
     )
     return response.json()["access_token"]
