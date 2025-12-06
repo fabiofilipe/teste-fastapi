@@ -40,20 +40,10 @@ Plano de implementacao incremental para evoluir o sistema a um nivel comparavel 
 **Concluido em:** 06/12/2025  
 **Resultado:** 97/97 testes passando | Cobertura 93% | Tempo 28.7s
 
-### 1.2 Aprimorar Modelos de Dados
+### 1.2 Aprimorar Modelos de Dados [CONCLUIDO]
 
-**Backend**
-- Adicionar timestamps (created_at, updated_at) em todos os modelos
-- Adicionar soft delete (deleted_at) para auditoria
-- Adicionar indices otimizados em campos de busca frequente
-- Criar modelo de Endereco (rua, numero, complemento, bairro, cidade, estado, CEP)
-- Adicionar relacionamento Usuario -> Enderecos (um usuario pode ter multiplos enderecos)
-- Adicionar campo endereco_entrega_id em Pedido
-
-**Testes**
-- Testes unitarios para novos campos e relacionamentos
-- Testes de validacao de soft delete
-- Testes de busca com indices
+**Concluido em:** 06/12/2025  
+**Resultado:** 108/108 testes passando | Cobertura 93.54% | Mixins + Endereco + 12 novos testes
 
 ### 1.3 Sistema de Categorias e Cardapio Dinamico
 
