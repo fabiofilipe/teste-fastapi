@@ -12,13 +12,20 @@ Plano de implementacao incremental para evoluir o sistema a um nivel comparavel 
 
 ### Backend
 - Autenticacao JWT completa (access + refresh tokens)
-- CRUD de Usuarios com roles (admin/user)
-- CRUD de Produtos (categoria, tamanho, preco, disponibilidade)
-- CRUD de Pedidos (status, itens, validacoes)
+- CRUD de Usuarios com roles (admin/user) e enderecos
+- Sistema de Categorias (CRUD admin + listagem publica ordenada)
+- Sistema de Ingredientes (CRUD admin + controle de disponibilidade)
+- CRUD de Produtos com Variacoes (multiplos tamanhos/precos por produto)
+- Ingredientes Padrao (muitos-para-muitos com flag obrigatorio)
+- Cardapio Publico dinamico (otimizado com eager loading)
+- CRUD de Pedidos com customizacoes (adicionar/remover ingredientes)
+- Calculo automatico de precos (base + ingredientes × quantidade)
 - Sistema de permissoes e ownership
-- Tratamento de erros robusto (8 excecoes customizadas + 5 handlers)
+- Tratamento de erros robusto (14 excecoes customizadas + 5 handlers)
 - Health checks e endpoints de monitoramento
 - Validacao Pydantic v2
+- Script de seed data completo
+- Soft Delete e Timestamp Mixins
 
 ### Testes
 - 101 testes (69 passando, 32 precisam correcao)
@@ -45,31 +52,48 @@ Plano de implementacao incremental para evoluir o sistema a um nivel comparavel 
 **Concluido em:** 06/12/2025  
 **Resultado:** 108/108 testes passando | Cobertura 93.54% | Mixins + Endereco + 12 novos testes
 
-### 1.3 Sistema de Categorias e Cardapio Dinamico
+### 1.3 Sistema de Categorias e Cardapio Dinamico [CONCLUIDO]
 
-**Backend**
-- Criar modelo Categoria (nome, descricao, icone, ordem_exibicao, ativa)
-- Refatorar Produto para usar FK para Categoria
-- Criar modelo Ingrediente (nome, preco_adicional, disponivel)
-- Criar modelo ProdutoIngrediente (muitos-para-muitos)
-- Endpoint para listar categorias ativas com produtos disponiveis
-- Endpoint para buscar produtos por categoria
-- Endpoint para buscar ingredientes disponiveis
-- Sistema de customizacao de pizza (remover/adicionar ingredientes)
+**Concluido em:** 10/12/2025
+**Resultado:** Backend completo | 4 novos modelos | 5 routers | Seed data funcional
 
-**Testes**
-- Testes de criacao e atualizacao de categorias
-- Testes de listagem de cardapio com filtros
-- Testes de validacao de ingredientes
-- Testes de customizacao de produtos
+**Backend** ✅
+- ✅ Criar modelo Categoria (nome, descricao, icone, ordem_exibicao, ativa)
+- ✅ Criar modelo Ingrediente (nome, preco_adicional, disponivel)
+- ✅ Criar modelo ProdutoVariacao (produto_id, tamanho, preco, disponivel)
+- ✅ Criar modelo ProdutoIngrediente (muitos-para-muitos com flag obrigatorio)
+- ✅ Refatorar Produto para usar FK para Categoria + variacoes
+- ✅ Refatorar ItemPedido para suportar customizacoes (JSON)
+- ✅ Router de Categorias (CRUD admin + listagem publica)
+- ✅ Router de Ingredientes (CRUD admin + listagem publica)
+- ✅ Router de Produtos refatorado (variacoes + ingredientes padrao)
+- ✅ Router de Cardapio publico (otimizado com joinedload)
+- ✅ Router de Pedidos refatorado (customizacoes + calculo de preco)
+- ✅ Sistema de customizacao de pizza (adicionar/remover ingredientes)
+- ✅ Validacoes de negocio (ingredientes obrigatorios, disponibilidade)
+- ✅ Script de seed data (3 categorias + 15 ingredientes + 10 produtos)
+- ✅ 6 novas excecoes customizadas
+- ✅ Documentacao atualizada (README.md com breaking changes)
 
-**Frontend**
-- Tela de cardapio com navegacao por categorias
-- Cards de produtos com imagem, nome, descricao, preco
-- Modal de detalhes do produto
-- Interface de customizacao de pizza (checkboxes de ingredientes)
-- Carrinho de compras (sidebar ou modal)
-- Badge de quantidade de itens no carrinho
+**Testes** ⏳
+- ⏳ Testes de criacao e atualizacao de categorias
+- ⏳ Testes de listagem de cardapio com filtros
+- ⏳ Testes de validacao de ingredientes
+- ⏳ Testes de customizacao de produtos
+
+**Frontend** 📋
+- 📋 Tela de cardapio com navegacao por categorias
+- 📋 Cards de produtos com imagem, nome, descricao, preco
+- 📋 Modal de detalhes do produto
+- 📋 Interface de customizacao de pizza (checkboxes de ingredientes)
+- 📋 Carrinho de compras (sidebar ou modal)
+- 📋 Badge de quantidade de itens no carrinho
+
+**Observacoes:**
+- Banco de dados precisa ser recriado (breaking changes)
+- Estrutura pronta para escalar com mais categorias e produtos
+- Sistema de precificacao dinamica implementado
+- Eager loading configurado para evitar N+1 queries
 
 ### 1.4 Sistema de Enderecos Completo
 
