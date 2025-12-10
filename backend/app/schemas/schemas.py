@@ -188,3 +188,75 @@ class PedidoResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+# Schemas de Categoria
+class CategoriaCreate(BaseModel):
+    """Schema para criacao de categoria"""
+    nome: str = Field(..., min_length=3, max_length=100)
+    descricao: Optional[str] = None
+    icone: Optional[str] = None
+    ordem_exibicao: int = Field(default=0, ge=0)
+    ativa: Optional[bool] = True
+
+    class Config:
+        from_attributes = True
+
+
+class CategoriaUpdate(BaseModel):
+    """Schema para atualizacao de categoria"""
+    nome: Optional[str] = Field(None, min_length=3, max_length=100)
+    descricao: Optional[str] = None
+    icone: Optional[str] = None
+    ordem_exibicao: Optional[int] = Field(None, ge=0)
+    ativa: Optional[bool] = None
+
+    class Config:
+        from_attributes = True
+
+
+class CategoriaResponse(BaseModel):
+    """Schema para resposta de categoria"""
+    id: int
+    nome: str
+    descricao: Optional[str]
+    icone: Optional[str]
+    ordem_exibicao: int
+    ativa: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# Schemas de Ingrediente
+class IngredienteCreate(BaseModel):
+    """Schema para criacao de ingrediente"""
+    nome: str = Field(..., min_length=2, max_length=100)
+    preco_adicional: float = Field(default=0.0, ge=0)
+    disponivel: Optional[bool] = True
+
+    class Config:
+        from_attributes = True
+
+
+class IngredienteUpdate(BaseModel):
+    """Schema para atualizacao de ingrediente"""
+    nome: Optional[str] = Field(None, min_length=2, max_length=100)
+    preco_adicional: Optional[float] = Field(None, ge=0)
+    disponivel: Optional[bool] = None
+
+    class Config:
+        from_attributes = True
+
+
+class IngredienteResponse(BaseModel):
+    """Schema para resposta de ingrediente"""
+    id: int
+    nome: str
+    preco_adicional: float
+    disponivel: bool
+
+    class Config:
+        from_attributes = True
+
