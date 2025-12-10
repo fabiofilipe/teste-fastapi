@@ -1,15 +1,80 @@
 """Rotas de gerenciamento de pedidos"""
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Tuple
 
 from app.database import get_db
-from app.models import Pedido, ItemPedido, Usuario, Produto
-from app.schemas import PedidoCreate, PedidoResponse, ItemPedidoCreate
-from app.dependencies import obter_usuario_atual, obter_usuario_admin
-from app.exceptions import ProdutoNaoEncontrado, ProdutoIndisponivel, StatusInvalido, SemPermissao, PedidoNaoEncontrado
+from app.models.models import (
+    Pedido, ItemPedido, Usuario, Produto, ProdutoVariacao,
+    Ingrediente, ProdutoIngrediente
+)
+from app.schemas.schemas import PedidoCreate, PedidoResponse
+from app.dependencies.auth import obter_usuario_atual, obter_usuario_admin
+from app.exceptions import (
+    ProdutoNaoEncontrado, StatusInvalido, SemPermissao,
+    PedidoNaoEncontrado, ProdutoVariacaoNaoEncontrada,
+    IngredienteNaoEncontrado, IngredienteIndisponivel,
+    IngredienteObrigatorio
+)
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
+
+
+def calcular_preco_item(
+    produto_variacao: ProdutoVariacao,
+    ingredientes_adicionados: List[int],
+    ingredientes_removidos: List[int],
+    quantidade: int,
+    db: Session
+) -> Tuple[float, float, float, list, list]:
+    """
+    Calcula preco de um item do pedido com customizacoes
+
+    Retorna: (preco_base, preco_ingredientes, preco_total,
+              ingredientes_adicionados_data, ingredientes_removidos_data)
+    """
+    preco_base = produto_variacao.preco
+    preco_ingredientes = 0.0
+
+    # Validar e adicionar ingredientes extras
+    ingredientes_adicionados_data = []
+    for ing_id in ingredientes_adicionados:
+        ingrediente = db.query(Ingrediente).filter(Ingrediente.id == ing_id).first()
+        if not ingrediente:
+            raise IngredienteNaoEncontrado(ing_id)
+        if not ingrediente.disponivel:
+            raise IngredienteIndisponivel(ingrediente.nome)
+
+        preco_ingredientes += ingrediente.preco_adicional
+        ingredientes_adicionados_data.append({
+            "id": ingrediente.id,
+            "nome": ingrediente.nome,
+            "preco": ingrediente.preco_adicional
+        })
+
+    # Validar ingredientes removidos
+    ingredientes_removidos_data = []
+    for ing_id in ingredientes_removidos:
+        # Verificar se ingrediente esta nos ingredientes padrao do produto
+        produto_ingrediente = db.query(ProdutoIngrediente).filter(
+            ProdutoIngrediente.produto_id == produto_variacao.produto_id,
+            ProdutoIngrediente.ingrediente_id == ing_id
+        ).first()
+
+        if not produto_ingrediente:
+            continue  # Ignorar se nao e um ingrediente padrao
+
+        if produto_ingrediente.obrigatorio:
+            raise IngredienteObrigatorio(produto_ingrediente.ingrediente.nome)
+
+        ingredientes_removidos_data.append({
+            "id": produto_ingrediente.ingrediente.id,
+            "nome": produto_ingrediente.ingrediente.nome
+        })
+
+    preco_total = (preco_base + preco_ingredientes) * quantidade
+
+    return preco_base, preco_ingredientes, preco_total, ingredientes_adicionados_data, ingredientes_removidos_data
 
 
 @router.get("/meus/estatisticas", summary="Estatísticas dos meus pedidos")
@@ -121,7 +186,7 @@ async def calcular_preco_pedido(
     """
     Calcula o preço total de um pedido sem salvá-lo
 
-    - **itens**: Lista de itens do pedido com produto_id do cardápio
+    - **itens**: Lista de itens do pedido com produto_variacao_id e customizações
 
     Útil para mostrar o valor total antes de confirmar o pedido.
     """
@@ -129,27 +194,39 @@ async def calcular_preco_pedido(
     itens_calculados = []
 
     for item_data in pedido.itens:
-        # Buscar o produto no cardápio
-        produto = db.query(Produto).filter(Produto.id == item_data.produto_id).first()
+        # Buscar a variacao do produto
+        produto_variacao = db.query(ProdutoVariacao)\
+            .filter(ProdutoVariacao.id == item_data.produto_variacao_id)\
+            .first()
 
-        if not produto:
-            raise ProdutoNaoEncontrado(item_data.produto_id)
+        if not produto_variacao:
+            raise ProdutoVariacaoNaoEncontrada(item_data.produto_variacao_id)
 
-        # Verificar se o produto está disponível
-        if not produto.disponivel:
-            raise ProdutoIndisponivel(produto.nome)
+        # Verificar se a variacao esta disponivel
+        if not produto_variacao.disponivel or not produto_variacao.produto.disponivel:
+            raise ProdutoNaoEncontrado(produto_variacao.produto_id)
 
-        # Calcular preço do item
-        preco_item = produto.preco * item_data.quantidade
+        # Calcular preco com customizacoes
+        preco_base, preco_ingredientes, preco_item, ing_adicionados, ing_removidos = calcular_preco_item(
+            produto_variacao,
+            item_data.ingredientes_adicionados or [],
+            item_data.ingredientes_removidos or [],
+            item_data.quantidade,
+            db
+        )
+
         preco_total += preco_item
 
         itens_calculados.append({
-            "produto_id": produto.id,
-            "produto_nome": produto.nome,
-            "tamanho": produto.tamanho,
+            "produto_id": produto_variacao.produto_id,
+            "produto_nome": produto_variacao.produto.nome,
+            "tamanho": produto_variacao.tamanho,
             "quantidade": item_data.quantidade,
-            "preco_unitario": produto.preco,
-            "preco_total_item": round(preco_item, 2)
+            "preco_base": preco_base,
+            "preco_ingredientes": preco_ingredientes,
+            "preco_total_item": round(preco_item, 2),
+            "ingredientes_adicionados": ing_adicionados,
+            "ingredientes_removidos": ing_removidos
         })
 
     return {
@@ -168,42 +245,68 @@ async def criar_pedido(
     """
     Cria um novo pedido para a pizzaria
 
-    - **itens**: Lista de itens do pedido com produto_id do cardápio
+    - **itens**: Lista de itens do pedido com produto_variacao_id e customizações
 
     O pedido será criado para o usuário autenticado.
-    Os preços são calculados automaticamente baseados no cardápio.
+    Os preços são calculados automaticamente baseados no cardápio e customizações.
     """
-    # Cria o pedido para o usuário autenticado
-    novo_pedido = Pedido(usuario_id=usuario_atual.id)
+    # Criar o pedido para o usuario autenticado
+    novo_pedido = Pedido(
+        usuario_id=usuario_atual.id,
+        endereco_entrega_id=pedido.endereco_entrega_id
+    )
     db.add(novo_pedido)
     db.flush()  # Flush para obter o ID do pedido
 
-    # Adiciona os itens ao pedido com validação de produtos
+    # Adicionar os itens ao pedido com validacao de produtos e customizacoes
     preco_total = 0.0
     for item_data in pedido.itens:
-        # Buscar o produto no cardápio
-        produto = db.query(Produto).filter(Produto.id == item_data.produto_id).first()
+        # Buscar a variacao do produto
+        produto_variacao = db.query(ProdutoVariacao)\
+            .join(Produto)\
+            .filter(ProdutoVariacao.id == item_data.produto_variacao_id)\
+            .first()
 
-        if not produto:
-            raise ProdutoNaoEncontrado(item_data.produto_id)
+        if not produto_variacao:
+            raise ProdutoVariacaoNaoEncontrada(item_data.produto_variacao_id)
 
-        # Verificar se o produto está disponível
-        if not produto.disponivel:
-            raise ProdutoIndisponivel(produto.nome)
+        # Verificar se o produto e variacao estao disponiveis
+        if not produto_variacao.disponivel or not produto_variacao.produto.disponivel:
+            from app.exceptions import PizzariaException
+            raise PizzariaException(
+                f"Produto '{produto_variacao.produto.nome}' ({produto_variacao.tamanho}) não está disponível",
+                status.HTTP_400_BAD_REQUEST
+            )
 
-        # Criar item do pedido com dados do produto
+        # Calcular preco com customizacoes
+        preco_base, preco_ingredientes, preco_item, ing_adicionados, ing_removidos = calcular_preco_item(
+            produto_variacao,
+            item_data.ingredientes_adicionados or [],
+            item_data.ingredientes_removidos or [],
+            item_data.quantidade,
+            db
+        )
+
+        # Criar item do pedido com snapshot e customizacoes
         item = ItemPedido(
             pedido_id=novo_pedido.id,
+            produto_variacao_id=produto_variacao.id,
             quantidade=item_data.quantidade,
-            sabor=produto.nome,  # Nome do produto como sabor
-            tamanho=produto.tamanho,
-            preco_unitario=produto.preco,  # Preço do cardápio
+            # Snapshot (historico)
+            produto_nome=produto_variacao.produto.nome,
+            tamanho=produto_variacao.tamanho,
+            preco_base=preco_base,
+            # Customizacoes
+            ingredientes_adicionados=ing_adicionados,
+            ingredientes_removidos=ing_removidos,
+            preco_ingredientes=preco_ingredientes,
+            preco_total=preco_item,
             observacoes=item_data.observacoes
         )
-        preco_total += item.quantidade * item.preco_unitario
+        preco_total += preco_item
         db.add(item)
 
-    # Atualiza o preço total do pedido
+    # Atualizar o preco total do pedido
     novo_pedido.preco_total = round(preco_total, 2)
 
     db.commit()
