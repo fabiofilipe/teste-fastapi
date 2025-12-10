@@ -302,3 +302,25 @@ class ProdutoVariacaoResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+# Schemas de Cardapio Publico
+class CardapioCategoria(BaseModel):
+    """Schema para categoria no cardapio publico"""
+    id: int
+    nome: str
+    descricao: Optional[str]
+    icone: Optional[str]
+    ordem_exibicao: int
+    produtos: List["ProdutoResponse"] = []
+
+    class Config:
+        from_attributes = True
+
+
+class CardapioResponse(BaseModel):
+    """Schema para resposta completa do cardapio"""
+    categorias: List[CardapioCategoria]
+
+    class Config:
+        from_attributes = True
+
