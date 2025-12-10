@@ -104,12 +104,13 @@ class EnderecoResponse(BaseModel):
 # Schemas de Produto
 class ProdutoCreate(BaseModel):
     """Schema para criacao de produto"""
+    categoria_id: int = Field(..., gt=0)
     nome: str = Field(..., min_length=3, max_length=100)
     descricao: Optional[str] = None
-    categoria: str = Field(..., pattern="^(PIZZA|BEBIDA|SOBREMESA|ADICIONAL)$")
-    tamanho: str = Field(..., pattern="^(PEQUENA|MEDIA|GRANDE|GIGANTE|UNICO)$")
-    preco: float = Field(..., ge=0)
+    imagem_url: Optional[str] = None
     disponivel: Optional[bool] = True
+    variacoes: List["ProdutoVariacaoCreate"] = Field(..., min_length=1)
+    ingredientes_ids: Optional[List[int]] = []
 
     class Config:
         from_attributes = True
@@ -117,11 +118,10 @@ class ProdutoCreate(BaseModel):
 
 class ProdutoUpdate(BaseModel):
     """Schema para atualizacao de produto"""
+    categoria_id: Optional[int] = Field(None, gt=0)
     nome: Optional[str] = Field(None, min_length=3, max_length=100)
     descricao: Optional[str] = None
-    categoria: Optional[str] = Field(None, pattern="^(PIZZA|BEBIDA|SOBREMESA|ADICIONAL)$")
-    tamanho: Optional[str] = Field(None, pattern="^(PEQUENA|MEDIA|GRANDE|GIGANTE|UNICO)$")
-    preco: Optional[float] = Field(None, ge=0)
+    imagem_url: Optional[str] = None
     disponivel: Optional[bool] = None
 
     class Config:
@@ -131,12 +131,15 @@ class ProdutoUpdate(BaseModel):
 class ProdutoResponse(BaseModel):
     """Schema para resposta de produto"""
     id: int
+    categoria_id: int
     nome: str
     descricao: Optional[str]
-    categoria: str
-    tamanho: str
-    preco: float
+    imagem_url: Optional[str]
     disponivel: bool
+    variacoes: List["ProdutoVariacaoResponse"] = []
+    ingredientes: List["IngredienteResponse"] = []
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True
@@ -145,8 +148,10 @@ class ProdutoResponse(BaseModel):
 # Schemas de Item do Pedido
 class ItemPedidoCreate(BaseModel):
     """Schema para criacao de item do pedido"""
-    produto_id: int = Field(..., gt=0, description="ID do produto no cardapio")
+    produto_variacao_id: int = Field(..., gt=0, description="ID da variacao do produto")
     quantidade: int = Field(..., ge=1)
+    ingredientes_adicionados: Optional[List[int]] = []
+    ingredientes_removidos: Optional[List[int]] = []
     observacoes: Optional[str] = None
 
     class Config:
@@ -157,9 +162,13 @@ class ItemPedidoResponse(BaseModel):
     """Schema para resposta de item do pedido"""
     id: int
     quantidade: int
-    sabor: str
+    produto_nome: str
     tamanho: str
-    preco_unitario: float
+    preco_base: float
+    ingredientes_adicionados: Optional[List[dict]] = []
+    ingredientes_removidos: Optional[List[dict]] = []
+    preco_ingredientes: float
+    preco_total: float
     observacoes: Optional[str]
 
     class Config:
