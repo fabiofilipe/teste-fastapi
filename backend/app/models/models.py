@@ -1,5 +1,5 @@
 """Modelos SQLAlchemy para o sistema de pizzaria"""
-from sqlalchemy import Column, String, Integer, Boolean, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, Float, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from app.database import Base
 from app.models.mixins import TimestampMixin, SoftDeleteMixin
@@ -82,6 +82,25 @@ class Ingrediente(Base, TimestampMixin, SoftDeleteMixin):
 
     # Relacionamentos
     produtos = relationship("ProdutoIngrediente", back_populates="ingrediente")
+
+
+class ProdutoVariacao(Base, TimestampMixin, SoftDeleteMixin):
+    """Modelo de variacao de produto (tamanhos/precos)"""
+    __tablename__ = "produtos_variacoes"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    produto_id = Column(Integer, ForeignKey("produtos.id"), nullable=False, index=True)
+    tamanho = Column(String, nullable=False)
+    preco = Column(Float, nullable=False)
+    disponivel = Column(Boolean, default=True, index=True)
+
+    # Relacionamento
+    produto = relationship("Produto", back_populates="variacoes")
+
+    # Constraints
+    __table_args__ = (
+        UniqueConstraint('produto_id', 'tamanho', name='uq_produto_tamanho'),
+    )
 
 
 class Produto(Base, TimestampMixin, SoftDeleteMixin):
