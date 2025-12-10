@@ -56,6 +56,21 @@ class Pedido(Base, TimestampMixin, SoftDeleteMixin):
     endereco_entrega = relationship("Endereco")
 
 
+class Categoria(Base, TimestampMixin, SoftDeleteMixin):
+    """Modelo de categoria do cardapio"""
+    __tablename__ = "categorias"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False, unique=True, index=True)
+    descricao = Column(String, nullable=True)
+    icone = Column(String, nullable=True)  # URL ou emoji
+    ordem_exibicao = Column(Integer, nullable=False, default=0, index=True)
+    ativa = Column(Boolean, default=True, index=True)
+
+    # Relacionamentos
+    produtos = relationship("Produto", back_populates="categoria")
+
+
 class Produto(Base, TimestampMixin, SoftDeleteMixin):
     """Modelo de produto do cardapio"""
     __tablename__ = "produtos"
