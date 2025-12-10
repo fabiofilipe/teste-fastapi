@@ -71,6 +71,19 @@ class Categoria(Base, TimestampMixin, SoftDeleteMixin):
     produtos = relationship("Produto", back_populates="categoria")
 
 
+class Ingrediente(Base, TimestampMixin, SoftDeleteMixin):
+    """Modelo de ingrediente para customizacao"""
+    __tablename__ = "ingredientes"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String, nullable=False, unique=True, index=True)
+    preco_adicional = Column(Float, nullable=False, default=0.0)
+    disponivel = Column(Boolean, default=True, index=True)
+
+    # Relacionamentos
+    produtos = relationship("ProdutoIngrediente", back_populates="ingrediente")
+
+
 class Produto(Base, TimestampMixin, SoftDeleteMixin):
     """Modelo de produto do cardapio"""
     __tablename__ = "produtos"
