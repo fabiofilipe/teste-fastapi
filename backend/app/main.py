@@ -9,7 +9,15 @@ from sqlalchemy.exc import SQLAlchemyError
 from jose.exceptions import JWTError
 
 from app.database import engine, Base
-from app.routers import auth_router, orders_router, products_router, health_router
+from app.routers import (
+    auth_router,
+    orders_router,
+    products_router,
+    health_router,
+    categorias_router,
+    ingredientes_router,
+    cardapio_router
+)
 from app.exceptions import PizzariaException
 from app.error_handlers import (
     pizzaria_exception_handler,
@@ -50,8 +58,11 @@ app.add_exception_handler(Exception, generic_exception_handler)
 # Registrar routers
 app.include_router(health_router)
 app.include_router(auth_router)
-app.include_router(orders_router)
+app.include_router(categorias_router)
+app.include_router(ingredientes_router)
 app.include_router(products_router)
+app.include_router(cardapio_router)
+app.include_router(orders_router)
 
 
 @app.get("/", tags=["Root"])
@@ -71,7 +82,10 @@ async def root():
         },
         "recursos": {
             "autenticacao": "/auth",
+            "categorias": "/categorias",
+            "ingredientes": "/ingredientes",
             "produtos": "/produtos",
+            "cardapio": "/cardapio",
             "pedidos": "/pedidos"
         }
     }
