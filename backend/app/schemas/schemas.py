@@ -260,3 +260,36 @@ class IngredienteResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+# Schemas de ProdutoVariacao
+class ProdutoVariacaoCreate(BaseModel):
+    """Schema para criacao de variacao de produto"""
+    tamanho: str = Field(..., pattern="^(PEQUENA|MEDIA|GRANDE|GIGANTE|UNICO)$")
+    preco: float = Field(..., gt=0)
+    disponivel: Optional[bool] = True
+
+    class Config:
+        from_attributes = True
+
+
+class ProdutoVariacaoUpdate(BaseModel):
+    """Schema para atualizacao de variacao"""
+    tamanho: Optional[str] = Field(None, pattern="^(PEQUENA|MEDIA|GRANDE|GIGANTE|UNICO)$")
+    preco: Optional[float] = Field(None, gt=0)
+    disponivel: Optional[bool] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ProdutoVariacaoResponse(BaseModel):
+    """Schema para resposta de variacao"""
+    id: int
+    produto_id: int
+    tamanho: str
+    preco: float
+    disponivel: bool
+
+    class Config:
+        from_attributes = True
+
