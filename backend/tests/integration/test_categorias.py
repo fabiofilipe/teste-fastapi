@@ -31,7 +31,7 @@ class TestCreateCategoria:
         assert "created_at" in data
 
     def test_criar_categoria_sem_autenticacao(self, client):
-        """Deve retornar 401 sem autenticação"""
+        """Deve retornar 403 sem autenticação"""
         response = client.post(
             "/categorias/",
             json={
@@ -40,7 +40,7 @@ class TestCreateCategoria:
             }
         )
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_criar_categoria_com_usuario_comum(self, client, token_usuario):
         """Usuário comum não deve conseguir criar categoria"""
