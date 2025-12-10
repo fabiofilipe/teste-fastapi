@@ -1,5 +1,5 @@
 """Modelos SQLAlchemy para o sistema de pizzaria"""
-from sqlalchemy import Column, String, Integer, Boolean, Float, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, String, Integer, Boolean, Float, ForeignKey, UniqueConstraint, JSON
 from sqlalchemy.orm import relationship
 from app.database import Base
 from app.models.mixins import TimestampMixin, SoftDeleteMixin
@@ -103,17 +103,41 @@ class ProdutoVariacao(Base, TimestampMixin, SoftDeleteMixin):
     )
 
 
+class ProdutoIngrediente(Base, TimestampMixin):
+    """Tabela associativa para ingredientes padrao de produtos"""
+    __tablename__ = "produtos_ingredientes"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    produto_id = Column(Integer, ForeignKey("produtos.id"), nullable=False, index=True)
+    ingrediente_id = Column(Integer, ForeignKey("ingredientes.id"), nullable=False, index=True)
+    quantidade = Column(Integer, default=1)
+    obrigatorio = Column(Boolean, default=False)  # Nao pode ser removido
+
+    # Relacionamentos
+    produto = relationship("Produto", back_populates="ingredientes")
+    ingrediente = relationship("Ingrediente", back_populates="produtos")
+
+    # Constraints
+    __table_args__ = (
+        UniqueConstraint('produto_id', 'ingrediente_id', name='uq_produto_ingrediente'),
+    )
+
+
 class Produto(Base, TimestampMixin, SoftDeleteMixin):
     """Modelo de produto do cardapio"""
     __tablename__ = "produtos"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    categoria_id = Column(Integer, ForeignKey("categorias.id"), nullable=False, index=True)
     nome = Column(String, nullable=False, unique=True, index=True)
     descricao = Column(String, nullable=True)
-    categoria = Column(String, nullable=False, index=True)
-    tamanho = Column(String, nullable=False)
-    preco = Column(Float, nullable=False)
+    imagem_url = Column(String, nullable=True)
     disponivel = Column(Boolean, default=True, index=True)
+
+    # Relacionamentos
+    categoria = relationship("Categoria", back_populates="produtos")
+    variacoes = relationship("ProdutoVariacao", back_populates="produto", cascade="all, delete-orphan")
+    ingredientes = relationship("ProdutoIngrediente", back_populates="produto", cascade="all, delete-orphan")
 
 
 class ItemPedido(Base, TimestampMixin):
@@ -122,12 +146,23 @@ class ItemPedido(Base, TimestampMixin):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     pedido_id = Column(Integer, ForeignKey("pedidos.id"), nullable=False, index=True)
+    produto_variacao_id = Column(Integer, ForeignKey("produtos_variacoes.id"), nullable=False, index=True)
     quantidade = Column(Integer, nullable=False)
-    sabor = Column(String, nullable=False)
+
+    # Snapshot (historico)
+    produto_nome = Column(String, nullable=False)
     tamanho = Column(String, nullable=False)
-    preco_unitario = Column(Float, nullable=False)
+    preco_base = Column(Float, nullable=False)
+
+    # Customizacoes
+    ingredientes_adicionados = Column(JSON, nullable=True)
+    ingredientes_removidos = Column(JSON, nullable=True)
+    preco_ingredientes = Column(Float, nullable=False, default=0.0)
+    preco_total = Column(Float, nullable=False)
+
     observacoes = Column(String, nullable=True)
 
-    # Relacionamento
+    # Relacionamentos
     pedido = relationship("Pedido", back_populates="itens")
+    produto_variacao = relationship("ProdutoVariacao")
 
