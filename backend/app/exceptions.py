@@ -86,3 +86,45 @@ class ProdutoIndisponivel(PizzariaException):
     def __init__(self, produto_nome: str):
         message = f"Produto '{produto_nome}' não está disponível no momento"
         super().__init__(message, status.HTTP_400_BAD_REQUEST)
+
+
+class CategoriaNaoEncontrada(PizzariaException):
+    """Exceção quando categoria não é encontrada"""
+    def __init__(self, categoria_id: int):
+        message = f"Categoria com ID {categoria_id} não encontrada"
+        super().__init__(message, status.HTTP_404_NOT_FOUND)
+
+
+class CategoriaJaExiste(PizzariaException):
+    """Exceção quando categoria já existe"""
+    def __init__(self, nome: str):
+        message = f"Categoria '{nome}' já existe"
+        super().__init__(message, status.HTTP_400_BAD_REQUEST)
+
+
+class IngredienteNaoEncontrado(PizzariaException):
+    """Exceção quando ingrediente não é encontrado"""
+    def __init__(self, ingrediente_id: int):
+        message = f"Ingrediente com ID {ingrediente_id} não encontrado"
+        super().__init__(message, status.HTTP_404_NOT_FOUND)
+
+
+class IngredienteIndisponivel(PizzariaException):
+    """Exceção quando ingrediente está indisponível"""
+    def __init__(self, ingrediente_nome: str):
+        message = f"Ingrediente '{ingrediente_nome}' não está disponível no momento"
+        super().__init__(message, status.HTTP_400_BAD_REQUEST)
+
+
+class ProdutoVariacaoNaoEncontrada(PizzariaException):
+    """Exceção quando variação de produto não é encontrada"""
+    def __init__(self, variacao_id: int):
+        message = f"Variação de produto com ID {variacao_id} não encontrada"
+        super().__init__(message, status.HTTP_404_NOT_FOUND)
+
+
+class IngredienteObrigatorio(PizzariaException):
+    """Exceção quando tentam remover ingrediente obrigatório"""
+    def __init__(self, ingrediente_nome: str):
+        message = f"Ingrediente '{ingrediente_nome}' é obrigatório e não pode ser removido"
+        super().__init__(message, status.HTTP_400_BAD_REQUEST)
