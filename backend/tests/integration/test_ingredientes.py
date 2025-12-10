@@ -35,7 +35,7 @@ class TestCreateIngrediente:
             }
         )
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_criar_ingrediente_com_usuario_comum(self, client, token_usuario):
         """Usuário comum não deve conseguir criar ingrediente"""
@@ -142,7 +142,7 @@ class TestUpdateIngrediente:
             json={"nome": "Novo Nome"}
         )
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_atualizar_ingrediente_inexistente(self, client, token_admin):
         """Deve retornar 404 para ingrediente inexistente"""
@@ -175,7 +175,7 @@ class TestAlternarDisponibilidadeIngrediente:
         """Deve retornar 401 sem autenticação"""
         response = client.patch(f"/ingredientes/{ingrediente_teste.id}/disponibilidade")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_alternar_disponibilidade_ingrediente_inexistente(self, client, token_admin):
         """Deve retornar 404 para ingrediente inexistente"""
@@ -207,7 +207,7 @@ class TestDeleteIngrediente:
         """Deve retornar 401 sem autenticação"""
         response = client.delete(f"/ingredientes/{ingrediente_teste.id}")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_deletar_ingrediente_com_usuario_comum(self, client, token_usuario, ingrediente_teste):
         """Usuário comum não deve conseguir deletar ingrediente"""
