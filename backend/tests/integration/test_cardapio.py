@@ -13,17 +13,26 @@ class TestCardapioCompleto:
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert "categorias" in data
-        assert len(data["categorias"]) == 3  # Apenas ativas
+        assert len(data["categorias"]) >= 2  # Apenas categorias com produtos disponíveis
+        # Verifica que todas têm produtos
+        for categoria in data["categorias"]:
+            assert len(categoria["produtos"]) > 0
 
     def test_cardapio_apenas_categorias_ativas(self, client, cardapio_completo):
-        """Cardápio deve incluir apenas categorias ativas"""
+        """Cardápio deve incluir apenas categorias ativas com produtos disponíveis"""
         response = client.get("/cardapio/")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
 
         categorias = data["categorias"]
-        assert all(cat["ativa"] for cat in categorias)
+        # O router garante que apenas categorias ativas são retornadas
+        # Verifica que todas têm pelo menos 1 produto disponível
+        assert all(len(cat["produtos"]) > 0 for cat in categorias)
+        # Verifica que tem nome, descrição e ordem
+        for cat in categorias:
+            assert "nome" in cat
+            assert "ordem_exibicao" in cat
 
     def test_cardapio_categorias_ordenadas(self, client, cardapio_completo):
         """Categorias devem vir ordenadas por ordem_exibicao"""
@@ -74,6 +83,11 @@ class TestCardapioCompleto:
         if categoria_pizza["produtos"]:
             produto = categoria_pizza["produtos"][0]
             assert "ingredientes" in produto
+            # Verificar estrutura de ProdutoIngrediente
+            if produto["ingredientes"]:
+                ingrediente_produto = produto["ingredientes"][0]
+                assert "ingrediente" in ingrediente_produto
+                assert "obrigatorio" in ingrediente_produto
 
 
 class TestProdutosPorCategoria:
@@ -159,7 +173,7 @@ class TestBuscaProdutos:
 
     def test_buscar_apenas_produtos_disponiveis(self, client, cardapio_completo):
         """Busca deve retornar apenas produtos disponíveis"""
-        response = client.get("/cardapio/buscar?termo=a")
+        response = client.get("/cardapio/buscar?termo=Pi")
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()

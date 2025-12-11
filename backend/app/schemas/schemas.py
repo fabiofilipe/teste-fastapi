@@ -128,6 +128,17 @@ class ProdutoUpdate(BaseModel):
         from_attributes = True
 
 
+class ProdutoIngredienteResponse(BaseModel):
+    """Schema para resposta de ingrediente de produto"""
+    ingrediente_id: int
+    quantidade: int
+    obrigatorio: bool
+    ingrediente: "IngredienteResponse"
+
+    class Config:
+        from_attributes = True
+
+
 class ProdutoResponse(BaseModel):
     """Schema para resposta de produto"""
     id: int
@@ -137,7 +148,7 @@ class ProdutoResponse(BaseModel):
     imagem_url: Optional[str]
     disponivel: bool
     variacoes: List["ProdutoVariacaoResponse"] = []
-    ingredientes: List["IngredienteResponse"] = []
+    ingredientes: List["ProdutoIngredienteResponse"] = []
     created_at: datetime
     updated_at: datetime
 
