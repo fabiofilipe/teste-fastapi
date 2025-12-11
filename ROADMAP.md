@@ -3,7 +3,8 @@
 Plano de implementacao incremental para evoluir o sistema a um nivel comparavel a plataformas como iFood, Rappi e Uber Eats.
 
 **Versao:** 2.0  
-**Data:** 03/12/2025  
+**Data:** 03/12/2025     
+**Data da ultima alteração:** 10/12/2025
 **Abordagem:** Backend -> Testes -> Frontend (incremental por funcionalidade)
 
 ---
@@ -75,7 +76,7 @@ Plano de implementacao incremental para evoluir o sistema a um nivel comparavel 
 - ✅ 6 novas excecoes customizadas
 - ✅ Documentacao atualizada (README.md com breaking changes)
 
-**Testes** ⏳
+**Testes** Alguns já realizados e com coverage > 98%
 - ⏳ Testes de criacao e atualizacao de categorias
 - ⏳ Testes de listagem de cardapio com filtros
 - ⏳ Testes de validacao de ingredientes
@@ -787,6 +788,6 @@ Para cada funcionalidade:
 
 ## NOTAS FINAIS
 
-A migracao para PostgreSQL pode ser feita a qualquer momento, preferencialmente antes da Fase 3, quando o volume de dados e complexidade das queries aumenta.
+A migracao para PostgreSQL posse fazer a qualquer momento, preferencialmente antes da Fase 3, quando o volume de dados e complexidade das queries aumenta.
 
 O sistema final sera comparavel em robustez e features as principais plataformas de delivery do mercado, com codigo limpo, testado e preparado para escalar.
