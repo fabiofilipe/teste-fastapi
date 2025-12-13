@@ -8,7 +8,16 @@ from app.schemas.schemas import (
     ProdutoCreate,
     ProdutoResponse,
     ItemPedidoCreate,
-    PedidoCreate
+    PedidoCreate,
+    CategoriaCreate,
+    CategoriaUpdate,
+    CategoriaResponse,
+    IngredienteCreate,
+    IngredienteUpdate,
+    IngredienteResponse,
+    ProdutoVariacaoCreate,
+    ProdutoVariacaoUpdate,
+    ProdutoVariacaoResponse
 )
 
 
@@ -77,104 +86,8 @@ class TestLoginSchema:
         assert "email" in str(exc_info.value).lower()
 
 
-class TestProdutoSchema:
-    """Testes dos schemas de Produto"""
-
-    def test_produto_create_valido(self):
-        """Testa criação de produto válido"""
-        produto = ProdutoCreate(
-            nome="Pizza Margherita",
-            descricao="Molho, mussarela e manjericão",
-            categoria="PIZZA",
-            tamanho="MEDIA",
-            preco=35.00
-        )
-        assert produto.nome == "Pizza Margherita"
-        assert produto.categoria == "PIZZA"
-        assert produto.tamanho == "MEDIA"
-        assert produto.preco == 35.00
-
-    def test_preco_negativo_invalido(self):
-        """Testa que preço não pode ser negativo"""
-        with pytest.raises(ValidationError) as exc_info:
-            ProdutoCreate(
-                nome="Pizza Margherita",
-                categoria="PIZZA",
-                tamanho="MEDIA",
-                preco=-10.00
-            )
-        assert "greater than or equal to 0" in str(exc_info.value)
-
-    def test_categoria_invalida(self):
-        """Testa validação de categoria"""
-        with pytest.raises(ValidationError) as exc_info:
-            ProdutoCreate(
-                nome="Pizza Margherita",
-                categoria="CATEGORIA_INVALIDA",
-                tamanho="MEDIA",
-                preco=35.00
-            )
-        assert "string should match pattern" in str(exc_info.value).lower()
-
-    def test_tamanho_invalido(self):
-        """Testa validação de tamanho"""
-        with pytest.raises(ValidationError) as exc_info:
-            ProdutoCreate(
-                nome="Pizza Margherita",
-                categoria="PIZZA",
-                tamanho="ENORME",
-                preco=35.00
-            )
-        assert "string should match pattern" in str(exc_info.value).lower()
 
 
-class TestItemPedidoSchema:
-    """Testes do schema ItemPedidoCreate"""
-
-    def test_item_pedido_valido(self):
-        """Testa criação de item de pedido válido"""
-        item = ItemPedidoCreate(
-            produto_id=1,
-            quantidade=2
-        )
-        assert item.produto_id == 1
-        assert item.quantidade == 2
-
-    def test_quantidade_minima(self):
-        """Testa que quantidade deve ser no mínimo 1"""
-        with pytest.raises(ValidationError) as exc_info:
-            ItemPedidoCreate(
-                produto_id=1,
-                quantidade=0
-            )
-        assert "greater than or equal to 1" in str(exc_info.value)
-
-    def test_produto_id_obrigatorio(self):
-        """Testa que produto_id é obrigatório"""
-        with pytest.raises(ValidationError) as exc_info:
-            ItemPedidoCreate(quantidade=1)
-        assert "produto_id" in str(exc_info.value).lower()
-
-    def test_produto_id_maior_que_zero(self):
-        """Testa que produto_id deve ser maior que 0"""
-        with pytest.raises(ValidationError) as exc_info:
-            ItemPedidoCreate(produto_id=0, quantidade=1)
-        assert "greater than 0" in str(exc_info.value)
-
-    def test_observacoes_opcional(self):
-        """Testa que observações é opcional"""
-        item = ItemPedidoCreate(
-            produto_id=1,
-            quantidade=1
-        )
-        assert item.observacoes is None
-
-        item_com_obs = ItemPedidoCreate(
-            produto_id=1,
-            quantidade=1,
-            observacoes="Sem cebola"
-        )
-        assert item_com_obs.observacoes == "Sem cebola"
 
 
 class TestPedidoSchema:
@@ -203,8 +116,258 @@ class TestPedidoSchema:
         """Testa pedido com múltiplos itens"""
         pedido = PedidoCreate(
             itens=[
-                ItemPedidoCreate(produto_id=1, quantidade=2),
-                ItemPedidoCreate(produto_id=2, quantidade=1),
+                ItemPedidoCreate(produto_variacao_id=1, quantidade=2),
+                ItemPedidoCreate(produto_variacao_id=2, quantidade=1),
             ]
         )
         assert len(pedido.itens) == 2
+
+
+class TestCategoriaSchema:
+    """Testes dos schemas de Categoria"""
+
+    def test_categoria_create_valida(self):
+        """Testa criação de categoria válida"""
+        categoria = CategoriaCreate(
+            nome="Pizzas",
+            descricao="Pizzas tradicionais e especiais",
+            icone="🍕",
+            ordem_exibicao=1,
+            ativa=True
+        )
+        assert categoria.nome == "Pizzas"
+        assert categoria.descricao == "Pizzas tradicionais e especiais"
+        assert categoria.icone == "🍕"
+        assert categoria.ordem_exibicao == 1
+        assert categoria.ativa is True
+
+    def test_categoria_nome_muito_curto(self):
+        """Testa que nome deve ter no mínimo 3 caracteres"""
+        with pytest.raises(ValidationError) as exc_info:
+            CategoriaCreate(nome="Pi")
+        assert "at least 3 characters" in str(exc_info.value)
+
+    def test_categoria_campos_opcionais(self):
+        """Testa campos opcionais de categoria"""
+        categoria = CategoriaCreate(nome="Bebidas")
+        assert categoria.descricao is None
+        assert categoria.icone is None
+        assert categoria.ordem_exibicao == 0
+        assert categoria.ativa is True
+
+    def test_categoria_ordem_exibicao_negativa(self):
+        """Testa que ordem_exibicao não pode ser negativa"""
+        with pytest.raises(ValidationError) as exc_info:
+            CategoriaCreate(nome="Pizzas", ordem_exibicao=-1)
+        assert "greater than or equal to 0" in str(exc_info.value)
+
+    def test_categoria_update_parcial(self):
+        """Testa atualização parcial de categoria"""
+        categoria_update = CategoriaUpdate(nome="Pizzas Especiais")
+        assert categoria_update.nome == "Pizzas Especiais"
+        assert categoria_update.descricao is None
+        assert categoria_update.icone is None
+        assert categoria_update.ordem_exibicao is None
+        assert categoria_update.ativa is None
+
+
+class TestIngredienteSchema:
+    """Testes dos schemas de Ingrediente"""
+
+    def test_ingrediente_create_valido(self):
+        """Testa criação de ingrediente válido"""
+        ingrediente = IngredienteCreate(
+            nome="Mussarela",
+            preco_adicional=0.0,
+            disponivel=True
+        )
+        assert ingrediente.nome == "Mussarela"
+        assert ingrediente.preco_adicional == 0.0
+        assert ingrediente.disponivel is True
+
+    def test_ingrediente_nome_muito_curto(self):
+        """Testa que nome deve ter no mínimo 2 caracteres"""
+        with pytest.raises(ValidationError) as exc_info:
+            IngredienteCreate(nome="M")
+        assert "at least 2 characters" in str(exc_info.value)
+
+    def test_ingrediente_preco_negativo(self):
+        """Testa que preço não pode ser negativo"""
+        with pytest.raises(ValidationError) as exc_info:
+            IngredienteCreate(nome="Tomate", preco_adicional=-1.0)
+        assert "greater than or equal to 0" in str(exc_info.value)
+
+    def test_ingrediente_campos_padrao(self):
+        """Testa valores padrão de ingrediente"""
+        ingrediente = IngredienteCreate(nome="Oregano")
+        assert ingrediente.preco_adicional == 0.0
+        assert ingrediente.disponivel is True
+
+    def test_ingrediente_update_parcial(self):
+        """Testa atualização parcial de ingrediente"""
+        ing_update = IngredienteUpdate(preco_adicional=2.5)
+        assert ing_update.nome is None
+        assert ing_update.preco_adicional == 2.5
+        assert ing_update.disponivel is None
+
+
+class TestProdutoVariacaoSchema:
+    """Testes dos schemas de ProdutoVariacao"""
+
+    def test_variacao_create_valida(self):
+        """Testa criação de variação válida"""
+        variacao = ProdutoVariacaoCreate(
+            tamanho="MEDIA",
+            preco=35.00,
+            disponivel=True
+        )
+        assert variacao.tamanho == "MEDIA"
+        assert variacao.preco == 35.00
+        assert variacao.disponivel is True
+
+    def test_variacao_tamanhos_validos(self):
+        """Testa que apenas tamanhos válidos são aceitos"""
+        tamanhos_validos = ["PEQUENA", "MEDIA", "GRANDE", "GIGANTE", "UNICO"]
+
+        for tamanho in tamanhos_validos:
+            variacao = ProdutoVariacaoCreate(tamanho=tamanho, preco=30.00)
+            assert variacao.tamanho == tamanho
+
+    def test_variacao_tamanho_invalido(self):
+        """Testa que tamanho inválido é rejeitado"""
+        with pytest.raises(ValidationError) as exc_info:
+            ProdutoVariacaoCreate(tamanho="ENORME", preco=30.00)
+        assert "string should match pattern" in str(exc_info.value).lower()
+
+    def test_variacao_preco_zero_invalido(self):
+        """Testa que preço deve ser maior que zero"""
+        with pytest.raises(ValidationError) as exc_info:
+            ProdutoVariacaoCreate(tamanho="MEDIA", preco=0)
+        assert "greater than 0" in str(exc_info.value)
+
+    def test_variacao_preco_negativo_invalido(self):
+        """Testa que preço não pode ser negativo"""
+        with pytest.raises(ValidationError) as exc_info:
+            ProdutoVariacaoCreate(tamanho="MEDIA", preco=-10.00)
+        assert "greater than 0" in str(exc_info.value)
+
+    def test_variacao_disponivel_padrao(self):
+        """Testa valor padrão de disponivel"""
+        variacao = ProdutoVariacaoCreate(tamanho="GRANDE", preco=45.00)
+        assert variacao.disponivel is True
+
+    def test_variacao_update_parcial(self):
+        """Testa atualização parcial de variação"""
+        var_update = ProdutoVariacaoUpdate(preco=40.00)
+        assert var_update.tamanho is None
+        assert var_update.preco == 40.00
+        assert var_update.disponivel is None
+
+
+class TestProdutoSchemaCompleto:
+    """Testes completos dos schemas de Produto com variações"""
+
+    def test_produto_create_com_variacoes(self):
+        """Testa criação de produto com variações"""
+        produto = ProdutoCreate(
+            categoria_id=1,
+            nome="Pizza Margherita",
+            descricao="Molho, mussarela e manjericão",
+            variacoes=[
+                ProdutoVariacaoCreate(tamanho="PEQUENA", preco=25.00),
+                ProdutoVariacaoCreate(tamanho="MEDIA", preco=35.00),
+                ProdutoVariacaoCreate(tamanho="GRANDE", preco=45.00),
+            ],
+            ingredientes_ids=[1, 2, 3]
+        )
+        assert produto.categoria_id == 1
+        assert produto.nome == "Pizza Margherita"
+        assert len(produto.variacoes) == 3
+        assert len(produto.ingredientes_ids) == 3
+
+    def test_produto_create_sem_variacoes_invalido(self):
+        """Testa que produto precisa ter pelo menos uma variação"""
+        with pytest.raises(ValidationError) as exc_info:
+            ProdutoCreate(
+                categoria_id=1,
+                nome="Pizza Margherita",
+                variacoes=[]
+            )
+        assert "at least 1 item" in str(exc_info.value).lower()
+
+    def test_produto_create_categoria_id_invalido(self):
+        """Testa que categoria_id deve ser maior que zero"""
+        with pytest.raises(ValidationError) as exc_info:
+            ProdutoCreate(
+                categoria_id=0,
+                nome="Pizza Margherita",
+                variacoes=[ProdutoVariacaoCreate(tamanho="MEDIA", preco=35.00)]
+            )
+        assert "greater than 0" in str(exc_info.value)
+
+    def test_produto_create_nome_muito_curto(self):
+        """Testa que nome deve ter no mínimo 3 caracteres"""
+        with pytest.raises(ValidationError) as exc_info:
+            ProdutoCreate(
+                categoria_id=1,
+                nome="Pi",
+                variacoes=[ProdutoVariacaoCreate(tamanho="MEDIA", preco=35.00)]
+            )
+        assert "at least 3 characters" in str(exc_info.value)
+
+    def test_produto_create_campos_opcionais(self):
+        """Testa campos opcionais de produto"""
+        produto = ProdutoCreate(
+            categoria_id=1,
+            nome="Pizza Simples",
+            variacoes=[ProdutoVariacaoCreate(tamanho="MEDIA", preco=30.00)]
+        )
+        assert produto.descricao is None
+        assert produto.imagem_url is None
+        assert produto.disponivel is True
+        assert produto.ingredientes_ids == []
+
+    def test_produto_update_parcial(self):
+        """Testa atualização parcial de produto"""
+        produto_update = ProdutoUpdate(nome="Pizza Margherita Premium")
+        assert produto_update.nome == "Pizza Margherita Premium"
+        assert produto_update.categoria_id is None
+        assert produto_update.descricao is None
+        assert produto_update.disponivel is None
+
+
+class TestItemPedidoSchemaCompleto:
+    """Testes completos do schema ItemPedidoCreate atualizado"""
+
+    def test_item_pedido_com_customizacoes(self):
+        """Testa item de pedido com customizações de ingredientes"""
+        item = ItemPedidoCreate(
+            produto_variacao_id=1,
+            quantidade=2,
+            ingredientes_adicionados=[1, 2],
+            ingredientes_removidos=[3],
+            observacoes="Sem cebola"
+        )
+        assert item.produto_variacao_id == 1
+        assert item.quantidade == 2
+        assert item.ingredientes_adicionados == [1, 2]
+        assert item.ingredientes_removidos == [3]
+        assert item.observacoes == "Sem cebola"
+
+    def test_item_pedido_minimo(self):
+        """Testa item de pedido com campos mínimos"""
+        item = ItemPedidoCreate(
+            produto_variacao_id=1,
+            quantidade=1
+        )
+        assert item.produto_variacao_id == 1
+        assert item.quantidade == 1
+        assert item.ingredientes_adicionados == []
+        assert item.ingredientes_removidos == []
+        assert item.observacoes is None
+
+    def test_item_pedido_produto_variacao_id_invalido(self):
+        """Testa que produto_variacao_id deve ser maior que zero"""
+        with pytest.raises(ValidationError) as exc_info:
+            ItemPedidoCreate(produto_variacao_id=0, quantidade=1)
+        assert "greater than 0" in str(exc_info.value)
