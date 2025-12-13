@@ -2,7 +2,10 @@
 import pytest
 import bcrypt
 from datetime import datetime
-from app.models.models import Usuario, Produto, Pedido, ItemPedido, Endereco
+from app.models.models import (
+    Usuario, Produto, Pedido, ItemPedido, Endereco,
+    Categoria, Ingrediente, ProdutoVariacao, ProdutoIngrediente
+)
 
 
 class TestUsuarioModel:
@@ -429,4 +432,370 @@ class TestEnderecoModel:
 
         assert pedido.endereco_entrega is not None
         assert pedido.endereco_entrega.rua == "Rua Entrega"
+
+
+class TestCategoriaModel:
+    """Testes do modelo Categoria"""
+
+    def test_criar_categoria(self, db):
+        """Testa criacao de categoria"""
+        categoria = Categoria(
+            nome="Pizzas",
+            descricao="Pizzas tradicionais e especiais",
+            icone="🍕",
+            ordem_exibicao=1,
+            ativa=True
+        )
+        db.add(categoria)
+        db.commit()
+        db.refresh(categoria)
+
+        assert categoria.id is not None
+        assert categoria.nome == "Pizzas"
+        assert categoria.descricao == "Pizzas tradicionais e especiais"
+        assert categoria.icone == "🍕"
+        assert categoria.ordem_exibicao == 1
+        assert categoria.ativa is True
+
+    def test_categoria_nome_unico(self, db):
+        """Testa que nome de categoria deve ser unico"""
+        from sqlalchemy.exc import IntegrityError
+
+        categoria1 = Categoria(nome="Pizzas", ordem_exibicao=1)
+        db.add(categoria1)
+        db.commit()
+
+        categoria2 = Categoria(nome="Pizzas", ordem_exibicao=2)
+        db.add(categoria2)
+
+        with pytest.raises(IntegrityError):
+            db.commit()
+
+    def test_categoria_campos_opcionais(self, db):
+        """Testa que descricao e icone sao opcionais"""
+        categoria = Categoria(
+            nome="Bebidas",
+            ordem_exibicao=2
+        )
+        db.add(categoria)
+        db.commit()
+        db.refresh(categoria)
+
+        assert categoria.descricao is None
+        assert categoria.icone is None
+
+    def test_categoria_ativa_padrao(self, db):
+        """Testa que ativa e True por padrao"""
+        categoria = Categoria(
+            nome="Sobremesas",
+            ordem_exibicao=3
+        )
+        db.add(categoria)
+        db.commit()
+        db.refresh(categoria)
+
+        assert categoria.ativa is True
+
+    def test_categoria_ordem_exibicao_padrao(self, db):
+        """Testa que ordem_exibicao tem padrao 0"""
+        categoria = Categoria(nome="Nova Categoria")
+        db.add(categoria)
+        db.commit()
+        db.refresh(categoria)
+
+        assert categoria.ordem_exibicao == 0
+
+    def test_categoria_relacionamento_produtos(self, db, categoria_teste):
+        """Testa relacionamento com produtos"""
+        produto = Produto(
+            categoria_id=categoria_teste.id,
+            nome="Pizza Margherita",
+            disponivel=True
+        )
+        db.add(produto)
+        db.commit()
+
+        db.refresh(categoria_teste)
+        assert len(categoria_teste.produtos) == 1
+        assert categoria_teste.produtos[0].nome == "Pizza Margherita"
+
+
+class TestIngredienteModel:
+    """Testes do modelo Ingrediente"""
+
+    def test_criar_ingrediente(self, db):
+        """Testa criacao de ingrediente"""
+        ingrediente = Ingrediente(
+            nome="Mussarela",
+            preco_adicional=0.0,
+            disponivel=True
+        )
+        db.add(ingrediente)
+        db.commit()
+        db.refresh(ingrediente)
+
+        assert ingrediente.id is not None
+        assert ingrediente.nome == "Mussarela"
+        assert ingrediente.preco_adicional == 0.0
+        assert ingrediente.disponivel is True
+
+    def test_ingrediente_nome_unico(self, db):
+        """Testa que nome de ingrediente deve ser unico"""
+        from sqlalchemy.exc import IntegrityError
+
+        ing1 = Ingrediente(nome="Tomate", preco_adicional=1.0)
+        db.add(ing1)
+        db.commit()
+
+        ing2 = Ingrediente(nome="Tomate", preco_adicional=2.0)
+        db.add(ing2)
+
+        with pytest.raises(IntegrityError):
+            db.commit()
+
+    def test_ingrediente_preco_padrao(self, db):
+        """Testa que preco_adicional tem padrao 0.0"""
+        ingrediente = Ingrediente(nome="Oregano")
+        db.add(ingrediente)
+        db.commit()
+        db.refresh(ingrediente)
+
+        assert ingrediente.preco_adicional == 0.0
+
+    def test_ingrediente_disponivel_padrao(self, db):
+        """Testa que disponivel e True por padrao"""
+        ingrediente = Ingrediente(nome="Manjericao", preco_adicional=1.5)
+        db.add(ingrediente)
+        db.commit()
+        db.refresh(ingrediente)
+
+        assert ingrediente.disponivel is True
+
+
+class TestProdutoVariacaoModel:
+    """Testes do modelo ProdutoVariacao"""
+
+    def test_criar_variacao(self, db, produto_teste):
+        """Testa criacao de variacao de produto"""
+        variacao = ProdutoVariacao(
+            produto_id=produto_teste.id,
+            tamanho="GIGANTE",
+            preco=55.00,
+            disponivel=True
+        )
+        db.add(variacao)
+        db.commit()
+        db.refresh(variacao)
+
+        assert variacao.id is not None
+        assert variacao.produto_id == produto_teste.id
+        assert variacao.tamanho == "GIGANTE"
+        assert variacao.preco == 55.00
+        assert variacao.disponivel is True
+
+    def test_variacao_produto_tamanho_unico(self, db, produto_teste):
+        """Testa que combinacao produto+tamanho deve ser unica"""
+        from sqlalchemy.exc import IntegrityError
+
+        var1 = ProdutoVariacao(
+            produto_id=produto_teste.id,
+            tamanho="GRANDE",
+            preco=45.00
+        )
+        db.add(var1)
+        db.commit()
+
+        var2 = ProdutoVariacao(
+            produto_id=produto_teste.id,
+            tamanho="GRANDE",
+            preco=50.00
+        )
+        db.add(var2)
+
+        with pytest.raises(IntegrityError):
+            db.commit()
+
+    def test_variacao_disponivel_padrao(self, db, produto_teste):
+        """Testa que disponivel e True por padrao"""
+        variacao = ProdutoVariacao(
+            produto_id=produto_teste.id,
+            tamanho="PEQUENA",
+            preco=20.00
+        )
+        db.add(variacao)
+        db.commit()
+        db.refresh(variacao)
+
+        assert variacao.disponivel is True
+
+    def test_variacao_relacionamento_produto(self, db, produto_teste):
+        """Testa relacionamento com produto"""
+        db.refresh(produto_teste)
+        assert len(produto_teste.variacoes) == 3  # fixture cria 3 variacoes
+        assert all(v.produto_id == produto_teste.id for v in produto_teste.variacoes)
+
+
+class TestProdutoIngredienteModel:
+    """Testes do modelo ProdutoIngrediente"""
+
+    def test_criar_produto_ingrediente(self, db, produto_teste, ingrediente_teste):
+        """Testa criacao de associacao produto-ingrediente"""
+        prod_ing = ProdutoIngrediente(
+            produto_id=produto_teste.id,
+            ingrediente_id=ingrediente_teste.id,
+            quantidade=1,
+            obrigatorio=False
+        )
+        db.add(prod_ing)
+        db.commit()
+        db.refresh(prod_ing)
+
+        assert prod_ing.id is not None
+        assert prod_ing.produto_id == produto_teste.id
+        assert prod_ing.ingrediente_id == ingrediente_teste.id
+        assert prod_ing.quantidade == 1
+        assert prod_ing.obrigatorio is False
+
+    def test_produto_ingrediente_unico(self, db, produto_teste, ingrediente_teste):
+        """Testa que combinacao produto+ingrediente deve ser unica"""
+        from sqlalchemy.exc import IntegrityError
+
+        prod_ing1 = ProdutoIngrediente(
+            produto_id=produto_teste.id,
+            ingrediente_id=ingrediente_teste.id
+        )
+        db.add(prod_ing1)
+        db.commit()
+
+        prod_ing2 = ProdutoIngrediente(
+            produto_id=produto_teste.id,
+            ingrediente_id=ingrediente_teste.id
+        )
+        db.add(prod_ing2)
+
+        with pytest.raises(IntegrityError):
+            db.commit()
+
+    def test_produto_ingrediente_quantidade_padrao(self, db, produto_teste, ingrediente_teste):
+        """Testa que quantidade tem padrao 1"""
+        prod_ing = ProdutoIngrediente(
+            produto_id=produto_teste.id,
+            ingrediente_id=ingrediente_teste.id
+        )
+        db.add(prod_ing)
+        db.commit()
+        db.refresh(prod_ing)
+
+        assert prod_ing.quantidade == 1
+
+    def test_produto_ingrediente_obrigatorio_padrao(self, db, produto_teste, ingrediente_teste):
+        """Testa que obrigatorio e False por padrao"""
+        prod_ing = ProdutoIngrediente(
+            produto_id=produto_teste.id,
+            ingrediente_id=ingrediente_teste.id
+        )
+        db.add(prod_ing)
+        db.commit()
+        db.refresh(prod_ing)
+
+        assert prod_ing.obrigatorio is False
+
+    def test_produto_ingrediente_relacionamentos(self, db, produto_com_ingredientes):
+        """Testa relacionamentos produto-ingrediente"""
+        db.refresh(produto_com_ingredientes)
+        assert len(produto_com_ingredientes.ingredientes) == 3
+
+        # Verificar que os ingredientes tem o relacionamento inverso
+        for prod_ing in produto_com_ingredientes.ingredientes:
+            assert prod_ing.produto.id == produto_com_ingredientes.id
+            assert prod_ing.ingrediente is not None
+
+
+class TestProdutoNovoModel:
+    """Testes do novo modelo Produto com categorias e variacoes"""
+
+    def test_criar_produto_novo(self, db, categoria_teste):
+        """Testa criacao do novo modelo de produto"""
+        produto = Produto(
+            categoria_id=categoria_teste.id,
+            nome="Pizza Calabresa",
+            descricao="Calabresa e cebola",
+            imagem_url="https://example.com/calabresa.jpg",
+            disponivel=True
+        )
+        db.add(produto)
+        db.commit()
+        db.refresh(produto)
+
+        assert produto.id is not None
+        assert produto.categoria_id == categoria_teste.id
+        assert produto.nome == "Pizza Calabresa"
+        assert produto.descricao == "Calabresa e cebola"
+        assert produto.imagem_url == "https://example.com/calabresa.jpg"
+        assert produto.disponivel is True
+
+    def test_produto_nome_unico(self, db, categoria_teste, produto_teste):
+        """Testa que nome de produto deve ser unico"""
+        from sqlalchemy.exc import IntegrityError
+
+        produto_duplicado = Produto(
+            categoria_id=categoria_teste.id,
+            nome=produto_teste.nome,
+            disponivel=True
+        )
+        db.add(produto_duplicado)
+
+        with pytest.raises(IntegrityError):
+            db.commit()
+
+    def test_produto_disponivel_padrao(self, db, categoria_teste):
+        """Testa que disponivel e True por padrao"""
+        produto = Produto(
+            categoria_id=categoria_teste.id,
+            nome="Pizza Portuguesa"
+        )
+        db.add(produto)
+        db.commit()
+        db.refresh(produto)
+
+        assert produto.disponivel is True
+
+    def test_produto_campos_opcionais(self, db, categoria_teste):
+        """Testa que descricao e imagem_url sao opcionais"""
+        produto = Produto(
+            categoria_id=categoria_teste.id,
+            nome="Pizza Simples"
+        )
+        db.add(produto)
+        db.commit()
+        db.refresh(produto)
+
+        assert produto.descricao is None
+        assert produto.imagem_url is None
+
+    def test_produto_relacionamento_categoria(self, db, produto_teste, categoria_teste):
+        """Testa relacionamento com categoria"""
+        assert produto_teste.categoria.id == categoria_teste.id
+        assert produto_teste.categoria.nome == categoria_teste.nome
+
+    def test_produto_relacionamento_variacoes(self, db, produto_teste):
+        """Testa relacionamento com variacoes"""
+        db.refresh(produto_teste)
+        assert len(produto_teste.variacoes) == 3
+        assert all(v.produto_id == produto_teste.id for v in produto_teste.variacoes)
+
+    def test_produto_delete_cascade_variacoes(self, db, produto_teste):
+        """Testa que deletar produto deleta suas variacoes"""
+        produto_id = produto_teste.id
+        variacoes_ids = [v.id for v in produto_teste.variacoes]
+
+        db.delete(produto_teste)
+        db.commit()
+
+        # Verificar que produto foi deletado
+        assert db.query(Produto).filter(Produto.id == produto_id).first() is None
+
+        # Verificar que variacoes foram deletadas em cascade
+        for var_id in variacoes_ids:
+            assert db.query(ProdutoVariacao).filter(ProdutoVariacao.id == var_id).first() is None
 
