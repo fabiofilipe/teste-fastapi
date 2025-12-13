@@ -6,6 +6,7 @@ from app.schemas.schemas import (
     UsuarioResponse,
     LoginSchema,
     ProdutoCreate,
+    ProdutoUpdate,
     ProdutoResponse,
     ItemPedidoCreate,
     PedidoCreate,
@@ -98,13 +99,13 @@ class TestPedidoSchema:
         pedido = PedidoCreate(
             itens=[
                 ItemPedidoCreate(
-                    produto_id=1,
+                    produto_variacao_id=1,
                     quantidade=1
                 )
             ]
         )
         assert len(pedido.itens) == 1
-        assert pedido.itens[0].produto_id == 1
+        assert pedido.itens[0].produto_variacao_id == 1
         assert pedido.itens[0].quantidade == 1
 
     def test_pedido_sem_itens(self):

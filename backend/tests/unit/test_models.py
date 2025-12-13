@@ -62,59 +62,6 @@ class TestUsuarioModel:
         assert usuario_teste.pedidos[0].status == "PENDENTE"
 
 
-class TestProdutoModel:
-    """Testes do modelo Produto"""
-
-    def test_criar_produto(self, db):
-        """Testa criacao de produto"""
-        produto = Produto(
-            nome="Pizza Margherita",
-            descricao="Molho, mussarela e manjericao",
-            categoria="PIZZA",
-            tamanho="MEDIA",
-            preco=35.00,
-            disponivel=True
-        )
-        db.add(produto)
-        db.commit()
-        db.refresh(produto)
-
-        assert produto.id is not None
-        assert produto.nome == "Pizza Margherita"
-        assert produto.categoria == "PIZZA"
-        assert produto.tamanho == "MEDIA"
-        assert produto.preco == 35.00
-        assert produto.disponivel is True
-
-    def test_produto_nome_tamanho_unico(self, db, produto_teste):
-        """Testa que combinacao nome+tamanho deve ser unica"""
-        from sqlalchemy.exc import IntegrityError
-
-        produto_duplicado = Produto(
-            nome=produto_teste.nome,
-            categoria="PIZZA",
-            tamanho=produto_teste.tamanho,
-            preco=40.00,
-            disponivel=True
-        )
-        db.add(produto_duplicado)
-
-        with pytest.raises(IntegrityError):
-            db.commit()
-
-    def test_produto_disponibilidade_padrao(self, db):
-        """Testa que disponivel e True por padrao"""
-        produto = Produto(
-            nome="Pizza Calabresa",
-            categoria="PIZZA",
-            tamanho="GRANDE",
-            preco=45.00
-        )
-        db.add(produto)
-        db.commit()
-        db.refresh(produto)
-
-        assert produto.disponivel is True
 
 
 class TestPedidoModel:
@@ -144,7 +91,7 @@ class TestPedidoModel:
     def test_pedido_relacionamento_itens(self, db, pedido_teste):
         """Testa relacionamento com itens"""
         assert len(pedido_teste.itens) == 1
-        assert pedido_teste.itens[0].sabor == "Margherita"
+        assert pedido_teste.itens[0].produto_nome == "Pizza Margherita"
 
     def test_pedido_status_padrao(self, db, usuario_teste):
         """Testa que status padrao e PENDENTE"""
@@ -174,14 +121,17 @@ class TestPedidoModel:
 class TestItemPedidoModel:
     """Testes do modelo ItemPedido"""
 
-    def test_criar_item_pedido(self, db, pedido_teste):
+    def test_criar_item_pedido(self, db, pedido_teste, produto_variacao_teste):
         """Testa criacao de item de pedido"""
         item = ItemPedido(
             pedido_id=pedido_teste.id,
+            produto_variacao_id=produto_variacao_teste.id,
             quantidade=2,
-            sabor="Calabresa",
+            produto_nome="Pizza Calabresa",
             tamanho="GRANDE",
-            preco_unitario=45.00,
+            preco_base=45.00,
+            preco_ingredientes=0.0,
+            preco_total=90.00,
             observacoes="Sem cebola"
         )
         db.add(item)
@@ -190,9 +140,9 @@ class TestItemPedidoModel:
 
         assert item.id is not None
         assert item.quantidade == 2
-        assert item.sabor == "Calabresa"
+        assert item.produto_nome == "Pizza Calabresa"
         assert item.tamanho == "GRANDE"
-        assert item.preco_unitario == 45.00
+        assert item.preco_base == 45.00
         assert item.observacoes == "Sem cebola"
 
     def test_item_relacionamento_pedido(self, db, pedido_teste):
@@ -201,14 +151,17 @@ class TestItemPedidoModel:
         assert item.pedido.id == pedido_teste.id
         assert item.pedido.usuario_id == pedido_teste.usuario_id
 
-    def test_item_observacoes_opcional(self, db, pedido_teste):
+    def test_item_observacoes_opcional(self, db, pedido_teste, produto_variacao_teste):
         """Testa que observacoes e opcional"""
         item = ItemPedido(
             pedido_id=pedido_teste.id,
+            produto_variacao_id=produto_variacao_teste.id,
             quantidade=1,
-            sabor="Margherita",
+            produto_nome="Pizza Margherita",
             tamanho="MEDIA",
-            preco_unitario=35.00
+            preco_base=35.00,
+            preco_ingredientes=0.0,
+            preco_total=35.00
         )
         db.add(item)
         db.commit()
@@ -234,13 +187,12 @@ class TestTimestampMixin:
         assert usuario.created_at is not None
         assert isinstance(usuario.created_at, datetime)
 
-    def test_produto_created_at_automatico(self, db):
+    def test_produto_created_at_automatico(self, db, categoria_teste):
         """Testa que created_at e preenchido em Produto"""
         produto = Produto(
             nome="Produto Timestamp",
-            categoria="PIZZA",
-            tamanho="MEDIA",
-            preco=30.00
+            categoria_id=categoria_teste.id,
+            disponivel=True
         )
         db.add(produto)
         db.commit()
@@ -593,12 +545,22 @@ class TestProdutoVariacaoModel:
         assert variacao.preco == 55.00
         assert variacao.disponivel is True
 
-    def test_variacao_produto_tamanho_unico(self, db, produto_teste):
+    def test_variacao_produto_tamanho_unico(self, db, categoria_teste):
         """Testa que combinacao produto+tamanho deve ser unica"""
         from sqlalchemy.exc import IntegrityError
 
+        # Criar novo produto para testar uniqueness
+        produto_novo = Produto(
+            categoria_id=categoria_teste.id,
+            nome="Produto Teste Uniqueness",
+            disponivel=True
+        )
+        db.add(produto_novo)
+        db.commit()
+        db.refresh(produto_novo)
+
         var1 = ProdutoVariacao(
-            produto_id=produto_teste.id,
+            produto_id=produto_novo.id,
             tamanho="GRANDE",
             preco=45.00
         )
@@ -606,7 +568,7 @@ class TestProdutoVariacaoModel:
         db.commit()
 
         var2 = ProdutoVariacao(
-            produto_id=produto_teste.id,
+            produto_id=produto_novo.id,
             tamanho="GRANDE",
             preco=50.00
         )
@@ -615,10 +577,20 @@ class TestProdutoVariacaoModel:
         with pytest.raises(IntegrityError):
             db.commit()
 
-    def test_variacao_disponivel_padrao(self, db, produto_teste):
+    def test_variacao_disponivel_padrao(self, db, categoria_teste):
         """Testa que disponivel e True por padrao"""
+        # Criar novo produto para testar
+        produto_novo = Produto(
+            categoria_id=categoria_teste.id,
+            nome="Produto Teste Padrao",
+            disponivel=True
+        )
+        db.add(produto_novo)
+        db.commit()
+        db.refresh(produto_novo)
+
         variacao = ProdutoVariacao(
-            produto_id=produto_teste.id,
+            produto_id=produto_novo.id,
             tamanho="PEQUENA",
             preco=20.00
         )
