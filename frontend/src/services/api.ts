@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { CardapioResponse, Produto } from '@/types/cardapio.types'
+import type { CardapioResponse, Produto } from '@/types/cardapio.types'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
