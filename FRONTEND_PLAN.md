@@ -1,12 +1,17 @@
-#  PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
+# PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
 
-**Data:** 13/12/2025
+**Data de Criação:** 13/12/2025
+**Última Atualização:** 13/12/2025 21:15 BRT
 **Fase:** 1.3 - Sistema de Categorias e Cardápio Dinâmico
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
+**Progresso Geral:** Sprint 1/7 concluído (14%)
+**Sprint Atual:** Sprint 1 - Setup e Fundação [CONCLUÍDO]
+**Próximo Sprint:** Sprint 2 - Layout e Navegação
+
 ---
 
-##  ÍNDICE
+## ÍNDICE
 
 1. [Stack Tecnológica](#stack-tecnológica)
 2. [Estrutura de Diretórios](#estrutura-de-diretórios)
@@ -18,189 +23,139 @@
 
 ---
 
-##  STACK TECNOLÓGICA
+## STACK TECNOLÓGICA
 
 ### Core
 - **React 18+** - Framework principal
-- **Vite** - Build tool (mais rápido que CRA)
-- **TypeScript** - Type safety 
+- **Vite** - Build tool
+- **TypeScript** - Type safety
 
 ### UI & Styling
-- **Tailwind CSS** - Utility-first CSS framework
-- **Headless UI** ou **Radix UI** - Componentes acessíveis
+- **Tailwind CSS v3** - Utility-first CSS framework
 - **Lucide React** - Ícones modernos
-- **Framer Motion** - Animações suaves
+- **clsx + tailwind-merge** - Concatenação de classes CSS
 
 ### State Management
 - **Context API** - Gerenciamento de estado do carrinho
 - **React Query (TanStack Query)** - Cache e sincronização com API
-- **Zustand** - Estado global leve (alternativa ao Context)
 
 ### HTTP & Data Fetching
 - **Axios** - Cliente HTTP
 - **React Query** - Cache, refetch automático, loading states
 
-### Utilities
-- **React Hook Form** - Formulários (para checkout futuro)
-- **Zod** - Validação de dados
-- **clsx** ou **classnames** - Concatenação de classes CSS
-- **date-fns** - Manipulação de datas
-
 ### Development
 - **ESLint** - Linting
-- **Prettier** - Formatação de código
-- **Vitest** - Testes unitários (compatível com Vite)
-- **React Testing Library** - Testes de componentes
+- **TypeScript** - Type checking
 
 ---
 
-##  ESTRUTURA DE DIRETÓRIOS
+## ESTRUTURA DE DIRETÓRIOS
 
 ```
 frontend/
 ├── public/
-│   ├── images/
-│   │   ├── products/          # Imagens de produtos
-│   │   ├── categories/        # Ícones de categorias
-│   │   └── placeholder.png    # Imagem padrão
-│   └── favicon.ico
+│   └── vite.svg
 ├── src/
 │   ├── components/
-│   │   ├── common/            # Componentes reutilizáveis
+│   │   ├── common/
 │   │   │   ├── Button.tsx
 │   │   │   ├── Card.tsx
 │   │   │   ├── Badge.tsx
-│   │   │   ├── Modal.tsx
-│   │   │   ├── Input.tsx
 │   │   │   ├── Loading.tsx
 │   │   │   └── ErrorMessage.tsx
-│   │   ├── layout/            # Layout da aplicação
+│   │   ├── layout/
 │   │   │   ├── Header.tsx
 │   │   │   ├── Footer.tsx
-│   │   │   └── MainLayout.tsx
-│   │   ├── cardapio/          # Componentes específicos do cardápio
+│   │   │   └── Layout.tsx
+│   │   ├── cardapio/
 │   │   │   ├── CategoriaNav.tsx
 │   │   │   ├── ProdutoCard.tsx
 │   │   │   ├── ProdutoModal.tsx
-│   │   │   ├── VariacaoSelector.tsx
-│   │   │   ├── IngredientesCheckbox.tsx
-│   │   │   └── SearchBar.tsx
-│   │   └── carrinho/          # Componentes do carrinho
+│   │   │   └── IngredientesList.tsx
+│   │   └── carrinho/
 │   │       ├── CarrinhoSidebar.tsx
-│   │       ├── CarrinhoItem.tsx
-│   │       ├── CarrinhoResumo.tsx
-│   │       └── CarrinhoBadge.tsx
+│   │       └── CarrinhoItem.tsx
 │   ├── contexts/
 │   │   └── CarrinhoContext.tsx
 │   ├── hooks/
-│   │   ├── useCardapio.ts
-│   │   ├── useCarrinho.ts
-│   │   └── useBusca.ts
-│   ├── services/
-│   │   ├── api.ts             # Configuração axios
-│   │   └── cardapioService.ts # Endpoints do cardápio
-│   ├── types/
-│   │   └── cardapio.types.ts  # Tipos TypeScript
-│   ├── utils/
-│   │   ├── formatters.ts      # Formatação de moeda, etc.
-│   │   └── validators.ts      # Validações
+│   │   └── useCardapio.ts
 │   ├── pages/
-│   │   ├── Cardapio.tsx       # Página principal
-│   │   └── NotFound.tsx       # 404
+│   │   └── Cardapio.tsx
+│   ├── services/
+│   │   └── api.ts
+│   ├── types/
+│   │   └── cardapio.types.ts
+│   ├── lib/
+│   │   └── utils.ts
 │   ├── App.tsx
 │   ├── main.tsx
 │   └── index.css
 ├── .env.development
-├── .env.production
 ├── package.json
 ├── vite.config.ts
 ├── tailwind.config.js
-├── tsconfig.json
-└── README.md
+├── postcss.config.js
+└── tsconfig.json
 ```
 
 ---
 
 ## COMPONENTES PRINCIPAIS
 
-### 1. **Header** (Layout)
-```tsx
+### 1. Header (Layout)
 - Logo da pizzaria
-- Badge de itens no carrinho (ex: 🛒 3)
+- Badge de itens no carrinho
 - Botão de busca
-- (Futuro) Login/Perfil
-```
 
-### 2. **CategoriaNav** (Navegação)
-```tsx
+### 2. CategoriaNav (Navegação)
 - Tabs horizontais com categorias
 - Scroll horizontal suave
 - Destaque da categoria ativa
 - Ícones + nomes das categorias
-- Contagem de produtos por categoria
-```
 
-### 3. **ProdutoCard** (Lista de Produtos)
-```tsx
+### 3. ProdutoCard (Lista de Produtos)
 - Imagem do produto
 - Nome e descrição
 - Badge de disponibilidade
-- Preços das variações (a partir de R$ X,XX)
+- Preços das variações
 - Botão "Ver detalhes"
 - Hover effect
-```
 
-### 4. **ProdutoModal** (Detalhes e Customização)
-```tsx
-- Imagem maior do produto
+### 4. ProdutoModal (Detalhes e Customização)
+- Imagem do produto
 - Nome e descrição completa
-- Seletor de variação (tamanho):
-  - Radio buttons (Pequena, Média, Grande, Gigante)
-  - Preço de cada variação
-- Lista de ingredientes padrão:
-  - Ingredientes obrigatórios (checkbox disabled + tooltip)
-  - Ingredientes opcionais (checkbox)
-  - Preço adicional (se houver)
-- Ingredientes adicionais disponíveis:
-  - Checkboxes de ingredientes extras
-  - Preço de cada um
+- Seletor de variação (tamanho com radio buttons)
+- Lista de ingredientes padrão (obrigatórios e opcionais)
+- Ingredientes adicionais disponíveis
 - Campo de observações (textarea)
 - Seletor de quantidade (+ e -)
 - Resumo do preço:
-  - Preço base: R$ X,XX
-  - Ingredientes adicionados: R$ Y,YY
-  - Ingredientes removidos: -R$ Z,ZZ
-  - Subtotal: R$ TOTAL × quantidade
-- Botões:
-  - "Adicionar ao carrinho" (primary)
-  - "Cancelar" (secondary)
-```
+  - Preço base
+  - Ingredientes adicionados
+  - Ingredientes removidos
+  - Subtotal com quantidade
+- Botões: "Adicionar ao carrinho" e "Cancelar"
 
-### 5. **CarrinhoSidebar** (Carrinho de Compras)
-```tsx
+### 5. CarrinhoSidebar (Carrinho de Compras)
 - Drawer/Sidebar lateral direita
-- Lista de itens:
+- Lista de itens com:
   - Nome do produto + tamanho
   - Customizações (resumo)
   - Quantidade (+ e -)
   - Preço unitário e total
-  - Botão remover (🗑️)
+  - Botão remover
 - Resumo:
   - Subtotal
-  - (Futuro) Taxa de entrega
   - Total
-- Botão "Finalizar pedido" (disabled se carrinho vazio)
+- Botão "Finalizar pedido"
 - Botão "Continuar comprando"
-```
 
-### 6. **SearchBar** (Busca)
-```tsx
-- Input de busca com ícone 🔍
+### 6. SearchBar (Busca)
+- Input de busca com ícone
 - Debounce de 300ms
 - Sugestões em tempo real (dropdown)
 - Destaque do termo buscado
 - Mínimo 2 caracteres
-```
 
 ---
 
@@ -210,27 +165,23 @@ frontend/
 
 ```typescript
 interface ItemCarrinho {
-  id: string; // Gerado localmente (UUID)
-  produtoId: number;
-  produtoNome: string;
-  variacaoId: number;
-  tamanho: string;
-  precoBase: number;
-  quantidade: number;
-  ingredientesAdicionados: { id: number; nome: string; preco: number }[];
-  ingredientesRemovidos: number[];
-  observacoes?: string;
-  precoTotal: number;
+  produto: Produto
+  variacao: ProdutoVariacao
+  quantidade: number
+  ingredientesAdicionados: Ingrediente[]
+  ingredientesRemovidos: number[]
+  observacoes?: string
+  preco_total: number
 }
 
 interface CarrinhoContextType {
-  itens: ItemCarrinho[];
-  adicionarItem: (item: ItemCarrinho) => void;
-  removerItem: (id: string) => void;
-  atualizarQuantidade: (id: string, quantidade: number) => void;
-  limparCarrinho: () => void;
-  totalItens: number;
-  subtotal: number;
+  itens: ItemCarrinho[]
+  adicionarItem: (item: ItemCarrinho) => void
+  removerItem: (id: string) => void
+  atualizarQuantidade: (id: string, quantidade: number) => void
+  limparCarrinho: () => void
+  totalItens: number
+  subtotal: number
 }
 ```
 
@@ -252,7 +203,7 @@ interface CarrinhoContextType {
 
 ---
 
-## 🔌 INTEGRAÇÃO COM API
+## INTEGRAÇÃO COM API
 
 ### Configuração do Axios
 
@@ -262,100 +213,123 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptors para logging e tratamento de erros
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Tratamento global de erros
-    console.error('API Error:', error);
-    return Promise.reject(error);
-  }
-);
-
 export default api;
 ```
 
-### Service Layer
+### API Service
 
 ```typescript
-// src/services/cardapioService.ts
-import api from './api';
-import { CardapioResponse, ProdutoResponse } from '@/types';
-
-export const cardapioService = {
-  async getCardapioCompleto(): Promise<CardapioResponse> {
-    const { data } = await api.get('/cardapio/');
-    return data;
+// src/services/api.ts
+export const cardapioApi = {
+  getCardapioCompleto: async (): Promise<CardapioResponse> => {
+    const response = await api.get<CardapioResponse>('/cardapio/')
+    return response.data
   },
 
-  async getProdutosPorCategoria(
+  getProdutosPorCategoria: async (
     categoriaId: number,
     incluirIndisponiveis = false
-  ): Promise<ProdutoResponse[]> {
-    const { data } = await api.get(
+  ): Promise<Produto[]> => {
+    const response = await api.get<Produto[]>(
       `/cardapio/categorias/${categoriaId}/produtos`,
       { params: { incluir_indisponiveis: incluirIndisponiveis } }
-    );
-    return data;
+    )
+    return response.data
   },
 
-  async buscarProdutos(termo: string): Promise<ProdutoResponse[]> {
-    const { data } = await api.get('/cardapio/buscar', {
+  buscarProdutos: async (termo: string): Promise<Produto[]> => {
+    const response = await api.get<Produto[]>('/cardapio/buscar', {
       params: { termo },
-    });
-    return data;
+    })
+    return response.data
   },
-};
+}
 ```
 
 ---
 
 ## FLUXO DE IMPLEMENTAÇÃO
 
-### **SPRINT 1: Setup e Fundação** (1-2 dias)
+### SPRINT 1: Setup e Fundação [CONCLUÍDO - 13/12/2025]
 
 #### Etapa 1.1: Configurar Projeto
-- [ ] Criar projeto Vite + React + TypeScript
-- [ ] Configurar Tailwind CSS
-- [ ] Instalar dependências (axios, react-query, lucide-react, etc.)
-- [ ] Configurar ESLint e Prettier
-- [ ] Criar estrutura de pastas
+- [x] Criar projeto Vite + React + TypeScript
+- [x] Configurar Tailwind CSS v3
+- [x] Instalar dependências (axios, react-query, lucide-react, clsx, tailwind-merge)
+- [x] Configurar ESLint (gerado pelo Vite)
+- [x] Criar estrutura de pastas
+
+**Arquivos criados:**
+- `frontend/vite.config.ts` - Configuração com path aliases (@/) e proxy para API
+- `frontend/tailwind.config.js` - Cores customizadas (primary, secondary, accent)
+- `frontend/postcss.config.js` - Configuração PostCSS + Autoprefixer
+- `frontend/tsconfig.app.json` - Path aliases TypeScript
+- `frontend/.env.development` - VITE_API_URL=http://localhost:8000
 
 #### Etapa 1.2: Setup de API e Types
-- [ ] Criar arquivo `api.ts` com configuração axios
-- [ ] Criar `cardapioService.ts` com endpoints
-- [ ] Definir tipos TypeScript em `cardapio.types.ts`
-- [ ] Testar conexão com backend (verificar CORS)
+- [x] Criar arquivo `api.ts` com configuração axios
+- [x] Criar funções de API (getCardapioCompleto, getProdutosPorCategoria, buscarProdutos)
+- [x] Definir tipos TypeScript em `cardapio.types.ts`
+- [x] Configurar React Query em main.tsx (staleTime: 5min, retry: 1)
 
-#### Etapa 1.3: Componentes Base
+**Arquivos criados:**
+- `frontend/src/services/api.ts` - Cliente Axios + 3 endpoints do cardápio
+- `frontend/src/types/cardapio.types.ts` - Interfaces completas do backend
+- `frontend/src/lib/utils.ts` - Funções utilitárias (cn, formatarPreco)
+- `frontend/src/main.tsx` - QueryClientProvider configurado
+
+**Estrutura de diretórios criada:**
+```
+src/
+├── components/
+│   ├── layout/      [pronto para Sprint 2]
+│   ├── common/      [pronto para Sprint 2]
+│   ├── cardapio/    [pronto para Sprint 3]
+│   └── carrinho/    [pronto para Sprint 5]
+├── contexts/        [pronto para Sprint 2]
+├── hooks/           [pronto para Sprint 3]
+├── pages/           [pronto para Sprint 3]
+├── services/        [api.ts criado]
+├── types/           [cardapio.types.ts criado]
+└── lib/             [utils.ts criado]
+```
+
+**Status do Sprint 1:**
+- Build funcionando (npm run build executado com sucesso)
+- Servidor de desenvolvimento rodando em http://localhost:5173/
+- TypeScript sem erros
+- Tailwind CSS v3 configurado
+- Proxy para API configurado
+- React Query configurado
+
+---
+
+### SPRINT 2: Layout e Navegação
+
+#### Etapa 2.1: Componentes Base
 - [ ] Criar componente `Button`
 - [ ] Criar componente `Card`
 - [ ] Criar componente `Badge`
 - [ ] Criar componente `Loading` (spinner)
 - [ ] Criar componente `ErrorMessage`
 
----
-
-### **SPRINT 2: Layout e Navegação** (1-2 dias)
-
-#### Etapa 2.1: Layout Principal
+#### Etapa 2.2: Layout Principal
 - [ ] Criar `Header` com logo e badge de carrinho
 - [ ] Criar `Footer` básico
-- [ ] Criar `MainLayout` wrapper
+- [ ] Criar `Layout` wrapper
 
-#### Etapa 2.2: Context do Carrinho
+#### Etapa 2.3: Context do Carrinho
 - [ ] Criar `CarrinhoContext` com estado inicial
 - [ ] Implementar funções de adicionar/remover/atualizar
 - [ ] Persistir carrinho no localStorage
 - [ ] Criar hook `useCarrinho`
 
-#### Etapa 2.3: Navegação de Categorias
+#### Etapa 2.4: Navegação de Categorias
 - [ ] Criar `CategoriaNav` com tabs
 - [ ] Implementar scroll horizontal suave
 - [ ] Adicionar indicador de categoria ativa
@@ -363,7 +337,7 @@ export const cardapioService = {
 
 ---
 
-### **SPRINT 3: Listagem de Produtos** (2-3 dias)
+### SPRINT 3: Listagem de Produtos
 
 #### Etapa 3.1: Hook de Cardápio
 - [ ] Criar `useCardapio` com React Query
@@ -375,7 +349,7 @@ export const cardapioService = {
 - [ ] Adicionar imagem, nome, descrição
 - [ ] Mostrar faixa de preços (variações)
 - [ ] Implementar hover effects
-- [ ] Grid responsivo (1 col mobile, 2-3 cols tablet, 3-4 cols desktop)
+- [ ] Grid responsivo
 
 #### Etapa 3.3: Página de Cardápio
 - [ ] Criar página `Cardapio.tsx`
@@ -385,7 +359,7 @@ export const cardapioService = {
 
 ---
 
-### **SPRINT 4: Modal de Customização** (2-3 dias)
+### SPRINT 4: Modal de Customização
 
 #### Etapa 4.1: Modal Base
 - [ ] Criar componente `Modal` genérico
@@ -393,12 +367,12 @@ export const cardapioService = {
 - [ ] Adicionar botão de fechar (ESC + click fora)
 
 #### Etapa 4.2: Seletor de Variação
-- [ ] Criar `VariacaoSelector` com radio buttons
+- [ ] Criar seletor com radio buttons
 - [ ] Mostrar tamanho e preço de cada variação
 - [ ] Atualizar preço base ao selecionar
 
 #### Etapa 4.3: Customização de Ingredientes
-- [ ] Criar `IngredientesCheckbox`
+- [ ] Criar lista de ingredientes
 - [ ] Listar ingredientes padrão (disabled se obrigatório)
 - [ ] Listar ingredientes adicionais disponíveis
 - [ ] Calcular preço de ingredientes em tempo real
@@ -406,13 +380,13 @@ export const cardapioService = {
 
 #### Etapa 4.4: Resumo e Adicionar ao Carrinho
 - [ ] Criar seletor de quantidade (+ e -)
-- [ ] Calcular preço total (base + ingredientes × quantidade)
+- [ ] Calcular preço total (base + ingredientes x quantidade)
 - [ ] Implementar botão "Adicionar ao carrinho"
-- [ ] Mostrar feedback de sucesso (toast ou animação)
+- [ ] Mostrar feedback de sucesso
 
 ---
 
-### **SPRINT 5: Carrinho de Compras** (2 dias)
+### SPRINT 5: Carrinho de Compras
 
 #### Etapa 5.1: Sidebar do Carrinho
 - [ ] Criar `CarrinhoSidebar` (drawer lateral)
@@ -427,19 +401,19 @@ export const cardapioService = {
 - [ ] Atualizar preço ao alterar quantidade
 
 #### Etapa 5.3: Resumo do Carrinho
-- [ ] Criar `CarrinhoResumo` com cálculos
+- [ ] Criar resumo com cálculos
 - [ ] Mostrar subtotal
 - [ ] Botão "Finalizar pedido" (disabled se vazio)
 - [ ] Botão "Continuar comprando"
 
 #### Etapa 5.4: Badge do Carrinho
-- [ ] Criar `CarrinhoBadge` no header
+- [ ] Criar badge no header
 - [ ] Mostrar número de itens
 - [ ] Animação ao adicionar item
 
 ---
 
-### **SPRINT 6: Busca e Refinamentos** (1-2 dias)
+### SPRINT 6: Busca e Refinamentos
 
 #### Etapa 6.1: Barra de Busca
 - [ ] Criar `SearchBar` com debounce
@@ -461,7 +435,7 @@ export const cardapioService = {
 
 ---
 
-### **SPRINT 7: Polimento e Testes** (1-2 dias)
+### SPRINT 7: Polimento e Testes
 
 #### Etapa 7.1: UX/UI Refinements
 - [ ] Adicionar transições suaves
@@ -522,7 +496,7 @@ export const cardapioService = {
 ### UX/UI
 - [ ] Loading states (skeletons)
 - [ ] Error states (mensagens amigáveis)
-- [ ] Feedback de ações (toasts/animações)
+- [ ] Feedback de ações
 - [ ] Responsividade completa
 - [ ] Transições suaves
 - [ ] Acessibilidade (teclado, ARIA)
@@ -539,10 +513,10 @@ export const cardapioService = {
 ## METAS DE QUALIDADE
 
 ### Performance
--  First Contentful Paint < 1.5s
--  Time to Interactive < 3s
--  Lighthouse Score > 90
--  Bundle size < 500kb
+- First Contentful Paint < 1.5s
+- Time to Interactive < 3s
+- Lighthouse Score > 90
+- Bundle size < 500kb
 
 ### Acessibilidade
 - WCAG 2.1 AA compliance
@@ -558,46 +532,69 @@ export const cardapioService = {
 
 ---
 
-##  VARIÁVEIS DE AMBIENTE
+## VARIÁVEIS DE AMBIENTE
 
 ```bash
 # .env.development
 VITE_API_URL=http://localhost:8000
-VITE_APP_NAME=Pizzaria XYZ
-VITE_ENABLE_ANALYTICS=false
-
-# .env.production
-VITE_API_URL=https://api.pizzaria.com
-VITE_APP_NAME=Pizzaria XYZ
-VITE_ENABLE_ANALYTICS=true
 ```
 
 ---
 
-## RECURSOS E REFERÊNCIAS
+## STATUS ATUAL E PRÓXIMOS PASSOS
 
-### Design Inspiration
-- [iFood Web](https://www.ifood.com.br/)
-- [Rappi](https://www.rappi.com.br/)
-- [Uber Eats](https://www.ubereats.com/br)
-- [Dribbble - Food Ordering](https://dribbble.com/search/food-ordering)
+### Concluído (13/12/2025)
+- **Sprint 1: Setup e Fundação** - 100% completo
+  - Projeto Vite + React + TypeScript configurado
+  - Tailwind CSS v3 instalado
+  - API service e tipos TypeScript criados
+  - React Query configurado
+  - Estrutura de diretórios pronta
 
-### UI Components
-- [Tailwind UI](https://tailwindui.com/)
-- [Headless UI](https://headlessui.com/)
-- [Radix UI](https://www.radix-ui.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
+### Próximo Passo: Sprint 2 - Layout e Navegação
 
-### Icons
-- [Lucide Icons](https://lucide.dev/)
-- [Heroicons](https://heroicons.com/)
+**Para continuar:**
 
----
+1. Iniciar servidor de desenvolvimento:
+   ```bash
+   cd /home/fabionote/Projetos_pessoais/teste-fastapi/frontend
+   npm run dev
+   ```
+   Acesse: http://localhost:5173/
 
-## PRÓXIMOS PASSOS
+2. Tarefas do Sprint 2 (Etapa 2.1 - Componentes Base):
+   - Criar `src/components/common/Button.tsx`
+   - Criar `src/components/common/Card.tsx`
+   - Criar `src/components/common/Badge.tsx`
+   - Criar `src/components/common/Loading.tsx`
+   - Criar `src/components/common/ErrorMessage.tsx`
 
-1. **Agora**: Criar projeto Vite + React
-2. **Depois**: Implementar componentes base
-3. **Em seguida**: Integrar com API
-4. **Por fim**: Polir e testar
+3. Tarefas do Sprint 2 (Etapa 2.2 - Layout Principal):
+   - Criar `src/components/layout/Header.tsx` (com logo e badge de carrinho)
+   - Criar `src/components/layout/Footer.tsx`
+   - Criar `src/components/layout/Layout.tsx`
 
+4. Tarefas do Sprint 2 (Etapa 2.3 - Context do Carrinho):
+   - Criar `src/contexts/CarrinhoContext.tsx`
+   - Implementar funções: adicionarItem, removerItem, atualizarQuantidade
+   - Persistir no localStorage
+   - Criar hook `src/hooks/useCarrinho.ts`
+
+5. Tarefas do Sprint 2 (Etapa 2.4 - Navegação de Categorias):
+   - Criar `src/components/cardapio/CategoriaNav.tsx`
+   - Implementar scroll horizontal
+   - Indicador de categoria ativa
+
+**Arquivos de referência criados:**
+- `frontend/src/services/api.ts` - API do cardápio
+- `frontend/src/types/cardapio.types.ts` - Tipos TypeScript
+- `frontend/src/lib/utils.ts` - Funções utilitárias
+
+**Comandos úteis:**
+```bash
+# Verificar build
+npm run build
+
+# Verificar TypeScript
+npx tsc --noEmit
+```
