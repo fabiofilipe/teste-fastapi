@@ -1,34 +1,256 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Search, ShoppingCart, Plus, Trash2 } from 'lucide-react'
+import Button from './components/common/Button'
+import Badge from './components/common/Badge'
+import Card from './components/common/Card'
+import Loading from './components/common/Loading'
+import ErrorMessage from './components/common/ErrorMessage'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showError, setShowError] = useState(false)
+
+  const handleLoadingTest = () => {
+    setIsLoading(true)
+    setTimeout(() => setIsLoading(false), 2000)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold text-gray-900">Componentes Base</h1>
+          <p className="text-gray-600">Etapa 2.1 - Sprint 2</p>
+        </div>
+
+        {/* Buttons */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Buttons</h2>
+          <Card>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Variantes:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="primary">Primary</Button>
+                  <Button variant="secondary">Secondary</Button>
+                  <Button variant="outline">Outline</Button>
+                  <Button variant="ghost">Ghost</Button>
+                  <Button variant="danger">Danger</Button>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Tamanhos:</p>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <Button size="sm">Small</Button>
+                  <Button size="md">Medium</Button>
+                  <Button size="lg">Large</Button>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Com ícones:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button leftIcon={<Search size={16} />}>Buscar</Button>
+                  <Button variant="secondary" rightIcon={<ShoppingCart size={16} />}>
+                    Carrinho
+                  </Button>
+                  <Button variant="outline" leftIcon={<Plus size={16} />}>
+                    Adicionar
+                  </Button>
+                  <Button variant="danger" leftIcon={<Trash2 size={16} />}>
+                    Remover
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Estados:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button isLoading onClick={handleLoadingTest}>Loading</Button>
+                  <Button disabled>Disabled</Button>
+                  <Button variant="primary" isLoading>
+                    Processando...
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        {/* Badges */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Badges</h2>
+          <Card>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Variantes:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="success">Disponível</Badge>
+                  <Badge variant="warning">Estoque Baixo</Badge>
+                  <Badge variant="error">Esgotado</Badge>
+                  <Badge variant="info">Novo</Badge>
+                  <Badge variant="neutral">Tag</Badge>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Tamanhos:</p>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <Badge size="sm">Small</Badge>
+                  <Badge size="md">Medium</Badge>
+                  <Badge size="lg">Large</Badge>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Com dot:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="success" dot>3 itens</Badge>
+                  <Badge variant="info" dot>Em preparo</Badge>
+                  <Badge variant="error" dot>Cancelado</Badge>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        {/* Cards */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Cards</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card variant="default">
+              <h3 className="font-semibold text-gray-900 mb-2">Card Padrão</h3>
+              <p className="text-gray-600 text-sm">
+                Card com sombra sutil e estilo padrão.
+              </p>
+            </Card>
+
+            <Card variant="interactive" hoverable>
+              <h3 className="font-semibold text-gray-900 mb-2">Card Interativo</h3>
+              <p className="text-gray-600 text-sm">
+                Passe o mouse para ver o efeito de elevação.
+              </p>
+            </Card>
+
+            <Card variant="outlined" padding="lg">
+              <h3 className="font-semibold text-gray-900 mb-2">Card Outlined</h3>
+              <p className="text-gray-600 text-sm">
+                Card apenas com borda, sem sombra.
+              </p>
+            </Card>
+          </div>
+        </section>
+
+        {/* Loading */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Loading</h2>
+          <Card>
+            <div className="space-y-6">
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Variantes:</p>
+                <div className="flex flex-wrap gap-8 items-center">
+                  <div className="text-center">
+                    <Loading variant="spinner" size="md" />
+                    <p className="text-xs text-gray-500 mt-2">Spinner</p>
+                  </div>
+                  <div className="text-center">
+                    <Loading variant="dots" size="md" />
+                    <p className="text-xs text-gray-500 mt-2">Dots</p>
+                  </div>
+                  <div className="text-center">
+                    <Loading variant="pulse" size="md" />
+                    <p className="text-xs text-gray-500 mt-2">Pulse</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Tamanhos:</p>
+                <div className="flex flex-wrap gap-8 items-center">
+                  <Loading size="sm" text="Small" />
+                  <Loading size="md" text="Medium" />
+                  <Loading size="lg" text="Large" />
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Full Screen (teste):</p>
+                <Button onClick={handleLoadingTest}>
+                  Testar Loading Full Screen
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        {/* Error Messages */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Error Messages</h2>
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Inline:</p>
+              <ErrorMessage
+                variant="inline"
+                message="Email inválido"
+              />
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Card (sem retry):</p>
+              <ErrorMessage
+                variant="card"
+                title="Erro ao processar"
+                message="Não foi possível processar sua solicitação."
+              />
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Card (com retry):</p>
+              <ErrorMessage
+                variant="card"
+                title="Erro ao carregar cardápio"
+                message="Não foi possível conectar ao servidor. Tente novamente."
+                onRetry={() => alert('Tentando novamente...')}
+              />
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Full Screen (teste):</p>
+              <Button onClick={() => setShowError(true)}>
+                Testar Error Full Screen
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <div className="text-center pt-8 pb-4 text-gray-500 text-sm">
+          <p>✅ Etapa 2.1 completa - Todos os componentes base criados</p>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+      {/* Loading Full Screen */}
+      {isLoading && (
+        <Loading
+          fullScreen
+          size="lg"
+          text="Carregando..."
+          variant="spinner"
+        />
+      )}
+
+      {/* Error Full Screen */}
+      {showError && (
+        <ErrorMessage
+          variant="fullScreen"
+          title="Ops! Algo deu errado"
+          message="Não foi possível conectar ao servidor. Verifique sua conexão."
+          onRetry={() => setShowError(false)}
+        />
+      )}
+    </div>
   )
 }
 
