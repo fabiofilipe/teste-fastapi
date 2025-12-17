@@ -309,14 +309,28 @@ src/
 
 ---
 
-### SPRINT 2: Layout e Navegação
+### SPRINT 2: Layout e Navegação [EM PROGRESSO]
 
-#### Etapa 2.1: Componentes Base
-- [ ] Criar componente `Button`
-- [ ] Criar componente `Card`
-- [ ] Criar componente `Badge`
-- [ ] Criar componente `Loading` (spinner)
-- [ ] Criar componente `ErrorMessage`
+#### Etapa 2.1: Componentes Base [CONCLUÍDO - 16/12/2025]
+- [x] Criar componente `Button`
+- [x] Criar componente `Card`
+- [x] Criar componente `Badge`
+- [x] Criar componente `Loading` (spinner)
+- [x] Criar componente `ErrorMessage`
+
+**Arquivos criados:**
+- `frontend/src/components/common/Button.tsx` - 5 variantes, 3 tamanhos, loading state
+- `frontend/src/components/common/Badge.tsx` - 5 cores, 3 tamanhos, dot indicator
+- `frontend/src/components/common/Card.tsx` - 3 variantes, hover effects
+- `frontend/src/components/common/Loading.tsx` - 3 animações, fullScreen mode
+- `frontend/src/components/common/ErrorMessage.tsx` - 3 layouts, retry action
+- `frontend/src/App.tsx` - Página de testes com todos os componentes
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 258.31 kB (79.92 kB gzip)
+- ✅ Todos os componentes com forwardRef e tipos
+- ✅ Acessibilidade (focus, aria, keyboard)
 
 #### Etapa 2.2: Layout Principal
 - [ ] Criar `Header` com logo e badge de carrinho
