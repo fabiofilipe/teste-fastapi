@@ -332,10 +332,31 @@ src/
 - ✅ Todos os componentes com forwardRef e tipos
 - ✅ Acessibilidade (focus, aria, keyboard)
 
-#### Etapa 2.2: Layout Principal
-- [ ] Criar `Header` com logo e badge de carrinho
-- [ ] Criar `Footer` básico
-- [ ] Criar `Layout` wrapper
+#### Etapa 2.2: Layout Principal [CONCLUÍDO - 16/12/2025]
+- [x] Criar `Header` com logo e badge de carrinho
+- [x] Criar `Footer` básico
+- [x] Criar `Layout` wrapper
+
+**Arquivos criados:**
+- `frontend/src/components/layout/Header.tsx` - Header fixo com logo (Pizza icon), carrinho com badge
+- `frontend/src/components/layout/Footer.tsx` - Footer simples com copyright e créditos
+- `frontend/src/components/layout/Layout.tsx` - Wrapper que combina Header + conteúdo + Footer
+- `frontend/src/App.tsx` - Atualizado para usar Layout e testar todos os componentes
+
+**Features:**
+- ✅ Header sticky (position: sticky, top: 0)
+- ✅ Badge de carrinho com contador (máx 99+)
+- ✅ Logo clicável (Pizza icon + texto)
+- ✅ Footer com copyright dinâmico (ano atual)
+- ✅ Layout responsivo (mobile first)
+- ✅ Max-width configurável (full, 7xl, 6xl, 5xl)
+- ✅ Padding opcional (noPadding prop)
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 261.96 kB (81.04 kB gzip)
+- ✅ Teste de scroll (Header permanece fixo)
+- ✅ Props tipadas com interfaces
 
 #### Etapa 2.3: Context do Carrinho
 - [ ] Criar `CarrinhoContext` com estado inicial
