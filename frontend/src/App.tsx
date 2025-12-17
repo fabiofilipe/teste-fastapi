@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Search, ShoppingCart, Plus, Trash2 } from 'lucide-react'
+import Layout from './components/layout/Layout'
 import Button from './components/common/Button'
 import Badge from './components/common/Badge'
 import Card from './components/common/Card'
@@ -9,6 +10,7 @@ import ErrorMessage from './components/common/ErrorMessage'
 function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [showError, setShowError] = useState(false)
+  const [cartCount, setCartCount] = useState(3)
 
   const handleLoadingTest = () => {
     setIsLoading(true)
@@ -16,12 +18,25 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
+    <Layout
+      cartItemCount={cartCount}
+      onCartClick={() => alert('Carrinho clicado!')}
+      onLogoClick={() => alert('Logo clicado - voltando ao início')}
+    >
+      <div className="space-y-8">
+        {/* Header da página de testes */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900">Componentes Base</h1>
-          <p className="text-gray-600">Etapa 2.1 - Sprint 2</p>
+          <h1 className="text-4xl font-bold text-gray-900">Componentes Base + Layout</h1>
+          <p className="text-gray-600">Etapas 2.1 e 2.2 - Sprint 2</p>
+          <div className="flex justify-center gap-2 mt-4">
+            <Button size="sm" onClick={() => setCartCount(prev => Math.max(0, prev - 1))}>
+              - Carrinho
+            </Button>
+            <Badge variant="info">{cartCount} itens</Badge>
+            <Button size="sm" onClick={() => setCartCount(prev => prev + 1)}>
+              + Carrinho
+            </Button>
+          </div>
         </div>
 
         {/* Buttons */}
@@ -225,9 +240,28 @@ function App() {
           </div>
         </section>
 
+        {/* Layout Test - Scroll */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Teste de Layout (Scroll)</h2>
+          <p className="text-gray-600 mb-4">
+            Role a página para baixo para ver o Header fixo no topo e o Footer no final.
+          </p>
+          <div className="space-y-4">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Card key={i}>
+                <h3 className="font-semibold text-gray-900 mb-2">Card de Teste #{i + 1}</h3>
+                <p className="text-gray-600 text-sm">
+                  Este card está aqui para testar o scroll da página. O Header deve permanecer fixo no topo.
+                </p>
+              </Card>
+            ))}
+          </div>
+        </section>
+
         {/* Footer */}
-        <div className="text-center pt-8 pb-4 text-gray-500 text-sm">
-          <p>✅ Etapa 2.1 completa - Todos os componentes base criados</p>
+        <div className="text-center pt-8 pb-4 text-gray-500 text-sm border-t border-gray-200">
+          <p>✅ Etapas 2.1 e 2.2 completas</p>
+          <p className="text-xs mt-1">Header fixo • Footer no final • Layout responsivo</p>
         </div>
       </div>
 
@@ -250,7 +284,7 @@ function App() {
           onRetry={() => setShowError(false)}
         />
       )}
-    </div>
+    </Layout>
   )
 }
 
