@@ -1,13 +1,13 @@
 # PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
 
 **Data de Criação:** 13/12/2025
-**Última Atualização:** 17/12/2025 22:40 BRT
+**Última Atualização:** 17/12/2025 22:52 BRT
 **Fase:** 1.3 - Sistema de Categorias e Cardápio Dinâmico
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 2 em progresso - Etapa 2.3 concluída (24%)
-**Sprint Atual:** Sprint 2 - Layout e Navegação [EM PROGRESSO]
-**Próxima Etapa:** Etapa 2.4 - Navegação de Categorias
+**Progresso Geral:** Sprint 2 concluído - 100% (30%)
+**Sprint Atual:** Sprint 3 - Listagem de Produtos [PRÓXIMO]
+**Próxima Etapa:** Etapa 3.1 - Hook de Cardápio (já criado) + Etapa 3.2 - Cards de Produtos
 
 ---
 
@@ -389,20 +389,61 @@ src/
 - ✅ Badge do Header atualiza automaticamente com totalItens
 - ✅ localStorage persiste dados entre reloads
 
-#### Etapa 2.4: Navegação de Categorias
-- [ ] Criar `CategoriaNav` com tabs
-- [ ] Implementar scroll horizontal suave
-- [ ] Adicionar indicador de categoria ativa
-- [ ] Testar com dados reais da API
+#### Etapa 2.4: Navegação de Categorias [CONCLUÍDO - 17/12/2025]
+- [x] Criar `CategoriaNav` com tabs
+- [x] Implementar scroll horizontal suave
+- [x] Adicionar indicador de categoria ativa
+- [x] Testar com dados reais da API
+
+**Arquivos criados:**
+- `frontend/src/hooks/useCardapio.ts` - Hooks React Query para buscar dados da API
+- `frontend/src/components/cardapio/CategoriaNav.tsx` - Componente de navegação por categorias
+- `frontend/src/index.css` - Atualizado com classe .scrollbar-hide
+- `frontend/src/App.tsx` - Atualizado para integrar CategoriaNav e testar funcionalidades
+
+**Features:**
+- ✅ **Hooks especializados:**
+  - useCardapio() - Busca cardápio completo (GET /cardapio/)
+  - useProdutosPorCategoria(id) - Filtra produtos por categoria
+  - useBuscaProdutos(termo) - Busca produtos por termo
+  - React Query com cache de 5 minutos e refetch automático
+- ✅ **CategoriaNav Component:**
+  - Tabs horizontais com scroll suave (scrollbar oculta)
+  - Ícones dinâmicos por categoria (Pizza, Coffee, Wine, IceCream, etc)
+  - Mapeamento automático de ícones baseado no nome da categoria
+  - Indicador visual de categoria ativa (bg-primary-600, texto branco)
+  - Auto-scroll para centralizar categoria selecionada (useEffect + useRef)
+  - Badge com contador de produtos por categoria
+  - Animação de pulse no ícone da categoria ativa
+  - Gradiente visual indicando scroll disponível
+  - Estados hover, focus e active (acessibilidade)
+  - Ordenação por ordem_exibicao
+  - Filtro de categorias ativas
+- ✅ **Integração com API:**
+  - Conexão com backend via React Query
+  - Fallback para dados mockados caso API esteja offline
+  - Loading states e error handling
+  - Seção de testes interativa no App.tsx
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 318.30 kB (102.25 kB gzip)
+- ✅ HMR funcionando perfeitamente
+- ✅ Scroll horizontal suave e responsivo
+- ✅ Componente totalmente reutilizável
+- ✅ Props tipadas com TypeScript
+- ✅ Acessibilidade (keyboard navigation, focus states)
 
 ---
 
 ### SPRINT 3: Listagem de Produtos
 
-#### Etapa 3.1: Hook de Cardápio
-- [ ] Criar `useCardapio` com React Query
-- [ ] Implementar cache e refetch automático
-- [ ] Adicionar loading e error states
+#### Etapa 3.1: Hook de Cardápio [CONCLUÍDO - 17/12/2025]
+- [x] Criar `useCardapio` com React Query
+- [x] Implementar cache e refetch automático
+- [x] Adicionar loading e error states
+
+**Nota:** Esta etapa foi implementada junto com a Etapa 2.4. Ver detalhes em `frontend/src/hooks/useCardapio.ts`.
 
 #### Etapa 3.2: Cards de Produtos
 - [ ] Criar `ProdutoCard` com layout responsivo
@@ -612,34 +653,43 @@ VITE_API_URL=http://localhost:8000
 - React Query configurado
 - Estrutura de diretórios pronta
 
-**Sprint 2: Layout e Navegação** - 75% completo (17/12/2025)
+**Sprint 2: Layout e Navegação** - 100% completo (17/12/2025)
 - ✅ Etapa 2.1: Componentes Base (Button, Badge, Card, Loading, ErrorMessage)
 - ✅ Etapa 2.2: Layout Principal (Header, Footer, Layout)
 - ✅ Etapa 2.3: Context do Carrinho (CarrinhoContext + useCarrinho hook)
-- ⏳ Etapa 2.4: Navegação de Categorias (pendente)
+- ✅ Etapa 2.4: Navegação de Categorias (CategoriaNav + useCardapio hook)
 
-### Próximo Passo: Sprint 2 - Etapa 2.4 (Navegação de Categorias)
+**Sprint 3: Listagem de Produtos** - 33% completo (17/12/2025)
+- ✅ Etapa 3.1: Hook de Cardápio (useCardapio, useProdutosPorCategoria, useBuscaProdutos)
+- ⏳ Etapa 3.2: Cards de Produtos (pendente)
+- ⏳ Etapa 3.3: Página de Cardápio (pendente)
+
+### Próximo Passo: Sprint 3 - Etapa 3.2 (Cards de Produtos)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 2.4 - Navegação de Categorias:**
-   - Criar `src/components/cardapio/CategoriaNav.tsx`
-     - Tabs horizontais com categorias
-     - Scroll horizontal suave
-     - Destaque da categoria ativa
-     - Ícones + nomes das categorias
-   - Integrar com API (GET /cardapio/)
-   - Testar com dados reais do backend
+2. **Tarefas da Etapa 3.2 - Cards de Produtos:**
+   - Criar `src/components/cardapio/ProdutoCard.tsx`
+     - Layout responsivo com imagem do produto
+     - Nome, descrição e preço
+     - Badge de disponibilidade
+     - Faixa de preços (variações)
+     - Hover effects
+     - Botão "Ver detalhes"
+   - Grid responsivo
+   - Implementar lazy loading de imagens
 
 **Arquivos importantes criados:**
-- `frontend/src/services/api.ts` - API do cardápio
-- `frontend/src/types/cardapio.types.ts` - Tipos TypeScript
-- `frontend/src/lib/utils.ts` - Funções utilitárias
-- `frontend/src/contexts/CarrinhoContext.tsx` - Context do carrinho
+- `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
+- `frontend/src/types/cardapio.types.ts` - Tipos TypeScript completos
+- `frontend/src/lib/utils.ts` - Funções utilitárias (cn, formatarPreco)
+- `frontend/src/contexts/CarrinhoContext.tsx` - Context do carrinho + useCarrinho hook
+- `frontend/src/hooks/useCardapio.ts` - Hooks React Query (3 hooks)
 - `frontend/src/components/layout/` - Header, Footer, Layout
 - `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage
+- `frontend/src/components/cardapio/` - CategoriaNav
 
 **Comandos úteis:**
 ```bash
