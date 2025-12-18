@@ -6,11 +6,18 @@ import Badge from './components/common/Badge'
 import Card from './components/common/Card'
 import Loading from './components/common/Loading'
 import ErrorMessage from './components/common/ErrorMessage'
+import { CarrinhoProvider, useCarrinho } from './contexts/CarrinhoContext'
 
-function App() {
+// ============================================================================
+// APP CONTENT (usa o hook useCarrinho)
+// ============================================================================
+
+function AppContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [showError, setShowError] = useState(false)
-  const [cartCount, setCartCount] = useState(3)
+
+  // Hook do carrinho
+  const { totalItens, subtotal, adicionarItem, removerItem, limparCarrinho, itens } = useCarrinho()
 
   const handleLoadingTest = () => {
     setIsLoading(true)
