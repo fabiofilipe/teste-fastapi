@@ -19,7 +19,7 @@ export interface ItemCarrinho {
 
 export interface CarrinhoContextType {
   itens: ItemCarrinho[];
-  adicionarItem: (item: Omit<ItemCarrinho, 'id'>) => void;
+  adicionarItem: (item: Omit<ItemCarrinho, 'id' | 'preco_total'>) => void;
   removerItem: (id: string) => void;
   atualizarQuantidade: (id: string, quantidade: number) => void;
   limparCarrinho: () => void;
