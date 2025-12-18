@@ -6,7 +6,10 @@ import Badge from './components/common/Badge'
 import Card from './components/common/Card'
 import Loading from './components/common/Loading'
 import ErrorMessage from './components/common/ErrorMessage'
+import CategoriaNav from './components/cardapio/CategoriaNav'
 import { CarrinhoProvider, useCarrinho } from './contexts/CarrinhoContext'
+import { useCardapio } from './hooks/useCardapio'
+import type { Categoria } from './types/cardapio.types'
 
 // ============================================================================
 // APP CONTENT (usa o hook useCarrinho)
@@ -15,9 +18,65 @@ import { CarrinhoProvider, useCarrinho } from './contexts/CarrinhoContext'
 function AppContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [showError, setShowError] = useState(false)
+  const [categoriaAtiva, setCategoriaAtiva] = useState<number | undefined>(undefined)
 
   // Hook do carrinho
   const { totalItens, subtotal, adicionarItem, removerItem, limparCarrinho, itens } = useCarrinho()
+
+  // Hook do cardápio (dados reais da API)
+  const { data: cardapioData, isLoading: isLoadingCardapio, error: cardapioError } = useCardapio()
+
+  // Dados mockados para testes (caso a API não esteja disponível)
+  const categoriasMock: Categoria[] = [
+    {
+      id: 1,
+      nome: 'Pizzas',
+      descricao: 'Pizzas tradicionais e especiais',
+      icone: null,
+      ordem_exibicao: 1,
+      ativa: true,
+      produtos: [],
+    },
+    {
+      id: 2,
+      nome: 'Bebidas',
+      descricao: 'Refrigerantes, sucos e mais',
+      icone: null,
+      ordem_exibicao: 2,
+      ativa: true,
+      produtos: [],
+    },
+    {
+      id: 3,
+      nome: 'Sobremesas',
+      descricao: 'Doces e sobremesas deliciosas',
+      icone: null,
+      ordem_exibicao: 3,
+      ativa: true,
+      produtos: [],
+    },
+    {
+      id: 4,
+      nome: 'Saladas',
+      descricao: 'Saladas frescas',
+      icone: null,
+      ordem_exibicao: 4,
+      ativa: true,
+      produtos: [],
+    },
+    {
+      id: 5,
+      nome: 'Vinhos',
+      descricao: 'Vinhos selecionados',
+      icone: null,
+      ordem_exibicao: 5,
+      ativa: true,
+      produtos: [],
+    },
+  ]
+
+  // Usa dados da API se disponíveis, senão usa mock
+  const categorias = cardapioData?.categorias || categoriasMock
 
   const handleLoadingTest = () => {
     setIsLoading(true)
@@ -69,13 +128,72 @@ function AppContent() {
       <div className="space-y-8">
         {/* Header da página de testes */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900">Componentes Base + Layout + Carrinho</h1>
-          <p className="text-gray-600">Etapas 2.1, 2.2 e 2.3 - Sprint 2</p>
+          <h1 className="text-4xl font-bold text-gray-900">Componentes Base + Layout + Carrinho + Navegação</h1>
+          <p className="text-gray-600">Etapas 2.1, 2.2, 2.3 e 2.4 - Sprint 2</p>
           <div className="flex justify-center gap-2 mt-4">
             <Badge variant="success">{totalItens} itens</Badge>
             <Badge variant="info">R$ {subtotal.toFixed(2)}</Badge>
           </div>
         </div>
+
+        {/* Navegação de Categorias (Etapa 2.4) */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Navegação de Categorias (Etapa 2.4)</h2>
+          <Card>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">
+                    {isLoadingCardapio ? 'Carregando categorias...' :
+                     cardapioError ? 'Usando dados mockados (API offline)' :
+                     'Dados da API carregados com sucesso'}
+                  </p>
+                  {categoriaAtiva && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Categoria selecionada: <span className="font-semibold">
+                        {categorias.find(c => c.id === categoriaAtiva)?.nome || 'Nenhuma'}
+                      </span>
+                    </p>
+                  )}
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setCategoriaAtiva(undefined)}
+                  disabled={!categoriaAtiva}
+                >
+                  Limpar Seleção
+                </Button>
+              </div>
+
+              <div className="-mx-6">
+                <CategoriaNav
+                  categorias={categorias}
+                  categoriaAtiva={categoriaAtiva}
+                  onCategoriaClick={(id) => {
+                    setCategoriaAtiva(id)
+                    console.log('Categoria clicada:', id)
+                  }}
+                />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                <p className="text-sm text-blue-800">
+                  <strong>✅ Funcionalidades testadas:</strong>
+                </p>
+                <ul className="text-xs text-blue-700 mt-2 space-y-1 ml-4 list-disc">
+                  <li>Tabs horizontais com scroll suave</li>
+                  <li>Ícones dinâmicos por categoria (Pizza, Bebidas, Sobremesas, etc)</li>
+                  <li>Indicador visual de categoria ativa</li>
+                  <li>Auto-scroll para categoria selecionada</li>
+                  <li>Contador de produtos por categoria</li>
+                  <li>Integração com API (React Query) + fallback para dados mock</li>
+                  <li>Responsividade mobile-first</li>
+                </ul>
+              </div>
+            </div>
+          </Card>
+        </section>
 
         {/* Teste do Carrinho Context */}
         <section>
@@ -390,8 +508,8 @@ function AppContent() {
 
         {/* Footer */}
         <div className="text-center pt-8 pb-4 text-gray-500 text-sm border-t border-gray-200">
-          <p>✅ Etapas 2.1, 2.2 e 2.3 completas</p>
-          <p className="text-xs mt-1">Header fixo • Footer no final • Layout responsivo • Context do Carrinho</p>
+          <p>✅ Sprint 2 completo - Etapas 2.1, 2.2, 2.3 e 2.4</p>
+          <p className="text-xs mt-1">Layout • Context do Carrinho • Navegação de Categorias</p>
         </div>
       </div>
 

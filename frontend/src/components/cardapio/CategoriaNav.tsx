@@ -1,4 +1,5 @@
-import { useRef, useEffect, LucideIcon } from 'react';
+import { useRef, useEffect } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { Pizza, Coffee, Wine, IceCream, Dessert, Soup, Salad, Utensils } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Categoria } from '@/types/cardapio.types';
@@ -104,7 +105,7 @@ const CategoriaNav = ({
     .sort((a, b) => a.ordem_exibicao - b.ordem_exibicao);
 
   return (
-    <nav className={cn('w-full bg-white border-b border-gray-200', className)}>
+    <nav className={cn('relative w-full bg-white border-b border-gray-200', className)}>
       <div
         ref={scrollContainerRef}
         className="flex gap-2 px-4 py-3 overflow-x-auto scrollbar-hide scroll-smooth"
