@@ -7,3 +7,15 @@
     @apply bg-gray-50 text-gray-900;
   }
 }
+
+@layer utilities {
+  /* Esconde scrollbar mantendo funcionalidade de scroll */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
