@@ -1,13 +1,13 @@
 # PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
 
 **Data de Criação:** 13/12/2025
-**Última Atualização:** 16/12/2025 20:55 BRT
+**Última Atualização:** 17/12/2025 22:40 BRT
 **Fase:** 1.3 - Sistema de Categorias e Cardápio Dinâmico
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 2 em progresso - Etapa 2.1 concluída (18%)
+**Progresso Geral:** Sprint 2 em progresso - Etapa 2.3 concluída (24%)
 **Sprint Atual:** Sprint 2 - Layout e Navegação [EM PROGRESSO]
-**Próxima Etapa:** Etapa 2.2 - Layout Principal
+**Próxima Etapa:** Etapa 2.4 - Navegação de Categorias
 
 ---
 
@@ -358,11 +358,36 @@ src/
 - ✅ Teste de scroll (Header permanece fixo)
 - ✅ Props tipadas com interfaces
 
-#### Etapa 2.3: Context do Carrinho
-- [ ] Criar `CarrinhoContext` com estado inicial
-- [ ] Implementar funções de adicionar/remover/atualizar
-- [ ] Persistir carrinho no localStorage
-- [ ] Criar hook `useCarrinho`
+#### Etapa 2.3: Context do Carrinho [CONCLUÍDO - 17/12/2025]
+- [x] Criar `CarrinhoContext` com estado inicial
+- [x] Implementar funções de adicionar/remover/atualizar
+- [x] Persistir carrinho no localStorage
+- [x] Criar hook `useCarrinho`
+
+**Arquivos criados:**
+- `frontend/src/contexts/CarrinhoContext.tsx` - Context API completo com todas as operações do carrinho
+- `frontend/src/App.tsx` - Atualizado para integrar CarrinhoProvider e testar funcionalidades
+- `frontend/src/components/layout/Footer.tsx` - Atualizado (removido créditos)
+
+**Features:**
+- ✅ Interface ItemCarrinho com cálculo automático de preço total
+- ✅ adicionarItem() - Adiciona item com ingredientes e calcula preço (base + adicionais × quantidade)
+- ✅ removerItem(id) - Remove item específico do carrinho
+- ✅ atualizarQuantidade(id, qtd) - Atualiza quantidade e recalcula preço automaticamente
+- ✅ limparCarrinho() - Remove todos os itens
+- ✅ Computed values: totalItens (soma de quantidades), subtotal (soma de preços)
+- ✅ Persistência bidirecional em localStorage (carrega ao iniciar, salva a cada mudança)
+- ✅ Hook useCarrinho() com validação automática
+- ✅ Tratamento de erros no localStorage (try/catch)
+- ✅ IDs únicos gerados com crypto.randomUUID()
+- ✅ Seção de testes interativa no App.tsx
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 266.38 kB (82.41 kB gzip)
+- ✅ Todas as operações testadas e funcionando
+- ✅ Badge do Header atualiza automaticamente com totalItens
+- ✅ localStorage persiste dados entre reloads
 
 #### Etapa 2.4: Navegação de Categorias
 - [ ] Criar `CategoriaNav` com tabs
@@ -578,52 +603,43 @@ VITE_API_URL=http://localhost:8000
 
 ## STATUS ATUAL E PRÓXIMOS PASSOS
 
-### Concluído (13/12/2025)
-- **Sprint 1: Setup e Fundação** - 100% completo
-  - Projeto Vite + React + TypeScript configurado
-  - Tailwind CSS v3 instalado
-  - API service e tipos TypeScript criados
-  - React Query configurado
-  - Estrutura de diretórios pronta
+### Concluído
 
-### Próximo Passo: Sprint 2 - Layout e Navegação
+**Sprint 1: Setup e Fundação** - 100% completo (13/12/2025)
+- Projeto Vite + React + TypeScript configurado
+- Tailwind CSS v3 instalado
+- API service e tipos TypeScript criados
+- React Query configurado
+- Estrutura de diretórios pronta
+
+**Sprint 2: Layout e Navegação** - 75% completo (17/12/2025)
+- ✅ Etapa 2.1: Componentes Base (Button, Badge, Card, Loading, ErrorMessage)
+- ✅ Etapa 2.2: Layout Principal (Header, Footer, Layout)
+- ✅ Etapa 2.3: Context do Carrinho (CarrinhoContext + useCarrinho hook)
+- ⏳ Etapa 2.4: Navegação de Categorias (pendente)
+
+### Próximo Passo: Sprint 2 - Etapa 2.4 (Navegação de Categorias)
 
 **Para continuar:**
 
-1. Iniciar servidor de desenvolvimento:
-   ```bash
-   cd /home/fabionote/Projetos_pessoais/teste-fastapi/frontend
-   npm run dev
-   ```
-   Acesse: http://localhost:5173/
+1. Servidor já rodando em: http://localhost:5173/
 
-2. Tarefas do Sprint 2 (Etapa 2.1 - Componentes Base):
-   - Criar `src/components/common/Button.tsx`
-   - Criar `src/components/common/Card.tsx`
-   - Criar `src/components/common/Badge.tsx`
-   - Criar `src/components/common/Loading.tsx`
-   - Criar `src/components/common/ErrorMessage.tsx`
-
-3. Tarefas do Sprint 2 (Etapa 2.2 - Layout Principal):
-   - Criar `src/components/layout/Header.tsx` (com logo e badge de carrinho)
-   - Criar `src/components/layout/Footer.tsx`
-   - Criar `src/components/layout/Layout.tsx`
-
-4. Tarefas do Sprint 2 (Etapa 2.3 - Context do Carrinho):
-   - Criar `src/contexts/CarrinhoContext.tsx`
-   - Implementar funções: adicionarItem, removerItem, atualizarQuantidade
-   - Persistir no localStorage
-   - Criar hook `src/hooks/useCarrinho.ts`
-
-5. Tarefas do Sprint 2 (Etapa 2.4 - Navegação de Categorias):
+2. **Tarefas da Etapa 2.4 - Navegação de Categorias:**
    - Criar `src/components/cardapio/CategoriaNav.tsx`
-   - Implementar scroll horizontal
-   - Indicador de categoria ativa
+     - Tabs horizontais com categorias
+     - Scroll horizontal suave
+     - Destaque da categoria ativa
+     - Ícones + nomes das categorias
+   - Integrar com API (GET /cardapio/)
+   - Testar com dados reais do backend
 
-**Arquivos de referência criados:**
+**Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio
 - `frontend/src/types/cardapio.types.ts` - Tipos TypeScript
 - `frontend/src/lib/utils.ts` - Funções utilitárias
+- `frontend/src/contexts/CarrinhoContext.tsx` - Context do carrinho
+- `frontend/src/components/layout/` - Header, Footer, Layout
+- `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage
 
 **Comandos úteis:**
 ```bash
@@ -632,4 +648,7 @@ npm run build
 
 # Verificar TypeScript
 npx tsc --noEmit
+
+# Servidor dev
+npm run dev
 ```

@@ -110,7 +110,7 @@ export function CarrinhoProvider({ children }: CarrinhoProviderProps) {
   /**
    * Adiciona um novo item ao carrinho
    */
-  const adicionarItem = (itemData: Omit<ItemCarrinho, 'id'>) => {
+  const adicionarItem = (itemData: Omit<ItemCarrinho, 'id' | 'preco_total'>) => {
     const novoItem: ItemCarrinho = {
       id: crypto.randomUUID(),
       ...itemData,
