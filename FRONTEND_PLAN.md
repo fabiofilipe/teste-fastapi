@@ -2,12 +2,12 @@
 
 **Data de Criação:** 13/12/2025
 **Última Atualização:** 26/12/2025 BRT
-**Fase:** 1.3 - Sistema de Categorias e Cardápio Dinâmico
+**Fase:** 1.4 - Modal de Customização
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 3 em progresso - 67% (40%)
-**Sprint Atual:** Sprint 3 - Listagem de Produtos [EM PROGRESSO]
-**Próxima Etapa:** Etapa 3.3 - Página de Cardápio
+**Progresso Geral:** Sprint 3 concluído - 100% (43%)
+**Sprint Atual:** Sprint 4 - Modal de Customização [PRÓXIMO]
+**Próxima Etapa:** Etapa 4.1 - Modal Base
 
 ---
 
@@ -487,11 +487,55 @@ src/
 - ✅ Props tipadas e documentadas
 - ✅ Componente reutilizável e extensível
 
-#### Etapa 3.3: Página de Cardápio
-- [ ] Criar página `Cardapio.tsx`
-- [ ] Integrar `CategoriaNav` + grid de produtos
-- [ ] Filtrar produtos por categoria selecionada
-- [ ] Implementar scroll suave ao trocar categoria
+#### Etapa 3.3: Página de Cardápio [CONCLUÍDO - 26/12/2025]
+- [x] Criar página `Cardapio.tsx`
+- [x] Integrar `CategoriaNav` + grid de produtos
+- [x] Filtrar produtos por categoria selecionada
+- [x] Implementar scroll suave ao trocar categoria
+
+**Arquivos criados:**
+- `frontend/src/pages/Cardapio.tsx` - Página completa de cardápio
+- `frontend/src/App.tsx` - Atualizado para usar a página Cardapio
+
+**Features:**
+- ✅ **Integração completa:**
+  - CategoriaNav sticky no topo (z-index + shadow)
+  - Grid responsivo de produtos (1 → 2 → 3 → 4 colunas)
+  - Usa hooks useCardapio() e useCarrinho()
+- ✅ **Filtros dinâmicos:**
+  - Filtrar produtos por categoria selecionada
+  - Toggle de categoria (clicar novamente desseleciona)
+  - Exibir "Todos os Produtos" quando nenhuma categoria está selecionada
+  - Contador de produtos encontrados
+- ✅ **Scroll suave:**
+  - Auto-scroll para seção de produtos ao trocar categoria
+  - scroll-mt-24 para compensar header fixo
+  - Transição suave (behavior: smooth)
+- ✅ **Estados de UI:**
+  - Loading state (fullScreen com spinner)
+  - Error state (fullScreen com botão retry)
+  - Empty state (nenhuma categoria/produto)
+  - Mensagem "Nenhum produto encontrado" por categoria
+- ✅ **Header da página:**
+  - Título "Nosso Cardápio"
+  - Descrição explicativa
+  - Design centralizado e responsivo
+- ✅ **Preparação para próximas etapas:**
+  - Handler handleVerDetalhes() (modal Sprint 4)
+  - Handler handleCarrinhoClick() (sidebar Sprint 5)
+  - Alerts temporários com mensagens informativas
+- ✅ **Layout consistente:**
+  - Usa componente Layout com maxWidth="7xl"
+  - Badge de carrinho integrado no header
+  - Footer informativo
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 310.06 kB (100.74 kB gzip)
+- ✅ Integração perfeita com API via React Query
+- ✅ Responsividade mobile-first
+- ✅ Código limpo e bem estruturado
+- ✅ Componentes reutilizados (Layout, CategoriaNav, ProdutoCard)
 
 ---
 
@@ -694,26 +738,28 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 2.3: Context do Carrinho (CarrinhoContext + useCarrinho hook)
 - ✅ Etapa 2.4: Navegação de Categorias (CategoriaNav + useCardapio hook)
 
-**Sprint 3: Listagem de Produtos** - 67% completo (26/12/2025)
+**Sprint 3: Listagem de Produtos** - 100% completo (26/12/2025)
 - ✅ Etapa 3.1: Hook de Cardápio (useCardapio, useProdutosPorCategoria, useBuscaProdutos)
 - ✅ Etapa 3.2: Cards de Produtos (ProdutoCard.tsx + TestProdutoCard.tsx)
-- ⏳ Etapa 3.3: Página de Cardápio (pendente)
+- ✅ Etapa 3.3: Página de Cardápio (Cardapio.tsx + integração completa)
 
-### Próximo Passo: Sprint 3 - Etapa 3.3 (Página de Cardápio)
+### Próximo Passo: Sprint 4 - Etapa 4.1 (Modal Base)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 3.3 - Página de Cardápio:**
-   - Criar `src/pages/Cardapio.tsx`
-     - Integrar CategoriaNav no topo
-     - Grid de produtos usando ProdutoCard
-     - Filtrar produtos por categoria selecionada
-     - Estados de loading, erro e lista vazia
-     - Scroll suave ao trocar categoria
-   - Atualizar App.tsx para usar a página Cardapio
-   - Testar integração completa com dados da API
+2. **Tarefas da Etapa 4.1 - Modal Base:**
+   - Criar `src/components/common/Modal.tsx`
+     - Componente genérico e reutilizável
+     - Overlay com backdrop
+     - Animações de entrada/saída
+     - Fechar com ESC, click fora ou botão X
+     - Controle de scroll (bloquear body quando aberto)
+     - Acessibilidade (focus trap, aria-labels)
+     - Tamanhos configuráveis (sm, md, lg, xl, full)
+   - Criar arquivo de teste
+   - Validar TypeScript e build
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
@@ -724,6 +770,7 @@ VITE_API_URL=http://localhost:8000
 - `frontend/src/components/layout/` - Header, Footer, Layout
 - `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage
 - `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard
+- `frontend/src/pages/` - Cardapio
 
 **Comandos úteis:**
 ```bash
