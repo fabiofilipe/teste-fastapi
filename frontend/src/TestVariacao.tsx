@@ -90,14 +90,46 @@ function TestVariacao() {
   const [variacaoStandalone, setVariacaoStandalone] = useState<ProdutoVariacao | null>(null)
 
   // Handler para adicionar ao carrinho
-  const handleAddToCart = (produto: Produto, variacao: ProdutoVariacao) => {
-    alert(
+  const handleAddToCart = (
+    produto: Produto,
+    variacao: ProdutoVariacao,
+    customizacao: {
+      ingredientesAdicionados: any[]
+      ingredientesRemovidos: number[]
+      observacoes: string
+      precoIngredientes: number
+    }
+  ) => {
+    const precoTotal = variacao.preco + customizacao.precoIngredientes
+
+    let mensagem =
       `Produto adicionado ao carrinho!\n\n` +
-        `Produto: ${produto.nome}\n` +
-        `Tamanho: ${variacao.tamanho}\n` +
-        `Preço: R$ ${variacao.preco.toFixed(2)}\n\n` +
-        `(Funcionalidade completa será implementada nas próximas etapas)`
-    )
+      `📦 Produto: ${produto.nome}\n` +
+      `📏 Tamanho: ${variacao.tamanho}\n` +
+      `💰 Preço base: R$ ${variacao.preco.toFixed(2)}\n`
+
+    if (customizacao.ingredientesAdicionados.length > 0) {
+      mensagem += `\n✨ Ingredientes adicionados:\n`
+      customizacao.ingredientesAdicionados.forEach((ing) => {
+        mensagem += `  • ${ing.nome} (+R$ ${ing.preco_adicional.toFixed(2)})\n`
+      })
+    }
+
+    if (customizacao.ingredientesRemovidos.length > 0) {
+      mensagem += `\n❌ Ingredientes removidos: ${customizacao.ingredientesRemovidos.length}\n`
+    }
+
+    if (customizacao.observacoes) {
+      mensagem += `\n📝 Observações: ${customizacao.observacoes}\n`
+    }
+
+    if (customizacao.precoIngredientes > 0) {
+      mensagem += `\n💵 Ingredientes extras: +R$ ${customizacao.precoIngredientes.toFixed(2)}\n`
+    }
+
+    mensagem += `\n🎯 TOTAL: R$ ${precoTotal.toFixed(2)}`
+
+    alert(mensagem)
   }
 
   return (
@@ -105,10 +137,10 @@ function TestVariacao() {
       <div className="py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Teste: Seletor de Variação + Modal de Produto
+            Teste: Modal de Produto Completo
           </h1>
           <p className="text-gray-600">
-            Etapa 4.2 - Testando VariacaoSelector e ProdutoModal
+            Etapas 4.2 + 4.3 - Testando VariacaoSelector, IngredientesCustomizacao e ProdutoModal
           </p>
         </div>
 
@@ -222,7 +254,7 @@ function TestVariacao() {
         {/* Features testadas */}
         <Card className="mt-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Features Implementadas (Etapa 4.2):
+            Features Implementadas (Etapas 4.2 + 4.3):
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
             <div className="flex items-start gap-2">
@@ -239,39 +271,39 @@ function TestVariacao() {
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Auto-seleção da primeira variação disponível</span>
+              <span className="text-gray-700">Ingredientes padrão (obrigatórios e opcionais)</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Indicador visual de seleção (check icon)</span>
+              <span className="text-gray-700">Remover ingredientes opcionais (checkbox)</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Estados hover, focus e disabled</span>
+              <span className="text-gray-700">Adicionar ingredientes extras (8 opções disponíveis)</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Layout vertical e horizontal</span>
+              <span className="text-gray-700">Preço adicional de cada ingrediente exibido</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Acessibilidade (role="radiogroup", aria-checked)</span>
+              <span className="text-gray-700">Cálculo de preço em tempo real (base + extras)</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Badge para variações indisponíveis</span>
+              <span className="text-gray-700">Campo de observações (200 caracteres)</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Modal de produto com imagem e descrição</span>
+              <span className="text-gray-700">Resumo detalhado do preço total</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Integração com Modal base (Etapa 4.1)</span>
+              <span className="text-gray-700">Estados visuais (hover, selected, removed, added)</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span className="text-gray-700">Botão "Adicionar ao Carrinho" (placeholder)</span>
+              <span className="text-gray-700">Alert detalhado ao adicionar ao carrinho</span>
             </div>
           </div>
         </Card>
@@ -279,19 +311,13 @@ function TestVariacao() {
         {/* Próximas etapas */}
         <Card className="mt-6 bg-blue-50 border-blue-200">
           <h2 className="text-xl font-semibold text-blue-900 mb-4">
-            Próximas Etapas:
+            Próxima Etapa:
           </h2>
           <div className="space-y-2 text-sm text-blue-800">
             <div className="flex items-start gap-2">
               <span className="font-bold">⏳</span>
               <span>
-                <strong>Etapa 4.3:</strong> Customização de Ingredientes (adicionar/remover ingredientes)
-              </span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="font-bold">⏳</span>
-              <span>
-                <strong>Etapa 4.4:</strong> Resumo e Adicionar ao Carrinho (quantidade, cálculo de preço total)
+                <strong>Etapa 4.4:</strong> Resumo e Adicionar ao Carrinho (seletor de quantidade e integração final com carrinho)
               </span>
             </div>
           </div>
