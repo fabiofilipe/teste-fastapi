@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Modal from '@/components/common/Modal'
 import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
+import QuantidadeSelector from '@/components/common/QuantidadeSelector'
 import VariacaoSelector from './VariacaoSelector'
 import IngredientesCustomizacao from './IngredientesCustomizacao'
 import { formatarPreco } from '@/lib/utils'
@@ -37,7 +38,8 @@ interface ProdutoModalProps {
   onAddToCart?: (
     produto: Produto,
     variacao: ProdutoVariacao,
-    customizacao: CustomizacaoData
+    customizacao: CustomizacaoData,
+    quantidade: number
   ) => void
 }
 
@@ -53,6 +55,9 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
     precoIngredientes: 0,
   })
 
+  // Estado da quantidade
+  const [quantidade, setQuantidade] = useState(1)
+
   // Resetar seleção quando o produto mudar ou modal fechar
   useEffect(() => {
     if (!isOpen || !produto) {
@@ -63,6 +68,7 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
         observacoes: '',
         precoIngredientes: 0,
       })
+      setQuantidade(1)
       return
     }
 
@@ -78,7 +84,7 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
     if (!produto || !variacaoSelecionada) return
 
     if (onAddToCart) {
-      onAddToCart(produto, variacaoSelecionada, customizacao)
+      onAddToCart(produto, variacaoSelecionada, customizacao, quantidade)
     }
 
     // Fechar modal
@@ -98,7 +104,8 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
 
   // Calcular preços
   const precoBase = variacaoSelecionada?.preco || 0
-  const precoTotal = precoBase + customizacao.precoIngredientes
+  const precoUnitario = precoBase + customizacao.precoIngredientes
+  const precoTotal = precoUnitario * quantidade
 
   return (
     <Modal
@@ -159,8 +166,30 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
           </div>
         )}
 
+        {/* Quantidade */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            Quantidade
+          </h3>
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <span className="text-sm text-gray-700">
+              Quantas unidades você deseja?
+            </span>
+            <QuantidadeSelector
+              quantidade={quantidade}
+              onChange={setQuantidade}
+              min={1}
+              max={10}
+              disabled={!produtoDisponivel}
+            />
+          </div>
+        </div>
+
         {/* Resumo de preço */}
         <div className="border-t border-gray-200 pt-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            Resumo do Pedido
+          </h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Preço base:</span>
@@ -176,16 +205,29 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
                 </span>
               </div>
             )}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-              <span className="text-base font-semibold text-gray-900">Total:</span>
+            {quantidade > 1 && (
+              <>
+                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                  <span className="text-sm text-gray-600">Subtotal unitário:</span>
+                  <span className="text-base font-semibold text-gray-900">
+                    {formatarPreco(precoUnitario)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Quantidade:</span>
+                  <span className="text-base font-semibold text-gray-900">
+                    × {quantidade}
+                  </span>
+                </div>
+              </>
+            )}
+            <div className="flex items-center justify-between pt-3 border-t-2 border-gray-300">
+              <span className="text-lg font-bold text-gray-900">Total:</span>
               <span className="text-2xl font-bold text-primary-600">
                 {variacaoSelecionada ? formatarPreco(precoTotal) : '—'}
               </span>
             </div>
           </div>
-          <p className="text-xs text-gray-500 italic mt-2">
-            (Seletor de quantidade será implementado na Etapa 4.4)
-          </p>
         </div>
       </div>
 

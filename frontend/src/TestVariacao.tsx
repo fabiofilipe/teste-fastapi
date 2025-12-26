@@ -98,9 +98,11 @@ function TestVariacao() {
       ingredientesRemovidos: number[]
       observacoes: string
       precoIngredientes: number
-    }
+    },
+    quantidade: number
   ) => {
-    const precoTotal = variacao.preco + customizacao.precoIngredientes
+    const precoUnitario = variacao.preco + customizacao.precoIngredientes
+    const precoTotal = precoUnitario * quantidade
 
     let mensagem =
       `Produto adicionado ao carrinho!\n\n` +
@@ -125,6 +127,11 @@ function TestVariacao() {
 
     if (customizacao.precoIngredientes > 0) {
       mensagem += `\n💵 Ingredientes extras: +R$ ${customizacao.precoIngredientes.toFixed(2)}\n`
+    }
+
+    if (quantidade > 1) {
+      mensagem += `\n📊 Subtotal unitário: R$ ${precoUnitario.toFixed(2)}\n`
+      mensagem += `📦 Quantidade: × ${quantidade}\n`
     }
 
     mensagem += `\n🎯 TOTAL: R$ ${precoTotal.toFixed(2)}`
