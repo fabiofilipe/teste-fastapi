@@ -5,9 +5,9 @@
 **Fase:** 1.4 - Modal de Customização
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 4 em progresso - 50% (49%)
+**Progresso Geral:** Sprint 4 em progresso - 75% (52%)
 **Sprint Atual:** Sprint 4 - Modal de Customização [EM PROGRESSO]
-**Próxima Etapa:** Etapa 4.3 - Customização de Ingredientes
+**Próxima Etapa:** Etapa 4.4 - Resumo e Adicionar ao Carrinho
 
 ---
 
@@ -664,12 +664,91 @@ src/
 - ✅ Modal abre/fecha corretamente
 - ✅ Componentes reutilizáveis e bem tipados
 
-#### Etapa 4.3: Customização de Ingredientes
-- [ ] Criar lista de ingredientes
-- [ ] Listar ingredientes padrão (disabled se obrigatório)
-- [ ] Listar ingredientes adicionais disponíveis
-- [ ] Calcular preço de ingredientes em tempo real
-- [ ] Adicionar campo de observações
+#### Etapa 4.3: Customização de Ingredientes [CONCLUÍDO - 26/12/2025]
+- [x] Criar lista de ingredientes
+- [x] Listar ingredientes padrão (disabled se obrigatório)
+- [x] Listar ingredientes adicionais disponíveis
+- [x] Calcular preço de ingredientes em tempo real
+- [x] Adicionar campo de observações
+
+**Arquivos criados:**
+- `frontend/src/components/cardapio/IngredientesCustomizacao.tsx` - Componente de customização completo
+- `frontend/src/components/cardapio/ProdutoModal.tsx` - Atualizado com integração
+
+**Features:**
+- ✅ **IngredientesCustomizacao Component:**
+  - Separação clara de ingredientes (obrigatórios, opcionais e extras)
+  - Lista de ingredientes padrão obrigatórios (somente visualização)
+  - Lista de ingredientes padrão opcionais (checkbox para remover)
+  - 8 ingredientes extras disponíveis para adicionar
+  - Indicadores visuais distintos (check, X, plus, minus icons)
+  - Estados visuais para cada tipo (verde/incluído, vermelho/removido, cinza/obrigatório)
+  - Preço adicional exibido ao lado de cada ingrediente extra
+  - Campo de observações com contador de caracteres (máx 200)
+  - Cálculo automático do preço dos ingredientes adicionados
+  - Callback onChange com dados completos de customização
+- ✅ **Ingredientes Padrão Obrigatórios:**
+  - Exibidos com background cinza
+  - Ícone de check fixo
+  - Label "Obrigatório"
+  - Não podem ser removidos
+- ✅ **Ingredientes Padrão Opcionais:**
+  - Checkbox interativo (incluir/remover)
+  - Visual de linha cortada quando removido
+  - Ícone X quando removido
+  - Background verde quando incluído, cinza quando removido
+  - Transições suaves entre estados
+- ✅ **Ingredientes Extras:**
+  - Lista completa de 8 opções:
+    - Borda Recheada (Catupiry) - R$ 8,00
+    - Borda Recheada (Cheddar) - R$ 8,00
+    - Bacon - R$ 5,00
+    - Azeitona Preta - R$ 3,00
+    - Palmito - R$ 6,00
+    - Rúcula - R$ 4,00
+    - Tomate Seco - R$ 5,00
+    - Orégano Extra - R$ 0,50
+  - Botões de adicionar com ícone plus
+  - Lista de ingredientes adicionados (com background verde)
+  - Botão de remover ingrediente extra (minus icon)
+  - Preço formatado ao lado de cada item
+- ✅ **Cálculo de Preço em Tempo Real:**
+  - Soma automática dos ingredientes adicionados
+  - Atualização instantânea ao adicionar/remover
+  - Display destacado do valor total dos extras
+  - Formato em Real (R$)
+- ✅ **Campo de Observações:**
+  - Textarea responsivo (3 linhas, altura fixa)
+  - Placeholder explicativo
+  - Contador de caracteres (atual/máximo)
+  - Limite de 200 caracteres
+  - Bordas com estados focus
+- ✅ **Integração com ProdutoModal:**
+  - Interface CustomizacaoData tipada
+  - Estado gerenciado no modal
+  - Callback onAddToCart atualizado (3 parâmetros)
+  - Resumo de preço atualizado:
+    - Preço base (variação)
+    - Ingredientes adicionais (se houver)
+    - Total (base + extras)
+  - Reset automático ao fechar modal
+- ✅ **UX/UI:**
+  - Cores consistentes (verde=adicionado, vermelho=removido, cinza=obrigatório)
+  - Ícones intuitivos (Lucide React)
+  - Hover states em todos os botões
+  - Transições suaves (transition-all)
+  - Espaçamento adequado entre seções
+  - Labels e descrições claras
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 274.09 kB (84.17 kB gzip)
+- ✅ Cálculo de preço correto
+- ✅ Estados visuais funcionando
+- ✅ Integração perfeita com ProdutoModal
+- ✅ Reset de estado ao fechar modal
+- ✅ Alert detalhado mostra todos os dados de customização
+- ✅ Componente reutilizável e bem tipado
 
 #### Etapa 4.4: Resumo e Adicionar ao Carrinho
 - [ ] Criar seletor de quantidade (+ e -)
@@ -856,28 +935,28 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 3.2: Cards de Produtos (ProdutoCard.tsx + TestProdutoCard.tsx)
 - ✅ Etapa 3.3: Página de Cardápio (Cardapio.tsx + integração completa)
 
-**Sprint 4: Modal de Customização** - 50% completo (26/12/2025)
+**Sprint 4: Modal de Customização** - 75% completo (26/12/2025)
 - ✅ Etapa 4.1: Modal Base (Modal.tsx + TestModal.tsx)
 - ✅ Etapa 4.2: Seletor de Variação (VariacaoSelector + ProdutoModal base)
-- ⏳ Etapa 4.3: Customização de Ingredientes (pendente)
+- ✅ Etapa 4.3: Customização de Ingredientes (IngredientesCustomizacao + integração)
 - ⏳ Etapa 4.4: Resumo e Adicionar ao Carrinho (pendente)
 
-### Próximo Passo: Sprint 4 - Etapa 4.3 (Customização de Ingredientes)
+### Próximo Passo: Sprint 4 - Etapa 4.4 (Resumo e Adicionar ao Carrinho)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 4.3 - Customização de Ingredientes:**
-   - Criar componente de lista de ingredientes
-   - Exibir ingredientes padrão (obrigatórios e opcionais)
-   - Checkbox para remover ingredientes opcionais
-   - Lista de ingredientes adicionais disponíveis
-   - Checkbox para adicionar ingredientes extras
-   - Mostrar preço adicional de cada ingrediente
-   - Calcular preço de ingredientes em tempo real
-   - Campo de observações (textarea)
-   - Integrar no ProdutoModal
+2. **Tarefas da Etapa 4.4 - Resumo e Adicionar ao Carrinho:**
+   - Criar componente QuantidadeSelector
+   - Seletor de quantidade com botões + e - (mín: 1, máx: 10)
+   - Calcular preço total (base + ingredientes) × quantidade
+   - Exibir resumo detalhado do pedido
+   - Integração final com CarrinhoContext
+   - Função adicionarItem() do carrinho
+   - Feedback visual de sucesso ao adicionar
+   - Fechar modal após adicionar
+   - Toast/notificação de confirmação
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
@@ -887,7 +966,7 @@ VITE_API_URL=http://localhost:8000
 - `frontend/src/hooks/useCardapio.ts` - Hooks React Query (3 hooks)
 - `frontend/src/components/layout/` - Header, Footer, Layout
 - `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage, Modal
-- `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard, VariacaoSelector, ProdutoModal
+- `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard, VariacaoSelector, ProdutoModal, IngredientesCustomizacao
 - `frontend/src/pages/` - Cardapio
 
 **Comandos úteis:**
