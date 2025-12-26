@@ -1,18 +1,8 @@
-import { useState } from 'react'
-import { Search, ShoppingCart, Plus, Trash2 } from 'lucide-react'
-import Layout from './components/layout/Layout'
-import Button from './components/common/Button'
-import Badge from './components/common/Badge'
-import Card from './components/common/Card'
-import Loading from './components/common/Loading'
-import ErrorMessage from './components/common/ErrorMessage'
-import CategoriaNav from './components/cardapio/CategoriaNav'
-import { CarrinhoProvider, useCarrinho } from './contexts/CarrinhoContext'
-import { useCardapio } from './hooks/useCardapio'
-import type { Categoria } from './types/cardapio.types'
+import { CarrinhoProvider } from './contexts/CarrinhoContext'
+import TestProdutoCard from './TestProdutoCard'
 
 // ============================================================================
-// APP CONTENT (usa o hook useCarrinho)
+// APP CONTENT
 // ============================================================================
 
 function AppContent() {
