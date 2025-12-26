@@ -1,13 +1,13 @@
 # PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
 
 **Data de Criação:** 13/12/2025
-**Última Atualização:** 17/12/2025 22:52 BRT
+**Última Atualização:** 26/12/2025 BRT
 **Fase:** 1.3 - Sistema de Categorias e Cardápio Dinâmico
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 2 concluído - 100% (30%)
-**Sprint Atual:** Sprint 3 - Listagem de Produtos [PRÓXIMO]
-**Próxima Etapa:** Etapa 3.1 - Hook de Cardápio (já criado) + Etapa 3.2 - Cards de Produtos
+**Progresso Geral:** Sprint 3 em progresso - 67% (40%)
+**Sprint Atual:** Sprint 3 - Listagem de Produtos [EM PROGRESSO]
+**Próxima Etapa:** Etapa 3.3 - Página de Cardápio
 
 ---
 
@@ -445,12 +445,47 @@ src/
 
 **Nota:** Esta etapa foi implementada junto com a Etapa 2.4. Ver detalhes em `frontend/src/hooks/useCardapio.ts`.
 
-#### Etapa 3.2: Cards de Produtos
-- [ ] Criar `ProdutoCard` com layout responsivo
-- [ ] Adicionar imagem, nome, descrição
-- [ ] Mostrar faixa de preços (variações)
-- [ ] Implementar hover effects
-- [ ] Grid responsivo
+#### Etapa 3.2: Cards de Produtos [CONCLUÍDO - 26/12/2025]
+- [x] Criar `ProdutoCard` com layout responsivo
+- [x] Adicionar imagem, nome, descrição
+- [x] Mostrar faixa de preços (variações)
+- [x] Implementar hover effects
+- [x] Grid responsivo
+
+**Arquivos criados:**
+- `frontend/src/components/cardapio/ProdutoCard.tsx` - Componente de card de produto completo
+- `frontend/src/TestProdutoCard.tsx` - Arquivo de teste temporário (6 cenários diferentes)
+
+**Features:**
+- ✅ **Layout responsivo** - Card com aspect ratio 4:3 para imagens
+- ✅ **Imagem com lazy loading** - Carregamento otimizado de imagens
+- ✅ **Placeholder automático** - Imagem gerada quando produto não tem imagem
+- ✅ **Badges de status:**
+  - Produto indisponível (overlay com badge "Indisponível")
+  - Sem variações (badge de aviso)
+  - Customizável (badge quando tem ingredientes)
+  - Contador de tamanhos disponíveis
+- ✅ **Faixa de preços inteligente:**
+  - "A partir de R$ X até R$ Y" (múltiplas variações)
+  - Preço único quando todas variações têm mesmo valor
+  - "Consulte disponibilidade" para produtos sem variações
+- ✅ **Hover effects:**
+  - Elevação do card (shadow-md + translate)
+  - Escala da imagem (scale-105)
+  - Transições suaves (duration-300)
+- ✅ **Line-clamp** - Limita nome e descrição a 2 linhas
+- ✅ **Botão de ação** - "Ver detalhes" (disabled se indisponível)
+- ✅ **Formatação de preço** - Valores em Real (R$) usando Intl.NumberFormat
+- ✅ **Reutilização de componentes** - Usa Card, Badge e Button já criados
+- ✅ **TypeScript** - Totalmente tipado com forwardRef
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 258.86 kB (81.05 kB gzip)
+- ✅ Grid responsivo (1 col mobile → 2 tablet → 3 desktop → 4 xl)
+- ✅ 6 cenários testados (disponível, indisponível, sem imagem, sem descrição, etc)
+- ✅ Props tipadas e documentadas
+- ✅ Componente reutilizável e extensível
 
 #### Etapa 3.3: Página de Cardápio
 - [ ] Criar página `Cardapio.tsx`
@@ -659,27 +694,26 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 2.3: Context do Carrinho (CarrinhoContext + useCarrinho hook)
 - ✅ Etapa 2.4: Navegação de Categorias (CategoriaNav + useCardapio hook)
 
-**Sprint 3: Listagem de Produtos** - 33% completo (17/12/2025)
+**Sprint 3: Listagem de Produtos** - 67% completo (26/12/2025)
 - ✅ Etapa 3.1: Hook de Cardápio (useCardapio, useProdutosPorCategoria, useBuscaProdutos)
-- ⏳ Etapa 3.2: Cards de Produtos (pendente)
+- ✅ Etapa 3.2: Cards de Produtos (ProdutoCard.tsx + TestProdutoCard.tsx)
 - ⏳ Etapa 3.3: Página de Cardápio (pendente)
 
-### Próximo Passo: Sprint 3 - Etapa 3.2 (Cards de Produtos)
+### Próximo Passo: Sprint 3 - Etapa 3.3 (Página de Cardápio)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 3.2 - Cards de Produtos:**
-   - Criar `src/components/cardapio/ProdutoCard.tsx`
-     - Layout responsivo com imagem do produto
-     - Nome, descrição e preço
-     - Badge de disponibilidade
-     - Faixa de preços (variações)
-     - Hover effects
-     - Botão "Ver detalhes"
-   - Grid responsivo
-   - Implementar lazy loading de imagens
+2. **Tarefas da Etapa 3.3 - Página de Cardápio:**
+   - Criar `src/pages/Cardapio.tsx`
+     - Integrar CategoriaNav no topo
+     - Grid de produtos usando ProdutoCard
+     - Filtrar produtos por categoria selecionada
+     - Estados de loading, erro e lista vazia
+     - Scroll suave ao trocar categoria
+   - Atualizar App.tsx para usar a página Cardapio
+   - Testar integração completa com dados da API
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
@@ -689,7 +723,7 @@ VITE_API_URL=http://localhost:8000
 - `frontend/src/hooks/useCardapio.ts` - Hooks React Query (3 hooks)
 - `frontend/src/components/layout/` - Header, Footer, Layout
 - `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage
-- `frontend/src/components/cardapio/` - CategoriaNav
+- `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard
 
 **Comandos úteis:**
 ```bash
