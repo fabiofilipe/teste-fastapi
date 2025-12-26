@@ -3,9 +3,17 @@ import Modal from '@/components/common/Modal'
 import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
 import VariacaoSelector from './VariacaoSelector'
+import IngredientesCustomizacao from './IngredientesCustomizacao'
 import { formatarPreco } from '@/lib/utils'
-import type { Produto, ProdutoVariacao } from '@/types/cardapio.types'
+import type { Produto, ProdutoVariacao, Ingrediente } from '@/types/cardapio.types'
 import { ShoppingCart } from 'lucide-react'
+
+interface CustomizacaoData {
+  ingredientesAdicionados: Ingrediente[]
+  ingredientesRemovidos: number[]
+  observacoes: string
+  precoIngredientes: number
+}
 
 interface ProdutoModalProps {
   /**
@@ -26,17 +34,35 @@ interface ProdutoModalProps {
   /**
    * Callback ao adicionar ao carrinho
    */
-  onAddToCart?: (produto: Produto, variacao: ProdutoVariacao) => void
+  onAddToCart?: (
+    produto: Produto,
+    variacao: ProdutoVariacao,
+    customizacao: CustomizacaoData
+  ) => void
 }
 
 function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalProps) {
   // Estado da variação selecionada
   const [variacaoSelecionada, setVariacaoSelecionada] = useState<ProdutoVariacao | null>(null)
 
+  // Estado da customização de ingredientes
+  const [customizacao, setCustomizacao] = useState<CustomizacaoData>({
+    ingredientesAdicionados: [],
+    ingredientesRemovidos: [],
+    observacoes: '',
+    precoIngredientes: 0,
+  })
+
   // Resetar seleção quando o produto mudar ou modal fechar
   useEffect(() => {
     if (!isOpen || !produto) {
       setVariacaoSelecionada(null)
+      setCustomizacao({
+        ingredientesAdicionados: [],
+        ingredientesRemovidos: [],
+        observacoes: '',
+        precoIngredientes: 0,
+      })
       return
     }
 
@@ -51,9 +77,8 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
   const handleAddToCart = () => {
     if (!produto || !variacaoSelecionada) return
 
-    // TODO: Adicionar lógica completa de customização (Sprint 4.3 e 4.4)
     if (onAddToCart) {
-      onAddToCart(produto, variacaoSelecionada)
+      onAddToCart(produto, variacaoSelecionada, customizacao)
     }
 
     // Fechar modal
@@ -71,8 +96,9 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
   // Verificar se produto está disponível
   const produtoDisponivel = produto.disponivel && produto.variacoes.some((v) => v.disponivel)
 
-  // Calcular preço base
+  // Calcular preços
   const precoBase = variacaoSelecionada?.preco || 0
+  const precoTotal = precoBase + customizacao.precoIngredientes
 
   return (
     <Modal
@@ -120,30 +146,45 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
           />
         </div>
 
-        {/* Informações sobre ingredientes (placeholder para Sprint 4.3) */}
+        {/* Customização de Ingredientes */}
         {produto.ingredientes.length > 0 && (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>✨ Customizável:</strong> Este produto possui{' '}
-              {produto.ingredientes.length} ingredientes que podem ser personalizados.
-              <br />
-              <em className="text-xs text-blue-600">
-                (Customização de ingredientes será implementada na Etapa 4.3)
-              </em>
-            </p>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              Personalize seu produto
+            </h3>
+            <IngredientesCustomizacao
+              produto={produto}
+              onChange={setCustomizacao}
+            />
           </div>
         )}
 
-        {/* Resumo de preço (placeholder para Sprint 4.4) */}
+        {/* Resumo de preço */}
         <div className="border-t border-gray-200 pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Preço base:</span>
-            <span className="text-xl font-bold text-primary-600">
-              {variacaoSelecionada ? formatarPreco(precoBase) : '—'}
-            </span>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Preço base:</span>
+              <span className="text-base font-semibold text-gray-900">
+                {variacaoSelecionada ? formatarPreco(precoBase) : '—'}
+              </span>
+            </div>
+            {customizacao.precoIngredientes > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Ingredientes adicionais:</span>
+                <span className="text-base font-semibold text-green-600">
+                  + {formatarPreco(customizacao.precoIngredientes)}
+                </span>
+              </div>
+            )}
+            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+              <span className="text-base font-semibold text-gray-900">Total:</span>
+              <span className="text-2xl font-bold text-primary-600">
+                {variacaoSelecionada ? formatarPreco(precoTotal) : '—'}
+              </span>
+            </div>
           </div>
-          <p className="text-xs text-gray-500 italic">
-            (Seletor de quantidade e cálculo completo será implementado na Etapa 4.4)
+          <p className="text-xs text-gray-500 italic mt-2">
+            (Seletor de quantidade será implementado na Etapa 4.4)
           </p>
         </div>
       </div>
