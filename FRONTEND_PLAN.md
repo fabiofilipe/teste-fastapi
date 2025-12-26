@@ -5,9 +5,9 @@
 **Fase:** 1.4 - Modal de Customização
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 3 concluído - 100% (43%)
-**Sprint Atual:** Sprint 4 - Modal de Customização [PRÓXIMO]
-**Próxima Etapa:** Etapa 4.1 - Modal Base
+**Progresso Geral:** Sprint 4 em progresso - 25% (46%)
+**Sprint Atual:** Sprint 4 - Modal de Customização [EM PROGRESSO]
+**Próxima Etapa:** Etapa 4.2 - Seletor de Variação
 
 ---
 
@@ -541,10 +541,71 @@ src/
 
 ### SPRINT 4: Modal de Customização
 
-#### Etapa 4.1: Modal Base
-- [ ] Criar componente `Modal` genérico
-- [ ] Implementar overlay e animações
-- [ ] Adicionar botão de fechar (ESC + click fora)
+#### Etapa 4.1: Modal Base [CONCLUÍDO - 26/12/2025]
+- [x] Criar componente `Modal` genérico
+- [x] Implementar overlay e animações
+- [x] Adicionar botão de fechar (ESC + click fora)
+
+**Arquivos criados:**
+- `frontend/src/components/common/Modal.tsx` - Componente Modal completo e reutilizável
+- `frontend/src/TestModal.tsx` - Arquivo de teste com 6 cenários diferentes
+
+**Features:**
+- ✅ **Overlay com backdrop:**
+  - Background preto semitransparente (bg-black/50)
+  - Animação de fade-in suave (duration-300)
+  - Click fora fecha modal (configurável)
+- ✅ **Animações de entrada/saída:**
+  - Zoom-in + fade-in + slide-in combinados
+  - Transições suaves com Tailwind animate-in
+  - Efeitos visuais profissionais
+- ✅ **Múltiplas formas de fechar:**
+  - Botão X no header (Lucide React icon)
+  - Pressionar ESC (listener de teclado)
+  - Clicar fora do modal (no overlay)
+  - Todas configuráveis via props
+- ✅ **Controle de scroll:**
+  - Bloqueia scroll do body quando modal aberto
+  - Preserva posição do scroll ao fechar
+  - Restaura estado original automaticamente
+- ✅ **Tamanhos configuráveis:**
+  - sm: max-w-md (pequeno)
+  - md: max-w-lg (médio - padrão)
+  - lg: max-w-2xl (grande)
+  - xl: max-w-4xl (extra grande)
+  - full: max-w-full (largura total)
+- ✅ **Acessibilidade:**
+  - Portal (renderiza no body via createPortal)
+  - ARIA labels (role="dialog", aria-modal="true")
+  - Focus automático no modal ao abrir
+  - Suporte a navegação por teclado
+  - aria-labelledby para título
+- ✅ **Customização:**
+  - Título opcional no header
+  - Footer customizável (ReactNode)
+  - Classes CSS adicionais (className, contentClassName)
+  - Props de controle granular
+- ✅ **Props configuráveis:**
+  - isOpen: boolean (controle externo)
+  - onClose: () => void (callback)
+  - title?: string
+  - size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+  - closeOnOverlayClick?: boolean (padrão: true)
+  - closeOnEsc?: boolean (padrão: true)
+  - showCloseButton?: boolean (padrão: true)
+  - footer?: ReactNode
+  - className?: string
+  - contentClassName?: string
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 264.10 kB (81.82 kB gzip)
+- ✅ Portal funcionando (modal renderizado no body)
+- ✅ 6 cenários testados (simples, footer, large, xl, restrito, confirmação)
+- ✅ Scroll bloqueado quando aberto
+- ✅ Todos os métodos de fechar funcionando
+- ✅ Responsividade mobile-first
+- ✅ Componente genérico e reutilizável
 
 #### Etapa 4.2: Seletor de Variação
 - [ ] Criar seletor com radio buttons
@@ -743,23 +804,24 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 3.2: Cards de Produtos (ProdutoCard.tsx + TestProdutoCard.tsx)
 - ✅ Etapa 3.3: Página de Cardápio (Cardapio.tsx + integração completa)
 
-### Próximo Passo: Sprint 4 - Etapa 4.1 (Modal Base)
+**Sprint 4: Modal de Customização** - 25% completo (26/12/2025)
+- ✅ Etapa 4.1: Modal Base (Modal.tsx + TestModal.tsx)
+- ⏳ Etapa 4.2: Seletor de Variação (pendente)
+- ⏳ Etapa 4.3: Customização de Ingredientes (pendente)
+- ⏳ Etapa 4.4: Resumo e Adicionar ao Carrinho (pendente)
+
+### Próximo Passo: Sprint 4 - Etapa 4.2 (Seletor de Variação)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 4.1 - Modal Base:**
-   - Criar `src/components/common/Modal.tsx`
-     - Componente genérico e reutilizável
-     - Overlay com backdrop
-     - Animações de entrada/saída
-     - Fechar com ESC, click fora ou botão X
-     - Controle de scroll (bloquear body quando aberto)
-     - Acessibilidade (focus trap, aria-labels)
-     - Tamanhos configuráveis (sm, md, lg, xl, full)
-   - Criar arquivo de teste
-   - Validar TypeScript e build
+2. **Tarefas da Etapa 4.2 - Seletor de Variação:**
+   - Criar componente de seleção de variação (radio buttons)
+   - Mostrar tamanho e preço de cada variação
+   - Atualizar preço base ao selecionar variação
+   - Design responsivo e acessível
+   - Integrar no modal de produto (ProdutoModal)
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
@@ -768,7 +830,7 @@ VITE_API_URL=http://localhost:8000
 - `frontend/src/contexts/CarrinhoContext.tsx` - Context do carrinho + useCarrinho hook
 - `frontend/src/hooks/useCardapio.ts` - Hooks React Query (3 hooks)
 - `frontend/src/components/layout/` - Header, Footer, Layout
-- `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage
+- `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage, Modal
 - `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard
 - `frontend/src/pages/` - Cardapio
 
