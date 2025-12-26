@@ -1,12 +1,12 @@
 import { CarrinhoProvider } from './contexts/CarrinhoContext'
-import Cardapio from './pages/Cardapio'
+import TestModal from './TestModal'
 
 // ============================================================================
 // APP CONTENT
 // ============================================================================
 
 function AppContent() {
-  return <Cardapio />
+  return <TestModal />
 }
 
 // ============================================================================
