@@ -5,9 +5,9 @@
 **Fase:** 1.4 - Modal de Customização
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 4 em progresso - 25% (46%)
+**Progresso Geral:** Sprint 4 em progresso - 50% (49%)
 **Sprint Atual:** Sprint 4 - Modal de Customização [EM PROGRESSO]
-**Próxima Etapa:** Etapa 4.2 - Seletor de Variação
+**Próxima Etapa:** Etapa 4.3 - Customização de Ingredientes
 
 ---
 
@@ -607,10 +607,62 @@ src/
 - ✅ Responsividade mobile-first
 - ✅ Componente genérico e reutilizável
 
-#### Etapa 4.2: Seletor de Variação
-- [ ] Criar seletor com radio buttons
-- [ ] Mostrar tamanho e preço de cada variação
-- [ ] Atualizar preço base ao selecionar
+#### Etapa 4.2: Seletor de Variação [CONCLUÍDO - 26/12/2025]
+- [x] Criar seletor com radio buttons
+- [x] Mostrar tamanho e preço de cada variação
+- [x] Atualizar preço base ao selecionar
+
+**Arquivos criados:**
+- `frontend/src/components/cardapio/VariacaoSelector.tsx` - Componente de seleção de variação
+- `frontend/src/components/cardapio/ProdutoModal.tsx` - Modal de produto com customização (base)
+- `frontend/src/TestVariacao.tsx` - Arquivo de teste com 4 cenários diferentes
+
+**Features:**
+- ✅ **VariacaoSelector Component:**
+  - Radio buttons customizados (sem input nativo)
+  - Design moderno com borda, background e ícone de check
+  - Exibe tamanho e preço formatado de cada variação
+  - Indicador visual de seleção (check icon + cores primary)
+  - Estados hover, focus e disabled
+  - Badge para variações indisponíveis
+  - Layout vertical e horizontal (configurável)
+  - Filtra automaticamente variações disponíveis
+  - Mensagem quando não há variações disponíveis
+  - Acessibilidade (role="radiogroup", aria-checked)
+  - forwardRef para controle externo
+- ✅ **ProdutoModal Component:**
+  - Integra Modal base (Etapa 4.1)
+  - Imagem do produto no topo (aspect ratio 3:2)
+  - Título e descrição do produto
+  - Overlay de indisponibilidade (quando aplicável)
+  - Integração com VariacaoSelector
+  - Auto-seleção da primeira variação disponível
+  - Preço base atualiza ao selecionar variação
+  - Placeholders para próximas etapas (ingredientes, quantidade)
+  - Footer com botões "Cancelar" e "Adicionar ao Carrinho"
+  - Botão de adicionar desabilitado quando produto/variação indisponível
+  - Reset de estado ao fechar modal
+  - Callback onAddToCart para integração com carrinho
+- ✅ **Atualização de preço em tempo real:**
+  - Preço base calculado da variação selecionada
+  - Display formatado em Real (R$)
+  - Atualização instantânea ao mudar variação
+- ✅ **Responsividade:**
+  - VariacaoSelector adapta layout (vertical padrão)
+  - Modal responsivo (size="lg", max-h-[90vh])
+  - Scroll interno quando conteúdo excede altura
+  - Grid de produtos no teste (1→2→4 colunas)
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 267.27 kB (82.79 kB gzip)
+- ✅ 4 cenários testados (4 variações, 3 variações com 1 indisponível, 1 variação fixa, produto indisponível)
+- ✅ Auto-seleção funcionando
+- ✅ Estados visuais corretos (hover, selected, disabled)
+- ✅ Acessibilidade implementada
+- ✅ Integração perfeita entre componentes
+- ✅ Modal abre/fecha corretamente
+- ✅ Componentes reutilizáveis e bem tipados
 
 #### Etapa 4.3: Customização de Ingredientes
 - [ ] Criar lista de ingredientes
@@ -804,24 +856,28 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 3.2: Cards de Produtos (ProdutoCard.tsx + TestProdutoCard.tsx)
 - ✅ Etapa 3.3: Página de Cardápio (Cardapio.tsx + integração completa)
 
-**Sprint 4: Modal de Customização** - 25% completo (26/12/2025)
+**Sprint 4: Modal de Customização** - 50% completo (26/12/2025)
 - ✅ Etapa 4.1: Modal Base (Modal.tsx + TestModal.tsx)
-- ⏳ Etapa 4.2: Seletor de Variação (pendente)
+- ✅ Etapa 4.2: Seletor de Variação (VariacaoSelector + ProdutoModal base)
 - ⏳ Etapa 4.3: Customização de Ingredientes (pendente)
 - ⏳ Etapa 4.4: Resumo e Adicionar ao Carrinho (pendente)
 
-### Próximo Passo: Sprint 4 - Etapa 4.2 (Seletor de Variação)
+### Próximo Passo: Sprint 4 - Etapa 4.3 (Customização de Ingredientes)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 4.2 - Seletor de Variação:**
-   - Criar componente de seleção de variação (radio buttons)
-   - Mostrar tamanho e preço de cada variação
-   - Atualizar preço base ao selecionar variação
-   - Design responsivo e acessível
-   - Integrar no modal de produto (ProdutoModal)
+2. **Tarefas da Etapa 4.3 - Customização de Ingredientes:**
+   - Criar componente de lista de ingredientes
+   - Exibir ingredientes padrão (obrigatórios e opcionais)
+   - Checkbox para remover ingredientes opcionais
+   - Lista de ingredientes adicionais disponíveis
+   - Checkbox para adicionar ingredientes extras
+   - Mostrar preço adicional de cada ingrediente
+   - Calcular preço de ingredientes em tempo real
+   - Campo de observações (textarea)
+   - Integrar no ProdutoModal
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
@@ -831,7 +887,7 @@ VITE_API_URL=http://localhost:8000
 - `frontend/src/hooks/useCardapio.ts` - Hooks React Query (3 hooks)
 - `frontend/src/components/layout/` - Header, Footer, Layout
 - `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage, Modal
-- `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard
+- `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard, VariacaoSelector, ProdutoModal
 - `frontend/src/pages/` - Cardapio
 
 **Comandos úteis:**
