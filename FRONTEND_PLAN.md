@@ -2,12 +2,12 @@
 
 **Data de Criação:** 13/12/2025
 **Última Atualização:** 26/12/2025 BRT
-**Fase:** 1.4 - Modal de Customização
+**Fase:** 2.1 - Carrinho de Compras
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 4 em progresso - 75% (52%)
-**Sprint Atual:** Sprint 4 - Modal de Customização [EM PROGRESSO]
-**Próxima Etapa:** Etapa 4.4 - Resumo e Adicionar ao Carrinho
+**Progresso Geral:** Sprint 4 concluído - 100% (57%)
+**Sprint Atual:** Sprint 5 - Carrinho de Compras [PRÓXIMO]
+**Próxima Etapa:** Etapa 5.1 - Sidebar do Carrinho
 
 ---
 
@@ -750,11 +750,103 @@ src/
 - ✅ Alert detalhado mostra todos os dados de customização
 - ✅ Componente reutilizável e bem tipado
 
-#### Etapa 4.4: Resumo e Adicionar ao Carrinho
-- [ ] Criar seletor de quantidade (+ e -)
-- [ ] Calcular preço total (base + ingredientes x quantidade)
-- [ ] Implementar botão "Adicionar ao carrinho"
-- [ ] Mostrar feedback de sucesso
+#### Etapa 4.4: Resumo e Adicionar ao Carrinho [CONCLUÍDO - 26/12/2025]
+- [x] Criar seletor de quantidade (+ e -)
+- [x] Calcular preço total (base + ingredientes x quantidade)
+- [x] Implementar botão "Adicionar ao carrinho"
+- [x] Mostrar feedback de sucesso
+
+**Arquivos criados/atualizados:**
+- `frontend/src/components/common/QuantidadeSelector.tsx` - Seletor de quantidade reutilizável
+- `frontend/src/components/cardapio/ProdutoModal.tsx` - Atualizado com seletor de quantidade e cálculos
+- `frontend/src/TestVariacao.tsx` - Atualizado para testar quantidade completa
+
+**Features:**
+- ✅ **QuantidadeSelector Component:**
+  - Botões +/- para incrementar/decrementar quantidade
+  - Display central mostrando valor atual
+  - Limites configuráveis (min/max, padrão 1-10)
+  - Três tamanhos disponíveis: sm, md, lg
+  - Estados visuais distintos (enabled/disabled)
+  - Cores primary quando habilitado, cinza quando desabilitado
+  - Botão + preenchido (bg-primary), botão - outline
+  - Desabilita automaticamente ao atingir limites
+  - Acessibilidade (aria-label, aria-live, role="group")
+  - forwardRef para controle externo
+- ✅ **ProdutoModal - Integração com Quantidade:**
+  - Seção "Quantidade" com label e QuantidadeSelector
+  - Estado de quantidade (padrão: 1)
+  - Reset de quantidade ao fechar modal
+  - Quantidade passada para callback onAddToCart
+  - Visual responsivo e consistente
+- ✅ **Cálculos de Preço Atualizados:**
+  - Preço unitário = preço base + ingredientes adicionais
+  - Preço total = preço unitário × quantidade
+  - Resumo detalhado mostrando:
+    - Preço base da variação
+    - Ingredientes adicionais (se houver)
+    - Subtotal unitário (quando quantidade > 1)
+    - Quantidade selecionada (quando > 1)
+    - Total final em destaque
+  - Formatação condicional: mostra breakdown apenas quando relevante
+  - Total sempre visível em fonte grande e cor primary
+- ✅ **Resumo do Pedido Completo:**
+  - Layout organizado com separadores visuais (border-t)
+  - Preço base sempre exibido
+  - Ingredientes adicionais destacados em verde (quando > 0)
+  - Breakdown de subtotal e quantidade aparece quando quantidade > 1:
+    ```
+    Preço base: R$ XX,XX
+    Ingredientes adicionais: + R$ X,XX
+    ─────────────────────
+    Subtotal unitário: R$ XX,XX
+    Quantidade: × N
+    ═════════════════════
+    Total: R$ XXX,XX
+    ```
+  - Total final em destaque (text-2xl, font-bold, primary-600)
+  - Mostra "—" quando nenhuma variação selecionada
+- ✅ **Botão Adicionar ao Carrinho:**
+  - Ícone de carrinho (ShoppingCart da lucide-react)
+  - Desabilitado quando produto/variação indisponível
+  - Desabilitado quando nenhuma variação selecionada
+  - Chama callback com 4 parâmetros: produto, variacao, customizacao, quantidade
+  - Fecha modal automaticamente após adicionar
+  - Visual primary com hover/active states
+- ✅ **Alert de Feedback (TestVariacao):**
+  - Mostra produto e tamanho
+  - Preço base
+  - Lista de ingredientes adicionados (com preços)
+  - Contagem de ingredientes removidos
+  - Observações (se houver)
+  - Subtotal unitário e quantidade (quando > 1)
+  - Total final calculado
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 276.77 kB (84.73 kB gzip)
+- ✅ Cálculo de preço correto para todas as combinações
+- ✅ Seletor de quantidade funcionando perfeitamente
+- ✅ Limites de quantidade respeitados (1-10)
+- ✅ Estados visuais corretos (botões desabilitados nos limites)
+- ✅ Resumo de preço mostra breakdown correto
+- ✅ Callback onAddToCart recebe todos os parâmetros corretos
+- ✅ Alert de teste mostra informações completas e corretas
+- ✅ Modal reseta todos os estados ao fechar (incluindo quantidade)
+- ✅ Componente QuantidadeSelector reutilizável em outros contextos
+- ✅ Layout responsivo e consistente
+
+**Sprint 4 - Resumo:**
+Sprint 4 completado com sucesso! Modal de customização totalmente funcional com:
+- ✅ 4 etapas implementadas (Modal Base, Variações, Ingredientes, Quantidade)
+- ✅ 5 componentes criados (Modal, VariacaoSelector, IngredientesCustomizacao, QuantidadeSelector, ProdutoModal)
+- ✅ Cálculo de preço em tempo real considerando base + ingredientes × quantidade
+- ✅ UX completa com estados visuais, animações e acessibilidade
+- ✅ Integração perfeita entre todos os componentes
+- ✅ Build final: 276.77 kB (84.73 kB gzip)
+- ✅ TypeScript sem erros, código limpo e bem documentado
+
+**Resultado:** Sistema completo de customização de produtos pronto para integração com carrinho (Sprint 5).
 
 ---
 
