@@ -228,57 +228,70 @@ const TestCarrinho: React.FC = () => {
         {/* Funcionalidades Testadas */}
         <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Funcionalidades Implementadas
+            Funcionalidades Implementadas - Sprint 5
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">✅ Estrutura</h3>
+              <h3 className="font-medium text-gray-900 mb-2">✅ Etapa 5.1: Sidebar</h3>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Drawer lateral direito</li>
+                <li>• Drawer lateral responsivo</li>
                 <li>• Overlay com backdrop</li>
-                <li>• Portal (renderiza no body)</li>
-                <li>• Responsivo (mobile-first)</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-900 mb-2">✅ Animações</h3>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Slide-in da direita</li>
-                <li>• Fade-in do overlay</li>
-                <li>• Transições suaves (300ms)</li>
-                <li>• Estados hover/active</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-900 mb-2">✅ Interações</h3>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Fechar com botão X</li>
-                <li>• Fechar com ESC</li>
-                <li>• Fechar clicando no overlay</li>
+                <li>• Animações slide-in/out</li>
+                <li>• Múltiplas formas de fechar</li>
                 <li>• Bloqueia scroll do body</li>
+                <li>• Estado vazio estilizado</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">✅ Conteúdo</h3>
+              <h3 className="font-medium text-gray-900 mb-2">✅ Etapa 5.2: Items</h3>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Estado vazio (mensagem)</li>
-                <li>• Lista de itens (básica)</li>
-                <li>• Resumo (subtotal/total)</li>
-                <li>• Botões de ação</li>
-                <li>• Badge com contador</li>
-                <li>• Limpar carrinho</li>
+                <li>• Layout compacto e clean</li>
+                <li>• Customizações detalhadas</li>
+                <li>• Seletor de quantidade inline</li>
+                <li>• Botão remover com confirm</li>
+                <li>• Preço atualiza em tempo real</li>
+                <li>• Badges coloridos (add/remove)</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">✅ Etapa 5.3: Resumo</h3>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Contador de produtos/itens</li>
+                <li>• Cálculo de subtotal</li>
+                <li>• Taxa de entrega (grátis)</li>
+                <li>• Total destacado</li>
+                <li>• Botão "Finalizar Pedido"</li>
+                <li>• Botão "Continuar Comprando"</li>
+                <li>• Opção "Limpar carrinho"</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">✅ Integrações</h3>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• CarrinhoContext completo</li>
+                <li>• Persistência em localStorage</li>
+                <li>• Cálculos automáticos</li>
+                <li>• Callbacks de ações</li>
+                <li>• Estados sincronizados</li>
+                <li>• TypeScript 100%</li>
               </ul>
             </div>
           </div>
         </div>
 
-        {/* Notas */}
-        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-sm text-yellow-800">
-            <strong>Nota:</strong> A Etapa 5.2 irá implementar o componente{' '}
-            <code className="px-1 py-0.5 bg-yellow-100 rounded">CarrinhoItem</code>{' '}
-            com layout detalhado, seletor de quantidade inline e botão de remover.
+        {/* Informações do Resumo */}
+        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800 mb-2">
+            <strong>Etapa 5.3 - Resumo do Carrinho:</strong>
           </p>
+          <ul className="text-sm text-blue-700 space-y-1 list-disc list-inside">
+            <li>Contador de produtos únicos vs total de itens</li>
+            <li>Subtotal calculado automaticamente pelo Context</li>
+            <li>Taxa de entrega exibida (preparada para futuras taxas)</li>
+            <li>Total destacado com cores primary</li>
+            <li>Ícones nos botões para melhor UX</li>
+            <li>Layout visual aprimorado com separadores</li>
+          </ul>
         </div>
       </div>
 
