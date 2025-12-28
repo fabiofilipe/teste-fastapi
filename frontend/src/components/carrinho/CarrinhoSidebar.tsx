@@ -4,6 +4,7 @@ import { X, ShoppingCart } from 'lucide-react';
 import { useCarrinho } from '@/contexts/CarrinhoContext';
 import { cn } from '@/lib/utils';
 import Button from '@/components/common/Button';
+import CarrinhoItem from './CarrinhoItem';
 
 interface CarrinhoSidebarProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ interface CarrinhoSidebarProps {
 }
 
 const CarrinhoSidebar: React.FC<CarrinhoSidebarProps> = ({ isOpen, onClose }) => {
-  const { itens, subtotal, totalItens, limparCarrinho } = useCarrinho();
+  const { itens, subtotal, totalItens, limparCarrinho, atualizarQuantidade, removerItem } = useCarrinho();
 
   // Bloquear scroll do body quando sidebar estiver aberto
   useEffect(() => {
@@ -113,23 +114,14 @@ const CarrinhoSidebar: React.FC<CarrinhoSidebarProps> = ({ isOpen, onClose }) =>
               </Button>
             </div>
           ) : (
-            <div className="space-y-4">
-              {/* TODO: Etapa 5.2 - Renderizar CarrinhoItem aqui */}
-              {itens.map((item, index) => (
-                <div
-                  key={item.id || index}
-                  className="p-4 border border-gray-200 rounded-lg bg-gray-50"
-                >
-                  <p className="font-medium text-gray-900">
-                    {item.produto.nome} - {item.variacao.tamanho}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Quantidade: {item.quantidade}
-                  </p>
-                  <p className="text-sm font-medium text-primary-600 mt-2">
-                    {formatarPreco(item.preco_total)}
-                  </p>
-                </div>
+            <div className="space-y-3">
+              {itens.map((item) => (
+                <CarrinhoItem
+                  key={item.id}
+                  item={item}
+                  onUpdateQuantidade={atualizarQuantidade}
+                  onRemove={removerItem}
+                />
               ))}
             </div>
           )}
