@@ -5,9 +5,9 @@
 **Fase:** 2.1 - Carrinho de Compras
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 5 em andamento - Etapa 5.2 concluída (62%)
+**Progresso Geral:** Sprint 5 em andamento - Etapa 5.3 concluída (64%)
 **Sprint Atual:** Sprint 5 - Carrinho de Compras [EM PROGRESSO]
-**Próxima Etapa:** Etapa 5.3 - Resumo do Carrinho
+**Próxima Etapa:** Etapa 5.4 - Badge do Carrinho
 
 ---
 
@@ -1046,11 +1046,95 @@ Sprint 4 completado com sucesso! Modal de customização totalmente funcional co
 - ✅ Props tipadas com TypeScript
 - ✅ Componente reutilizável e bem estruturado
 
-#### Etapa 5.3: Resumo do Carrinho
-- [ ] Criar resumo com cálculos
-- [ ] Mostrar subtotal
-- [ ] Botão "Finalizar pedido" (disabled se vazio)
-- [ ] Botão "Continuar comprando"
+#### Etapa 5.3: Resumo do Carrinho [CONCLUÍDO - 27/12/2025]
+- [x] Criar resumo com cálculos
+- [x] Mostrar subtotal
+- [x] Botão "Finalizar pedido" (disabled se vazio)
+- [x] Botão "Continuar comprando"
+
+**Arquivos atualizados:**
+- `frontend/src/components/carrinho/CarrinhoSidebar.tsx` - Footer do resumo aprimorado
+- `frontend/src/TestCarrinho.tsx` - Atualizado com informações da Etapa 5.3
+
+**Features:**
+- ✅ **Informações detalhadas do pedido:**
+  - Contador de produtos únicos (ex: "2 produtos")
+  - Contador total de itens (ex: "5 itens")
+  - Ícone ShoppingBag para identificação visual
+  - Separador visual (border-b) entre contador e cálculos
+  - Texto singular/plural correto ("produto"/"produtos", "item"/"itens")
+- ✅ **Cálculos de preços:**
+  - Subtotal calculado automaticamente pelo Context
+  - Taxa de entrega exibida (atualmente "Grátis" em verde)
+  - Estrutura preparada para futuras taxas variáveis
+  - Total destacado em fonte maior (text-xl)
+  - Formatação em Real (pt-BR)
+  - Separador visual forte (border-t-2) antes do total
+- ✅ **Layout visual aprimorado:**
+  - Footer dividido em duas seções (resumo + ações)
+  - Seção de resumo com background gray-50
+  - Seção de botões com background branco
+  - Espaçamento consistente (space-y-3, space-y-2)
+  - Border-t-2 mais destacado no topo do footer
+  - Hierarquia visual clara (tamanhos de fonte progressivos)
+- ✅ **Botões com ícones:**
+  - "Finalizar Pedido" com ícone CreditCard
+  - "Continuar Comprando" com ícone ShoppingCart
+  - Layout flex centralizado (justify-center)
+  - Gap consistente entre ícone e texto (gap-2)
+  - Ícones de tamanho adequado (w-4 h-4)
+- ✅ **Botão "Finalizar Pedido":**
+  - Variant primary (destaque visual)
+  - Largura total (w-full)
+  - Ícone de cartão de crédito
+  - Alert temporário (será implementado posteriormente)
+  - Primeiro botão (posição de destaque)
+- ✅ **Botão "Continuar Comprando":**
+  - Variant outline (secundário)
+  - Largura total (w-full)
+  - Ícone de carrinho
+  - Fecha a sidebar ao clicar
+  - Segundo botão (ação alternativa)
+- ✅ **Botão "Limpar carrinho":**
+  - Link estilizado em vermelho
+  - Underline para identificar ação
+  - Confirmação via window.confirm
+  - Mensagem clara de confirmação
+  - Posicionado após os botões principais
+  - Padding top para separação visual
+- ✅ **Validações e estados:**
+  - Footer só aparece quando há itens (itens.length > 0)
+  - Cálculos sempre corretos (sincronizados com Context)
+  - Botões sempre funcionais
+  - Estado vazio tratado separadamente
+- ✅ **Preparação para futuras features:**
+  - Estrutura de taxa de entrega pronta
+  - Espaço para cupons de desconto (futuro)
+  - Layout escalável para mais informações
+  - Componentes modulares e reutilizáveis
+- ✅ **UX/UI refinada:**
+  - Cores consistentes (gray para info, primary para total, green para grátis)
+  - Hierarquia visual clara (tamanhos de fonte, weights)
+  - Separadores estratégicos (borders)
+  - Espaçamento adequado (p-4, space-y-3)
+  - Ícones intuitivos (CreditCard, ShoppingCart, ShoppingBag)
+  - Feedback visual em hover/active
+- ✅ **Acessibilidade:**
+  - Texto legível em todos os tamanhos
+  - Contraste adequado de cores
+  - Ícones com propósito semântico
+  - Hierarquia lógica de informações
+  - Botões com tamanho de toque adequado
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 267.20 kB (82.76 kB gzip)
+- ✅ Contadores funcionando corretamente
+- ✅ Cálculos precisos (subtotal = total)
+- ✅ Todos os botões funcionais
+- ✅ Layout responsivo e profissional
+- ✅ Integração perfeita com Context
+- ✅ Estados sincronizados
 
 #### Etapa 5.4: Badge do Carrinho
 - [ ] Criar badge no header
@@ -1215,26 +1299,27 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 4.3: Customização de Ingredientes (IngredientesCustomizacao + integração)
 - ✅ Etapa 4.4: Resumo e Adicionar ao Carrinho (QuantidadeSelector + integração completa)
 
-**Sprint 5: Carrinho de Compras** - 50% completo (27/12/2025)
+**Sprint 5: Carrinho de Compras** - 75% completo (27/12/2025)
 - ✅ Etapa 5.1: Sidebar do Carrinho (CarrinhoSidebar.tsx + TestCarrinho.tsx)
 - ✅ Etapa 5.2: Item do Carrinho (CarrinhoItem.tsx + integração)
-- ⏳ Etapa 5.3: Resumo do Carrinho (pendente)
+- ✅ Etapa 5.3: Resumo do Carrinho (Footer aprimorado + contadores)
 - ⏳ Etapa 5.4: Badge do Carrinho (pendente)
 
-### Próximo Passo: Sprint 5 - Etapa 5.3 (Resumo do Carrinho)
+### Próximo Passo: Sprint 5 - Etapa 5.4 (Badge do Carrinho)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 5.3 - Resumo do Carrinho:**
-   - Revisar e aprimorar resumo de preços no CarrinhoSidebar (já implementado na 5.1)
-   - Garantir cálculos corretos (subtotal e total)
-   - Botão "Finalizar pedido" (atualmente com alert temporário)
-   - Botão "Continuar comprando" (já implementado)
-   - Validação: disabled quando carrinho vazio (já implementado)
-   - Possível adição de taxas de entrega ou cupons (opcional)
-   - Melhorias visuais no footer do resumo
+2. **Tarefas da Etapa 5.4 - Badge do Carrinho:**
+   - Atualizar componente Header para exibir badge interativo
+   - Mostrar contador de itens no carrinho (totalItens)
+   - Badge clicável para abrir sidebar do carrinho
+   - Animação ao adicionar item (opcional - bounce ou pulse)
+   - Estados visuais (vazio vs com itens)
+   - Integração com CarrinhoContext
+   - Badge visível e acessível
+   - Responsividade mobile
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
