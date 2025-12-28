@@ -1,13 +1,13 @@
 # PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
 
 **Data de Criação:** 13/12/2025
-**Última Atualização:** 26/12/2025 BRT
+**Última Atualização:** 27/12/2025 BRT
 **Fase:** 2.1 - Carrinho de Compras
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 4 concluído - 100% (57%)
-**Sprint Atual:** Sprint 5 - Carrinho de Compras [PRÓXIMO]
-**Próxima Etapa:** Etapa 5.1 - Sidebar do Carrinho
+**Progresso Geral:** Sprint 5 em andamento - Etapa 5.1 concluída (60%)
+**Sprint Atual:** Sprint 5 - Carrinho de Compras [EM PROGRESSO]
+**Próxima Etapa:** Etapa 5.2 - Item do Carrinho
 
 ---
 
@@ -852,10 +852,97 @@ Sprint 4 completado com sucesso! Modal de customização totalmente funcional co
 
 ### SPRINT 5: Carrinho de Compras
 
-#### Etapa 5.1: Sidebar do Carrinho
-- [ ] Criar `CarrinhoSidebar` (drawer lateral)
-- [ ] Implementar toggle (abrir/fechar)
-- [ ] Animação de slide-in/out
+#### Etapa 5.1: Sidebar do Carrinho [CONCLUÍDO - 27/12/2025]
+- [x] Criar `CarrinhoSidebar` (drawer lateral)
+- [x] Implementar toggle (abrir/fechar)
+- [x] Animação de slide-in/out
+
+**Arquivos criados:**
+- `frontend/src/components/carrinho/CarrinhoSidebar.tsx` - Componente drawer completo
+- `frontend/src/TestCarrinho.tsx` - Arquivo de teste com 3 cenários diferentes
+
+**Features:**
+- ✅ **Drawer lateral direito:**
+  - Sidebar fixa à direita (w-full sm:w-96)
+  - Overlay/backdrop semitransparente (bg-black/50)
+  - Portal (renderiza no body via createPortal)
+  - Altura total (h-full) com scroll interno
+  - Responsivo mobile-first (largura total em mobile)
+- ✅ **Toggle e controle de estado:**
+  - Props isOpen e onClose para controle externo
+  - Renderização condicional (retorna null quando fechado)
+  - Estado gerenciado pelo componente pai
+- ✅ **Animações suaves:**
+  - Slide-in/out da direita (translate-x-0 ↔ translate-x-full)
+  - Fade-in/out do overlay (opacity-0 ↔ opacity-100)
+  - Transições de 300ms (duration-300)
+  - Easing suave (ease-in-out)
+- ✅ **Múltiplas formas de fechar:**
+  - Botão X no header (ícone Lucide)
+  - Pressionar tecla ESC (listener de teclado)
+  - Clicar fora do sidebar (no overlay)
+  - Botão "Continuar Comprando"
+- ✅ **Controle de scroll:**
+  - Bloqueia scroll do body quando aberto (overflow: hidden)
+  - Scroll interno na lista de itens (overflow-y-auto)
+  - Restaura scroll do body ao fechar
+  - useEffect para cleanup automático
+- ✅ **Header informativo:**
+  - Ícone ShoppingCart + título "Meu Carrinho"
+  - Badge com contador de itens (totalItens)
+  - Botão de fechar estilizado
+  - Background destacado (bg-primary-50)
+- ✅ **Estado vazio:**
+  - Ícone grande centralizado
+  - Mensagem amigável ("Carrinho vazio")
+  - Texto explicativo
+  - Botão "Ver Cardápio" (chama onClose)
+  - Layout centrado vertical e horizontalmente
+- ✅ **Lista de itens (básica):**
+  - Renderiza todos os itens do carrinho
+  - Cards temporários com borda e padding
+  - Mostra: nome, tamanho, quantidade, preço
+  - Espaçamento entre itens (space-y-4)
+  - TODO: Será substituído por CarrinhoItem na Etapa 5.2
+- ✅ **Footer com resumo:**
+  - Cálculos de preço (subtotal e total)
+  - Formatação em Real (Intl.NumberFormat)
+  - Separador visual entre valores
+  - Total destacado em primary-600
+  - Aparece apenas quando há itens
+- ✅ **Botões de ação:**
+  - "Finalizar Pedido" (variant primary, w-full)
+  - "Continuar Comprando" (variant outline, w-full)
+  - "Limpar carrinho" (link vermelho com confirmação)
+  - Espaçamento adequado (space-y-2)
+  - Alert temporário no "Finalizar Pedido" (será implementado depois)
+- ✅ **Integração com CarrinhoContext:**
+  - Hook useCarrinho para acessar estado
+  - Variáveis: itens, subtotal, totalItens, limparCarrinho
+  - Cálculos automáticos via Context
+  - Persistência em localStorage (via Context)
+- ✅ **Acessibilidade:**
+  - role="dialog" e aria-modal="true"
+  - aria-labelledby vinculado ao título
+  - aria-label nos botões de ação
+  - Suporte a navegação por teclado (ESC)
+  - aria-hidden no overlay
+- ✅ **Formatação de preço:**
+  - Função formatarPreco local
+  - Padrão pt-BR com símbolo R$
+  - Intl.NumberFormat para consistência
+  - Mesma formatação em toda a aplicação
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 261.69 kB (81.41 kB gzip)
+- ✅ Animações fluidas e profissionais
+- ✅ Scroll bloqueado quando sidebar aberto
+- ✅ Todos os métodos de fechar funcionando
+- ✅ Responsividade mobile-first
+- ✅ Integração perfeita com Context
+- ✅ 3 cenários testados (vazio, simples, customizado)
+- ✅ Props tipadas com TypeScript
 
 #### Etapa 5.2: Item do Carrinho
 - [ ] Criar `CarrinhoItem` com layout compacto
@@ -1027,28 +1114,35 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 3.2: Cards de Produtos (ProdutoCard.tsx + TestProdutoCard.tsx)
 - ✅ Etapa 3.3: Página de Cardápio (Cardapio.tsx + integração completa)
 
-**Sprint 4: Modal de Customização** - 75% completo (26/12/2025)
+**Sprint 4: Modal de Customização** - 100% completo (26/12/2025)
 - ✅ Etapa 4.1: Modal Base (Modal.tsx + TestModal.tsx)
 - ✅ Etapa 4.2: Seletor de Variação (VariacaoSelector + ProdutoModal base)
 - ✅ Etapa 4.3: Customização de Ingredientes (IngredientesCustomizacao + integração)
-- ⏳ Etapa 4.4: Resumo e Adicionar ao Carrinho (pendente)
+- ✅ Etapa 4.4: Resumo e Adicionar ao Carrinho (QuantidadeSelector + integração completa)
 
-### Próximo Passo: Sprint 4 - Etapa 4.4 (Resumo e Adicionar ao Carrinho)
+**Sprint 5: Carrinho de Compras** - 25% completo (27/12/2025)
+- ✅ Etapa 5.1: Sidebar do Carrinho (CarrinhoSidebar.tsx + TestCarrinho.tsx)
+- ⏳ Etapa 5.2: Item do Carrinho (pendente)
+- ⏳ Etapa 5.3: Resumo do Carrinho (pendente)
+- ⏳ Etapa 5.4: Badge do Carrinho (pendente)
+
+### Próximo Passo: Sprint 5 - Etapa 5.2 (Item do Carrinho)
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 4.4 - Resumo e Adicionar ao Carrinho:**
-   - Criar componente QuantidadeSelector
-   - Seletor de quantidade com botões + e - (mín: 1, máx: 10)
-   - Calcular preço total (base + ingredientes) × quantidade
-   - Exibir resumo detalhado do pedido
-   - Integração final com CarrinhoContext
-   - Função adicionarItem() do carrinho
-   - Feedback visual de sucesso ao adicionar
-   - Fechar modal após adicionar
-   - Toast/notificação de confirmação
+2. **Tarefas da Etapa 5.2 - Item do Carrinho:**
+   - Criar componente `CarrinhoItem` com layout compacto
+   - Mostrar nome do produto + tamanho da variação
+   - Exibir resumo de customizações (ingredientes adicionados/removidos)
+   - Seletor de quantidade inline (+ e -)
+   - Botão remover item (com ícone X ou Trash)
+   - Mostrar preço unitário e total do item
+   - Atualizar preço automaticamente ao alterar quantidade
+   - Integração com funções do CarrinhoContext (atualizarQuantidade, removerItem)
+   - Layout responsivo e compacto
+   - Animações suaves nas interações
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)
@@ -1057,8 +1151,9 @@ VITE_API_URL=http://localhost:8000
 - `frontend/src/contexts/CarrinhoContext.tsx` - Context do carrinho + useCarrinho hook
 - `frontend/src/hooks/useCardapio.ts` - Hooks React Query (3 hooks)
 - `frontend/src/components/layout/` - Header, Footer, Layout
-- `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage, Modal
+- `frontend/src/components/common/` - Button, Badge, Card, Loading, ErrorMessage, Modal, QuantidadeSelector
 - `frontend/src/components/cardapio/` - CategoriaNav, ProdutoCard, VariacaoSelector, ProdutoModal, IngredientesCustomizacao
+- `frontend/src/components/carrinho/` - CarrinhoSidebar
 - `frontend/src/pages/` - Cardapio
 
 **Comandos úteis:**
