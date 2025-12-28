@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, ShoppingCart } from 'lucide-react';
+import { X, ShoppingCart, CreditCard, ShoppingBag } from 'lucide-react';
 import { useCarrinho } from '@/contexts/CarrinhoContext';
 import { cn } from '@/lib/utils';
 import Button from '@/components/common/Button';
@@ -129,52 +129,78 @@ const CarrinhoSidebar: React.FC<CarrinhoSidebarProps> = ({ isOpen, onClose }) =>
 
         {/* Footer - Resumo e Ações */}
         {itens.length > 0 && (
-          <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
+          <div className="border-t-2 border-gray-200 bg-white">
             {/* Resumo de Preços */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium text-gray-900">
-                  {formatarPreco(subtotal)}
+            <div className="p-4 bg-gray-50 space-y-3">
+              {/* Informações do Pedido */}
+              <div className="flex items-center justify-between text-xs text-gray-600 pb-2 border-b border-gray-200">
+                <div className="flex items-center gap-1">
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>
+                    {itens.length} {itens.length === 1 ? 'produto' : 'produtos'}
+                  </span>
+                </div>
+                <span>
+                  {totalItens} {totalItens === 1 ? 'item' : 'itens'}
                 </span>
               </div>
-              <div className="flex justify-between text-lg font-bold border-t border-gray-300 pt-2">
+
+              {/* Cálculos */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-medium text-gray-900">
+                    {formatarPreco(subtotal)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Taxa de entrega</span>
+                  <span className="font-medium text-green-600">
+                    Grátis
+                  </span>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="flex justify-between items-center text-lg font-bold border-t-2 border-gray-300 pt-3">
                 <span className="text-gray-900">Total</span>
-                <span className="text-primary-600">
+                <span className="text-primary-600 text-xl">
                   {formatarPreco(subtotal)}
                 </span>
               </div>
             </div>
 
             {/* Botões de Ação */}
-            <div className="space-y-2">
+            <div className="p-4 space-y-2">
               <Button
                 onClick={handleFinalizarPedido}
                 variant="primary"
-                className="w-full"
+                className="w-full flex items-center justify-center gap-2"
               >
+                <CreditCard className="w-4 h-4" />
                 Finalizar Pedido
               </Button>
               <Button
                 onClick={onClose}
                 variant="outline"
-                className="w-full"
+                className="w-full flex items-center justify-center gap-2"
               >
+                <ShoppingCart className="w-4 h-4" />
                 Continuar Comprando
               </Button>
-            </div>
 
-            {/* Botão Limpar Carrinho */}
-            <button
-              onClick={() => {
-                if (window.confirm('Deseja realmente limpar o carrinho?')) {
-                  limparCarrinho();
-                }
-              }}
-              className="w-full text-sm text-red-600 hover:text-red-700 underline transition-colors"
-            >
-              Limpar carrinho
-            </button>
+              {/* Botão Limpar Carrinho */}
+              <button
+                onClick={() => {
+                  if (window.confirm('Deseja realmente limpar o carrinho?')) {
+                    limparCarrinho();
+                  }
+                }}
+                className="w-full text-sm text-red-600 hover:text-red-700 underline transition-colors pt-2"
+              >
+                Limpar carrinho
+              </button>
+            </div>
           </div>
         )}
       </div>
