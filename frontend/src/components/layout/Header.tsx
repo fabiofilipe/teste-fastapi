@@ -1,13 +1,9 @@
 import { Pizza, ShoppingCart } from 'lucide-react'
+import { useCarrinho } from '@/contexts/CarrinhoContext'
 import Badge from '@/components/common/Badge'
 import Button from '@/components/common/Button'
 
 interface HeaderProps {
-  /**
-   * Número de itens no carrinho
-   */
-  cartItemCount?: number
-
   /**
    * Callback ao clicar no carrinho
    */
@@ -20,10 +16,10 @@ interface HeaderProps {
 }
 
 const Header = ({
-  cartItemCount = 0,
   onCartClick,
   onLogoClick
 }: HeaderProps) => {
+  const { totalItens } = useCarrinho();
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -51,14 +47,21 @@ const Header = ({
               variant="ghost"
               size="md"
               onClick={onCartClick}
-              className="relative"
-              aria-label={`Carrinho com ${cartItemCount} ${cartItemCount === 1 ? 'item' : 'itens'}`}
+              className="relative group"
+              aria-label={`Carrinho com ${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`}
             >
-              <ShoppingCart size={24} />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1">
-                  <Badge variant="error" size="sm" className="min-w-[20px] h-5 flex items-center justify-center px-1.5">
-                    {cartItemCount > 99 ? '99+' : cartItemCount}
+              <ShoppingCart
+                size={24}
+                className={totalItens > 0 ? 'text-primary-600 group-hover:scale-110 transition-transform' : 'group-hover:scale-110 transition-transform'}
+              />
+              {totalItens > 0 && (
+                <span className="absolute -top-1 -right-1 animate-in zoom-in-50 duration-200">
+                  <Badge
+                    variant="error"
+                    size="sm"
+                    className="min-w-[20px] h-5 flex items-center justify-center px-1.5 font-bold shadow-md animate-pulse"
+                  >
+                    {totalItens > 99 ? '99+' : totalItens}
                   </Badge>
                 </span>
               )}
