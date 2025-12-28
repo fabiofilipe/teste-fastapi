@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-import { ShoppingCart, Pizza } from 'lucide-react';
+import React from 'react';
+import { Pizza } from 'lucide-react';
 import Layout from './components/layout/Layout';
-import CarrinhoSidebar from './components/carrinho/CarrinhoSidebar';
 import Button from './components/common/Button';
 import { useCarrinho } from './contexts/CarrinhoContext';
 import type { Produto, Ingrediente } from './types/cardapio.types';
 
 const TestCarrinho: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { adicionarItem, itens, totalItens, subtotal } = useCarrinho();
 
   // Dados mockados para testes
@@ -55,7 +53,6 @@ const TestCarrinho: React.FC = () => {
       ingredientesAdicionados: [],
       ingredientesRemovidos: [],
     });
-    setIsSidebarOpen(true);
   };
 
   const adicionarPizzaComExtras = () => {
@@ -67,7 +64,6 @@ const TestCarrinho: React.FC = () => {
       ingredientesRemovidos: [],
       observacoes: 'Bem assada, por favor',
     });
-    setIsSidebarOpen(true);
   };
 
   const adicionarCalabresa = () => {
@@ -78,7 +74,6 @@ const TestCarrinho: React.FC = () => {
       ingredientesAdicionados: [],
       ingredientesRemovidos: [],
     });
-    setIsSidebarOpen(true);
   };
 
   const formatarPreco = (valor: number) => {
@@ -120,19 +115,9 @@ const TestCarrinho: React.FC = () => {
                 </p>
               </div>
             </div>
-            <Button
-              onClick={() => setIsSidebarOpen(true)}
-              variant="primary"
-              className="flex items-center gap-2"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              Abrir Carrinho
-              {totalItens > 0 && (
-                <span className="px-2 py-0.5 text-xs font-medium bg-white text-primary-600 rounded-full">
-                  {totalItens}
-                </span>
-              )}
-            </Button>
+            <p className="text-sm text-gray-600 mt-2">
+              Clique no ícone do carrinho no Header para abrir a sidebar
+            </p>
           </div>
         </div>
 
@@ -147,16 +132,9 @@ const TestCarrinho: React.FC = () => {
               <h3 className="font-semibold text-gray-900 mb-2">
                 1. Carrinho Vazio
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Abrir sidebar sem itens no carrinho
+              <p className="text-sm text-gray-600">
+                Clique no carrinho no Header (sem itens) para ver estado vazio
               </p>
-              <Button
-                onClick={() => setIsSidebarOpen(true)}
-                variant="outline"
-                className="w-full"
-              >
-                Abrir Vazio
-              </Button>
             </div>
 
             {/* Cenário 2: Pizza Simples */}
@@ -294,12 +272,6 @@ const TestCarrinho: React.FC = () => {
           </ul>
         </div>
       </div>
-
-      {/* CarrinhoSidebar */}
-      <CarrinhoSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
     </Layout>
   );
 };

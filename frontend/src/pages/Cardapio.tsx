@@ -5,7 +5,6 @@ import ProdutoCard from '@/components/cardapio/ProdutoCard'
 import Loading from '@/components/common/Loading'
 import ErrorMessage from '@/components/common/ErrorMessage'
 import { useCardapio } from '@/hooks/useCardapio'
-import { useCarrinho } from '@/contexts/CarrinhoContext'
 import type { Produto } from '@/types/cardapio.types'
 
 function Cardapio() {
@@ -13,7 +12,6 @@ function Cardapio() {
   const produtosRef = useRef<HTMLDivElement>(null)
 
   // Hooks
-  const { totalItens } = useCarrinho()
   const { data: cardapioData, isLoading, error, refetch } = useCardapio()
 
   // Scroll suave para a seção de produtos ao trocar categoria
@@ -36,17 +34,10 @@ function Cardapio() {
     alert(`Ver detalhes: ${produto.nome}\n\nModal de customização será implementado no Sprint 4.`)
   }
 
-  // Handler para clicar no carrinho
-  const handleCarrinhoClick = () => {
-    console.log('Abrir carrinho')
-    // TODO: Abrir sidebar do carrinho (Sprint 5)
-    alert(`Carrinho: ${totalItens} itens\n\nSidebar do carrinho será implementado no Sprint 5.`)
-  }
-
   // Loading state
   if (isLoading) {
     return (
-      <Layout cartItemCount={totalItens} onCartClick={handleCarrinhoClick}>
+      <Layout>
         <Loading fullScreen size="lg" text="Carregando cardápio..." />
       </Layout>
     )
@@ -55,7 +46,7 @@ function Cardapio() {
   // Error state
   if (error) {
     return (
-      <Layout cartItemCount={totalItens} onCartClick={handleCarrinhoClick}>
+      <Layout>
         <ErrorMessage
           variant="fullScreen"
           title="Erro ao carregar cardápio"
@@ -69,7 +60,7 @@ function Cardapio() {
   // Sem dados
   if (!cardapioData?.categorias || cardapioData.categorias.length === 0) {
     return (
-      <Layout cartItemCount={totalItens} onCartClick={handleCarrinhoClick}>
+      <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -104,11 +95,7 @@ function Cardapio() {
   const produtosFiltrados = produtosExibidos
 
   return (
-    <Layout
-      cartItemCount={totalItens}
-      onCartClick={handleCarrinhoClick}
-      maxWidth="7xl"
-    >
+    <Layout maxWidth="7xl">
       <div className="py-6 space-y-6">
         {/* Header da página */}
         <div className="text-center space-y-2">
