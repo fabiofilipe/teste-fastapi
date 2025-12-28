@@ -4,7 +4,7 @@ import Layout from './components/layout/Layout';
 import CarrinhoSidebar from './components/carrinho/CarrinhoSidebar';
 import Button from './components/common/Button';
 import { useCarrinho } from './contexts/CarrinhoContext';
-import type { Produto, ProdutoVariacao, Ingrediente } from './types/cardapio.types';
+import type { Produto, Ingrediente } from './types/cardapio.types';
 
 const TestCarrinho: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -15,41 +15,34 @@ const TestCarrinho: React.FC = () => {
     id: 1,
     nome: 'Pizza Margherita',
     descricao: 'Molho de tomate, mussarela, tomate, manjericão e orégano',
-    preco_base: 35.00,
-    categoria_id: 1,
     imagem_url: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400',
+    categoria_id: 1,
     disponivel: true,
-    personalizavel: true,
     variacoes: [
-      { id: 1, produto_id: 1, tamanho: 'Pequena', preco: 25.00, disponivel: true },
-      { id: 2, produto_id: 1, tamanho: 'Média', preco: 35.00, disponivel: true },
-      { id: 3, produto_id: 1, tamanho: 'Grande', preco: 45.00, disponivel: true },
+      { id: 1, tamanho: 'Pequena', preco: 25.00, disponivel: true },
+      { id: 2, tamanho: 'Média', preco: 35.00, disponivel: true },
+      { id: 3, tamanho: 'Grande', preco: 45.00, disponivel: true },
     ],
-    ingredientes_padrao: [],
-    ingredientes_adicionais_disponiveis: [],
+    ingredientes: [],
   };
 
   const produtoMock2: Produto = {
     id: 2,
     nome: 'Pizza Calabresa',
     descricao: 'Molho de tomate, mussarela, calabresa e cebola',
-    preco_base: 38.00,
-    categoria_id: 1,
     imagem_url: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400',
+    categoria_id: 1,
     disponivel: true,
-    personalizavel: true,
     variacoes: [
-      { id: 4, produto_id: 2, tamanho: 'Média', preco: 38.00, disponivel: true },
-      { id: 5, produto_id: 2, tamanho: 'Grande', preco: 48.00, disponivel: true },
+      { id: 4, tamanho: 'Média', preco: 38.00, disponivel: true },
+      { id: 5, tamanho: 'Grande', preco: 48.00, disponivel: true },
     ],
-    ingredientes_padrao: [],
-    ingredientes_adicionais_disponiveis: [],
+    ingredientes: [],
   };
 
   const ingredienteExtraMock: Ingrediente = {
     id: 1,
     nome: 'Bacon',
-    tipo: 'EXTRA',
     preco_adicional: 5.00,
     disponivel: true,
   };
@@ -61,7 +54,6 @@ const TestCarrinho: React.FC = () => {
       quantidade: 1,
       ingredientesAdicionados: [],
       ingredientesRemovidos: [],
-      preco_total: 35.00,
     });
     setIsSidebarOpen(true);
   };
@@ -74,7 +66,6 @@ const TestCarrinho: React.FC = () => {
       ingredientesAdicionados: [ingredienteExtraMock],
       ingredientesRemovidos: [],
       observacoes: 'Bem assada, por favor',
-      preco_total: (45.00 + 5.00) * 2, // (base + extra) * quantidade
     });
     setIsSidebarOpen(true);
   };
@@ -86,7 +77,6 @@ const TestCarrinho: React.FC = () => {
       quantidade: 1,
       ingredientesAdicionados: [],
       ingredientesRemovidos: [],
-      preco_total: 48.00,
     });
     setIsSidebarOpen(true);
   };

@@ -1,12 +1,12 @@
 import { CarrinhoProvider } from './contexts/CarrinhoContext'
-import TestVariacao from './TestVariacao'
+import TestCarrinho from './TestCarrinho'
 
 // ============================================================================
 // APP CONTENT
 // ============================================================================
 
 function AppContent() {
-  return <TestVariacao />
+  return <TestCarrinho />
 }
 
 // ============================================================================
