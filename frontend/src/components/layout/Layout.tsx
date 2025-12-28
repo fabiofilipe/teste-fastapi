@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import Header from './Header'
 import Footer from './Footer'
+import CarrinhoSidebar from '@/components/carrinho/CarrinhoSidebar'
 
 interface LayoutProps {
   /**
@@ -20,16 +22,6 @@ interface LayoutProps {
   maxWidth?: 'full' | '7xl' | '6xl' | '5xl'
 
   /**
-   * Número de itens no carrinho (passado para o Header)
-   */
-  cartItemCount?: number
-
-  /**
-   * Callback ao clicar no carrinho
-   */
-  onCartClick?: () => void
-
-  /**
    * Callback ao clicar no logo
    */
   onLogoClick?: () => void
@@ -39,10 +31,9 @@ const Layout = ({
   children,
   noPadding = false,
   maxWidth = '7xl',
-  cartItemCount,
-  onCartClick,
   onLogoClick
 }: LayoutProps) => {
+  const [isCarrinhoOpen, setIsCarrinhoOpen] = useState(false);
   const maxWidthClasses = {
     full: 'max-w-full',
     '7xl': 'max-w-7xl',
@@ -54,8 +45,7 @@ const Layout = ({
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
       <Header
-        cartItemCount={cartItemCount}
-        onCartClick={onCartClick}
+        onCartClick={() => setIsCarrinhoOpen(true)}
         onLogoClick={onLogoClick}
       />
 
@@ -74,6 +64,12 @@ const Layout = ({
 
       {/* Footer */}
       <Footer />
+
+      {/* Carrinho Sidebar */}
+      <CarrinhoSidebar
+        isOpen={isCarrinhoOpen}
+        onClose={() => setIsCarrinhoOpen(false)}
+      />
     </div>
   )
 }
