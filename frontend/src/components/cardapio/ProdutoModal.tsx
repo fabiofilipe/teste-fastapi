@@ -112,10 +112,11 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
-      className="max-h-[90vh] overflow-hidden flex flex-col"
+      className="max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col"
+      contentClassName="p-0"
     >
       {/* Imagem do produto */}
-      <div className="relative aspect-[3/2] overflow-hidden bg-gray-100 -mx-6 -mt-4 mb-4">
+      <div className="relative aspect-[4/3] sm:aspect-[3/2] overflow-hidden bg-gray-100">
         <img
           src={imagemUrl}
           alt={produto.nome}
@@ -131,7 +132,7 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
       </div>
 
       {/* Conteúdo do modal */}
-      <div className="space-y-6 flex-1 overflow-y-auto">
+      <div className="space-y-4 sm:space-y-6 flex-1 overflow-y-auto px-4 sm:px-6 py-4">
         {/* Header do produto */}
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{produto.nome}</h2>
@@ -168,10 +169,10 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
 
         {/* Quantidade */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
             Quantidade
           </h3>
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 gap-3 sm:gap-0">
             <span className="text-sm text-gray-700">
               Quantas unidades você deseja?
             </span>
@@ -232,11 +233,11 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
       </div>
 
       {/* Footer com ações */}
-      <div className="border-t border-gray-200 -mx-6 -mb-4 px-6 py-4 bg-gray-50 flex gap-3">
+      <div className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-gray-50 flex flex-col sm:flex-row gap-3">
         <Button
           variant="outline"
           onClick={onClose}
-          className="flex-1"
+          className="flex-1 w-full sm:w-auto order-2 sm:order-1"
         >
           Cancelar
         </Button>
@@ -245,7 +246,7 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
           onClick={handleAddToCart}
           disabled={!produtoDisponivel || !variacaoSelecionada}
           leftIcon={<ShoppingCart size={20} />}
-          className="flex-1"
+          className="flex-1 w-full sm:w-auto order-1 sm:order-2"
         >
           Adicionar ao Carrinho
         </Button>
