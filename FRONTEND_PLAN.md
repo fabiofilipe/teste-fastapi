@@ -1,13 +1,13 @@
 # PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
 
 **Data de Criação:** 13/12/2025
-**Última Atualização:** 27/12/2025 BRT
-**Fase:** 2.1 - Carrinho de Compras
+**Última Atualização:** 07/01/2026 BRT
+**Fase:** 2.2 - Busca e Refinamentos
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 5 em andamento - Etapa 5.3 concluída (64%)
-**Sprint Atual:** Sprint 5 - Carrinho de Compras [EM PROGRESSO]
-**Próxima Etapa:** Etapa 5.4 - Badge do Carrinho
+**Progresso Geral:** Sprint 6 - Etapa 6.1 concluída - 100% (68%)
+**Sprint Atual:** Sprint 6 - Busca e Refinamentos [EM PROGRESSO]
+**Próxima Etapa:** Etapa 6.2 - Estados de Loading e Erro
 
 ---
 
@@ -1136,20 +1136,254 @@ Sprint 4 completado com sucesso! Modal de customização totalmente funcional co
 - ✅ Integração perfeita com Context
 - ✅ Estados sincronizados
 
-#### Etapa 5.4: Badge do Carrinho
-- [ ] Criar badge no header
-- [ ] Mostrar número de itens
-- [ ] Animação ao adicionar item
+#### Etapa 5.4: Badge do Carrinho [CONCLUÍDO - 27/12/2025]
+- [x] Criar badge no header
+- [x] Mostrar número de itens
+- [x] Animação ao adicionar item
+
+**Arquivos atualizados:**
+- `frontend/src/components/layout/Header.tsx` - Integração com CarrinhoContext + animações
+- `frontend/src/components/layout/Layout.tsx` - Gerenciamento da sidebar + estado
+- `frontend/src/pages/Cardapio.tsx` - Simplificado (props removidas)
+- `frontend/src/TestCarrinho.tsx` - Simplificado (sidebar gerenciada pelo Layout)
+
+**Features:**
+- ✅ **Integração com CarrinhoContext:**
+  - Header usa hook useCarrinho diretamente
+  - Acesso ao totalItens em tempo real
+  - Props cartItemCount removidas (desnecessárias)
+  - Estado sincronizado automaticamente
+  - Nenhuma prop drilling necessária
+- ✅ **Badge interativo:**
+  - Contador de itens visível (totalItens)
+  - Máximo de 99+ para números grandes
+  - Variant "error" (vermelho) para destaque
+  - Tamanho compacto (min-w-20px h-5)
+  - Font-bold para legibilidade
+  - Shadow-md para profundidade
+  - Posicionamento absoluto (-top-1 -right-1)
+- ✅ **Animações do badge:**
+  - animate-in zoom-in-50 ao aparecer
+  - duration-200 para transição rápida
+  - animate-pulse contínuo quando há itens
+  - Efeito de pulsação sutil
+  - Aparece/desaparece suavemente
+- ✅ **Ícone do carrinho animado:**
+  - Cor primary quando há itens (text-primary-600)
+  - Cor padrão quando vazio
+  - Hover scale-110 (efeito de zoom)
+  - Transição suave (transition-transform)
+  - Group hover para coordenação
+- ✅ **Badge clicável:**
+  - Botão variant="ghost" no Header
+  - onClick abre a sidebar do carrinho
+  - aria-label descritivo (quantidade + plural)
+  - Estados hover/active
+  - Feedback visual claro
+- ✅ **Layout gerencia a sidebar:**
+  - Estado isCarrinhoOpen local no Layout
+  - CarrinhoSidebar renderizado uma única vez
+  - onCartClick={() => setIsCarrinhoOpen(true)}
+  - onClose={() => setIsCarrinhoOpen(false)}
+  - Sidebar disponível em todas as páginas
+  - Remoção de duplicação de código
+- ✅ **Simplificação de componentes:**
+  - Props cartItemCount removidas do Layout
+  - Props onCartClick removidas (gerenciado internamente)
+  - Cardapio.tsx simplificado
+  - TestCarrinho.tsx simplificado
+  - Menos código boilerplate
+  - Melhor separação de responsabilidades
+- ✅ **Estados visuais:**
+  - Badge só aparece quando totalItens > 0
+  - Ícone muda de cor (cinza → primary)
+  - Animações ativadas apenas com itens
+  - Feedback visual imediato
+  - UX clara e intuitiva
+- ✅ **Responsividade:**
+  - Badge visível em todos os tamanhos
+  - Posicionamento relativo ao ícone
+  - Escala adequada em mobile
+  - Touch-friendly (tamanho adequado)
+- ✅ **Acessibilidade:**
+  - aria-label dinâmico com quantidade
+  - Texto singular/plural correto
+  - Estados focus visíveis
+  - Navegação por teclado
+  - Feedback sonoro (leitores de tela)
+- ✅ **Integração completa:**
+  - Sidebar abre ao clicar no badge
+  - Badge atualiza em tempo real
+  - Persistência via Context
+  - localStorage automático
+  - Fluxo completo funcionando
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 267.14 kB (82.79 kB gzip)
+- ✅ Badge atualiza automaticamente
+- ✅ Animações funcionando corretamente
+- ✅ Sidebar abre ao clicar
+- ✅ Layout gerencia estado globalmente
+- ✅ Componentes simplificados
+- ✅ Fluxo completo end-to-end funcionando
 
 ---
 
 ### SPRINT 6: Busca e Refinamentos
 
-#### Etapa 6.1: Barra de Busca
-- [ ] Criar `SearchBar` com debounce
-- [ ] Implementar `useBuscaProdutos` hook
-- [ ] Mostrar resultados em dropdown
-- [ ] Destacar termo buscado
+#### Etapa 6.1: Barra de Busca [CONCLUÍDO - 07/01/2026]
+- [x] Criar `SearchBar` com debounce
+- [x] Implementar `useBuscaProdutos` hook (já existia)
+- [x] Mostrar resultados em dropdown
+- [x] Destacar termo buscado
+
+**Arquivos criados:**
+- `frontend/src/components/common/SearchBar.tsx` - Componente de busca completo
+- `frontend/src/TestSearchBar.tsx` - Arquivo de teste com 3 cenários
+
+**Arquivos atualizados:**
+- `frontend/src/pages/Cardapio.tsx` - Integração com SearchBar e ProdutoModal
+- `frontend/src/App.tsx` - Atualizado para TestSearchBar
+
+**Features:**
+- ✅ **Input de busca completo:**
+  - Ícone de busca (Search icon) à esquerda
+  - Placeholder configurável
+  - Border com states focus (ring-primary-500)
+  - Auto-focus opcional (prop autoFocus)
+  - Transições suaves (duration-200)
+- ✅ **Debounce de 300ms:**
+  - useState + useEffect para implementação
+  - Aguarda 300ms após parar de digitar
+  - Evita chamadas excessivas à API
+  - Timer cleanup adequado
+- ✅ **Validação de mínimo 2 caracteres:**
+  - Query só ativa com termo.length >= 2
+  - Mensagem informativa no dropdown
+  - Habilitado via React Query (enabled: termo.length >= 2)
+- ✅ **Integração com useBuscaProdutos:**
+  - Hook já existente em useCardapio.ts
+  - Cache de 2 minutos (staleTime)
+  - Loading states automáticos
+  - Error handling via React Query
+- ✅ **Dropdown de sugestões:**
+  - Position absolute (top-full, left-0, right-0)
+  - Max-height de 400px com scroll
+  - Shadow e border para profundidade
+  - Animação fade-in + zoom-in
+  - z-index 50 para ficar acima de tudo
+  - Portal não necessário (position relative no container)
+- ✅ **Resultados exibidos:**
+  - Contador de resultados no topo
+  - Lista com imagem + nome + descrição + preço
+  - Imagem 12x12 (aspect ratio quadrado)
+  - Placeholder quando produto sem imagem
+  - Line-clamp-1 para descrição
+  - Faixa de preços calculada (min-max)
+  - Badge "Indisponível" quando aplicável
+- ✅ **Destaque do termo buscado:**
+  - Função highlightTerm() com regex
+  - Tag <mark> com bg-yellow-200
+  - Case insensitive (/gi flag)
+  - Destaque no nome E na descrição
+  - Font-semibold no termo destacado
+- ✅ **Navegação por teclado:**
+  - Arrow Down: navega para próximo resultado
+  - Arrow Up: navega para resultado anterior
+  - Enter: seleciona resultado destacado
+  - Escape: fecha dropdown e limpa busca
+  - selectedIndex para controle de foco
+  - aria-selected nos itens
+  - Scroll automático para item selecionado (futuro)
+- ✅ **Estados visuais:**
+  - Hover: bg-gray-50 nos itens
+  - Selected: bg-primary-50 (keyboard navigation)
+  - MouseEnter atualiza selectedIndex
+  - Transições suaves em todos os estados
+- ✅ **Botão limpar busca:**
+  - Ícone X (lucide-react)
+  - Aparece apenas quando há texto
+  - Position absolute à direita
+  - Hover effect (bg-gray-100, rounded-full)
+  - onClick: limpa input e fecha dropdown
+  - aria-label para acessibilidade
+- ✅ **Indicador de loading:**
+  - Spinner animado (Loader2, animate-spin)
+  - Aparece durante busca ativa
+  - Position absolute à direita (mesma posição do X)
+  - Condicional: isLoading && debouncedValue.length >= 2
+  - Loading state no dropdown também
+- ✅ **Estado vazio:**
+  - Mensagem quando nenhum resultado encontrado
+  - Termo buscado destacado em negrito
+  - Sugestão de tentar outro termo
+  - Layout centralizado e amigável
+- ✅ **Click fora para fechar:**
+  - useEffect com event listener
+  - mousedown event no document
+  - Verifica se click foi fora do dropdown E do input
+  - Cleanup ao desmontar
+  - useRef para referências ao DOM
+- ✅ **Integração com Cardapio.tsx:**
+  - SearchBar no header da página
+  - Container max-w-2xl mx-auto
+  - onSelectProduct abre ProdutoModal
+  - Placeholder contextualizado
+  - Fluxo completo: busca → seleção → modal → carrinho
+- ✅ **Props configuráveis:**
+  - onSelectProduct?: (produto: Produto) => void
+  - onClose?: () => void (opcional)
+  - placeholder?: string (padrão: "Buscar produtos...")
+  - className?: string (classes adicionais)
+  - autoFocus?: boolean (padrão: false)
+  - forwardRef para ref externa
+- ✅ **Acessibilidade:**
+  - aria-label no input ("Buscar produtos")
+  - aria-autocomplete="list"
+  - aria-controls="search-results"
+  - aria-expanded={isOpen}
+  - role="listbox" no dropdown
+  - role="option" nos itens
+  - aria-selected nos itens selecionados
+  - Navegação completa por teclado
+- ✅ **Formatação de preço:**
+  - Função getFaixaPrecos() local
+  - Intl.NumberFormat pt-BR
+  - Mostra faixa quando múltiplas variações
+  - Preço único quando todas iguais
+  - "Indisponível" quando sem variações
+- ✅ **Responsividade:**
+  - Width 100% do container
+  - Max-width configurável via className
+  - Dropdown width 100% (left-0 right-0)
+  - Mobile-first design
+  - Touch-friendly (tamanhos adequados)
+- ✅ **Performance:**
+  - Debounce evita chamadas excessivas
+  - React Query cache (2 minutos)
+  - Renderização condicional eficiente
+  - Cleanup de event listeners
+  - useRef para evitar re-renders
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 331.33 kB (104.50 kB gzip)
+- ✅ Debounce funcionando corretamente (300ms)
+- ✅ Dropdown abre/fecha apropriadamente
+- ✅ Destaque de termos funcional
+- ✅ Navegação por teclado completa
+- ✅ Click fora fecha dropdown
+- ✅ Loading states visíveis
+- ✅ Estado vazio tratado
+- ✅ Integração com API via React Query
+- ✅ Props totalmente tipadas
+- ✅ forwardRef implementado
+- ✅ Arquivo de teste completo (TestSearchBar.tsx)
+- ✅ 3 cenários de teste criados
+- ✅ Integração com Cardapio.tsx funcionando
+- ✅ Modal de produto abre ao selecionar resultado
+- ✅ Fluxo end-to-end completo
 
 #### Etapa 6.2: Estados de Loading e Erro
 - [ ] Adicionar skeletons de loading
@@ -1299,27 +1533,35 @@ VITE_API_URL=http://localhost:8000
 - ✅ Etapa 4.3: Customização de Ingredientes (IngredientesCustomizacao + integração)
 - ✅ Etapa 4.4: Resumo e Adicionar ao Carrinho (QuantidadeSelector + integração completa)
 
-**Sprint 5: Carrinho de Compras** - 75% completo (27/12/2025)
+**Sprint 5: Carrinho de Compras** - 100% completo (27/12/2025)
 - ✅ Etapa 5.1: Sidebar do Carrinho (CarrinhoSidebar.tsx + TestCarrinho.tsx)
 - ✅ Etapa 5.2: Item do Carrinho (CarrinhoItem.tsx + integração)
 - ✅ Etapa 5.3: Resumo do Carrinho (Footer aprimorado + contadores)
-- ⏳ Etapa 5.4: Badge do Carrinho (pendente)
+- ✅ Etapa 5.4: Badge do Carrinho (Header + Layout integrados)
 
-### Próximo Passo: Sprint 5 - Etapa 5.4 (Badge do Carrinho)
+**Resumo do Sprint 5:**
+O Sprint 5 completou com sucesso a implementação completa do carrinho de compras:
+- Sidebar lateral responsiva com animações profissionais
+- Componentes de item com customizações detalhadas e controles inline
+- Resumo de preços com cálculos automáticos e layout aprimorado
+- Badge interativo no Header com animações e integração total
+- Fluxo end-to-end funcionando: adicionar → visualizar → editar → remover
+- Persistência automática em localStorage via Context
+- Código limpo, modular e bem documentado
+- Build final: 267.14 kB (82.79 kB gzip)
+
+### Próximo Passo: Sprint 6 - Busca e Refinamentos
 
 **Para continuar:**
 
 1. Servidor já rodando em: http://localhost:5173/
 
-2. **Tarefas da Etapa 5.4 - Badge do Carrinho:**
-   - Atualizar componente Header para exibir badge interativo
-   - Mostrar contador de itens no carrinho (totalItens)
-   - Badge clicável para abrir sidebar do carrinho
-   - Animação ao adicionar item (opcional - bounce ou pulse)
-   - Estados visuais (vazio vs com itens)
-   - Integração com CarrinhoContext
-   - Badge visível e acessível
-   - Responsividade mobile
+2. **Próximas implementações (Sprint 6):**
+   - Barra de busca com debounce e sugestões
+   - Skeletons de loading para melhor UX
+   - Tratamento aprimorado de erros
+   - Responsividade mobile completa
+   - Otimizações de performance
 
 **Arquivos importantes criados:**
 - `frontend/src/services/api.ts` - API do cardápio (3 endpoints)

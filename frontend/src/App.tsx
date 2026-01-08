@@ -1,12 +1,12 @@
 import { CarrinhoProvider } from './contexts/CarrinhoContext'
-import TestCarrinho from './TestCarrinho'
+import TestSearchBar from './TestSearchBar'
 
 // ============================================================================
 // APP CONTENT
 // ============================================================================
 
 function AppContent() {
-  return <TestCarrinho />
+  return <TestSearchBar />
 }
 
 // ============================================================================

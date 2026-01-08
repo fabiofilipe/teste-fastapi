@@ -2,17 +2,22 @@ import { useState, useRef, useEffect } from 'react'
 import Layout from '@/components/layout/Layout'
 import CategoriaNav from '@/components/cardapio/CategoriaNav'
 import ProdutoCard from '@/components/cardapio/ProdutoCard'
+import ProdutoModal from '@/components/cardapio/ProdutoModal'
+import SearchBar from '@/components/common/SearchBar'
 import Loading from '@/components/common/Loading'
 import ErrorMessage from '@/components/common/ErrorMessage'
 import { useCardapio } from '@/hooks/useCardapio'
+import { useCarrinho } from '@/contexts/CarrinhoContext'
 import type { Produto } from '@/types/cardapio.types'
 
 function Cardapio() {
   const [categoriaAtiva, setCategoriaAtiva] = useState<number | undefined>(undefined)
+  const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(null)
   const produtosRef = useRef<HTMLDivElement>(null)
 
   // Hooks
   const { data: cardapioData, isLoading, error, refetch } = useCardapio()
+  const { adicionarItem } = useCarrinho()
 
   // Scroll suave para a seção de produtos ao trocar categoria
   useEffect(() => {
@@ -27,11 +32,37 @@ function Cardapio() {
     }
   }, [categoriaAtiva])
 
-  // Handler para abrir modal de detalhes (será implementado no Sprint 4)
+  // Handler para abrir modal de detalhes
   const handleVerDetalhes = (produto: Produto) => {
-    console.log('Ver detalhes do produto:', produto)
-    // TODO: Abrir modal de customização (Sprint 4)
-    alert(`Ver detalhes: ${produto.nome}\n\nModal de customização será implementado no Sprint 4.`)
+    setProdutoSelecionado(produto)
+  }
+
+  // Handler para selecionar produto na busca
+  const handleSelectProduct = (produto: Produto) => {
+    setProdutoSelecionado(produto)
+  }
+
+  // Handler para fechar modal
+  const handleCloseModal = () => {
+    setProdutoSelecionado(null)
+  }
+
+  // Handler para adicionar ao carrinho
+  const handleAddToCart = (
+    produto: Produto,
+    variacao: any,
+    customizacao: any,
+    quantidade: number
+  ) => {
+    adicionarItem({
+      produto,
+      variacao,
+      quantidade,
+      ingredientesAdicionados: customizacao.ingredientesAdicionados,
+      ingredientesRemovidos: customizacao.ingredientesRemovidos,
+      observacoes: customizacao.observacoes,
+    })
+    handleCloseModal()
   }
 
   // Loading state
@@ -98,13 +129,23 @@ function Cardapio() {
     <Layout maxWidth="7xl">
       <div className="py-6 space-y-6">
         {/* Header da página */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Nosso Cardápio
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Escolha seus produtos favoritos e personalize como preferir
-          </p>
+        <div className="text-center space-y-4">
+          <div className="space-y-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+              Nosso Cardápio
+            </h1>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Escolha seus produtos favoritos e personalize como preferir
+            </p>
+          </div>
+
+          {/* Barra de Busca */}
+          <div className="max-w-2xl mx-auto">
+            <SearchBar
+              onSelectProduct={handleSelectProduct}
+              placeholder="Buscar produtos no cardápio..."
+            />
+          </div>
         </div>
 
         {/* Navegação de Categorias */}
@@ -164,13 +205,23 @@ function Cardapio() {
         {/* Footer informativo */}
         <div className="pt-12 pb-6 text-center border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            ✅ Sprint 3 - Etapa 3.3 completa
+            ✅ Sprint 6 - Etapa 6.1 completa
           </p>
           <p className="text-xs text-gray-400 mt-1">
-            Navegação de Categorias • Grid de Produtos • Filtros Dinâmicos
+            Navegação de Categorias • Grid de Produtos • Filtros Dinâmicos • Busca de Produtos
           </p>
         </div>
       </div>
+
+      {/* Modal de Produto */}
+      {produtoSelecionado && (
+        <ProdutoModal
+          produto={produtoSelecionado}
+          isOpen={!!produtoSelecionado}
+          onClose={handleCloseModal}
+          onAddToCart={handleAddToCart}
+        />
+      )}
     </Layout>
   )
 }
