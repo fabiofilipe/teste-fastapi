@@ -3,8 +3,10 @@ import Layout from '@/components/layout/Layout'
 import CategoriaNav from '@/components/cardapio/CategoriaNav'
 import ProdutoCard from '@/components/cardapio/ProdutoCard'
 import ProdutoModal from '@/components/cardapio/ProdutoModal'
+import ProdutoCardSkeleton from '@/components/cardapio/ProdutoCardSkeleton'
+import CategoriaSkeleton from '@/components/cardapio/CategoriaSkeleton'
 import SearchBar from '@/components/common/SearchBar'
-import Loading from '@/components/common/Loading'
+import Skeleton from '@/components/common/Skeleton'
 import ErrorMessage from '@/components/common/ErrorMessage'
 import { useCardapio } from '@/hooks/useCardapio'
 import { useCarrinho } from '@/contexts/CarrinhoContext'
@@ -65,11 +67,45 @@ function Cardapio() {
     handleCloseModal()
   }
 
-  // Loading state
+  // Loading state com skeletons
   if (isLoading) {
     return (
-      <Layout>
-        <Loading fullScreen size="lg" text="Carregando cardápio..." />
+      <Layout maxWidth="7xl">
+        <div className="py-6 space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+              Nosso Cardápio
+            </h1>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Escolha seus produtos favoritos e personalize como preferir
+            </p>
+
+            {/* SearchBar skeleton */}
+            <div className="max-w-2xl mx-auto">
+              <Skeleton variant="rect" height="44px" />
+            </div>
+          </div>
+
+          {/* Categorias skeleton */}
+          <div className="sticky top-16 bg-white z-10 -mx-4 px-4 py-4 shadow-sm">
+            <CategoriaSkeleton count={6} />
+          </div>
+
+          {/* Produtos skeleton */}
+          <div>
+            <div className="mb-6">
+              <Skeleton variant="text" width="200px" height="28px" className="mb-2" />
+              <Skeleton variant="text" width="150px" height="16px" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ProdutoCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        </div>
       </Layout>
     )
   }
