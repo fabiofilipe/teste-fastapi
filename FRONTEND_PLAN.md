@@ -1385,11 +1385,84 @@ Sprint 4 completado com sucesso! Modal de customização totalmente funcional co
 - ✅ Modal de produto abre ao selecionar resultado
 - ✅ Fluxo end-to-end completo
 
-#### Etapa 6.2: Estados de Loading e Erro
-- [ ] Adicionar skeletons de loading
-- [ ] Criar mensagens de erro amigáveis
-- [ ] Implementar retry em caso de falha
-- [ ] Adicionar estado vazio ("Nenhum produto encontrado")
+#### Etapa 6.2: Estados de Loading e Erro [CONCLUÍDO - 07/01/2026]
+- [x] Adicionar skeletons de loading
+- [x] Criar mensagens de erro amigáveis
+- [x] Implementar retry em caso de falha
+- [x] Adicionar estado vazio ("Nenhum produto encontrado")
+
+**Arquivos criados:**
+- `frontend/src/components/common/Skeleton.tsx` - Componente base de skeleton reutilizável
+- `frontend/src/components/cardapio/ProdutoCardSkeleton.tsx` - Skeleton para cards de produtos
+- `frontend/src/components/cardapio/CategoriaSkeleton.tsx` - Skeleton para navegação de categorias
+
+**Arquivos atualizados:**
+- `frontend/tailwind.config.js` - Adicionada animação shimmer
+- `frontend/src/pages/Cardapio.tsx` - Substituição de loading fullScreen por skeletons
+
+**Features:**
+- ✅ **Skeleton Component:**
+  - 3 variantes: `text`, `circle`, `rect`
+  - Width e height configuráveis (number ou string)
+  - Animação shimmer suave (2s infinite)
+  - Gradiente animado (gray-200 → gray-100 → gray-200)
+  - forwardRef para controle externo
+  - aria-hidden para acessibilidade
+  - className para customização
+- ✅ **ProdutoCardSkeleton:**
+  - Replica estrutura do ProdutoCard
+  - Imagem (aspect ratio 4:3)
+  - Título (2 linhas)
+  - Descrição (1 linha)
+  - Badges e preço
+  - Botão de ação
+  - Border e padding consistentes
+- ✅ **CategoriaSkeleton:**
+  - Tabs horizontais com scroll
+  - 6 categorias por padrão (configurável)
+  - Ícone circular + texto + badge
+  - Mesma estrutura do CategoriaNav
+  - scrollbar-hide para UX limpa
+- ✅ **Animação Shimmer:**
+  - Keyframe no Tailwind config
+  - backgroundPosition animado
+  - 2s ease-in-out infinite
+  - Efeito de "carregando" profissional
+- ✅ **Integração no Cardapio:**
+  - Loading state agora mostra layout completo
+  - Header mantido visível
+  - SearchBar skeleton (rect 44px)
+  - CategoriaSkeleton sticky
+  - Grid de 8 ProdutoCardSkeleton
+  - Título e contador como skeleton
+  - Transição suave para conteúdo real
+- ✅ **Estados de Erro:**
+  - ErrorMessage já existente e funcional
+  - Botão de retry já implementado
+  - Mensagens amigáveis
+  - Layout fullScreen com botão de ação
+- ✅ **Estados Vazios:**
+  - "Nenhum produto encontrado" por categoria
+  - Mensagem amigável na SearchBar
+  - Layouts centralizados
+  - Ícones ilustrativos
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 341.53 kB (108.43 kB gzip)
+- ✅ Skeletons aparecem durante loading
+- ✅ Animação shimmer funcionando
+- ✅ Layout mantido durante carregamento
+- ✅ Grid responsivo dos skeletons
+- ✅ Transição suave skeleton → conteúdo
+- ✅ HMR funcionando corretamente
+
+**Impacto na UX:**
+- Percepção de performance melhorada
+- Layout visível desde o início
+- Feedback visual durante carregamento
+- Transições mais suaves
+- Experiência mais profissional
 
 #### Etapa 6.3: Responsividade
 - [ ] Testar em mobile (320px+)
