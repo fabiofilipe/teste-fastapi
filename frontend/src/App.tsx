@@ -1,12 +1,12 @@
 import { CarrinhoProvider } from './contexts/CarrinhoContext'
-import TestSearchBar from './TestSearchBar'
+import Cardapio from './pages/Cardapio'
 
 // ============================================================================
 // APP CONTENT
 // ============================================================================
 
 function AppContent() {
-  return <TestSearchBar />
+  return <Cardapio />
 }
 
 // ============================================================================
