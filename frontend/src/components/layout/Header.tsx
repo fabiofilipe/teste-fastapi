@@ -2,6 +2,7 @@ import { Pizza, ShoppingCart } from 'lucide-react'
 import { useCarrinho } from '@/contexts/CarrinhoContext'
 import Badge from '@/components/common/Badge'
 import Button from '@/components/common/Button'
+import Tooltip from '@/components/common/Tooltip'
 
 interface HeaderProps {
   /**
