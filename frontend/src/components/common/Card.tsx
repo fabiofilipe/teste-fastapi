@@ -35,8 +35,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     },
     ref
   ) => {
-    // Classes base
-    const baseStyles = 'rounded-lg transition-all duration-200'
+    // Classes base com transições suaves
+    const baseStyles = 'rounded-lg transition-all duration-300 ease-out'
 
     // Variantes
     const variantStyles = {
@@ -45,11 +45,11 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       outlined: 'bg-white border-2 border-gray-200',
     }
 
-    // Efeito de hover
+    // Efeito de hover com feedback visual aprimorado
     const hoverStyles = hoverable
       ? variant === 'interactive'
-        ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer'
-        : 'hover:shadow-sm cursor-pointer'
+        ? 'hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer active:scale-[0.99] active:translate-y-0'
+        : 'hover:shadow-md hover:scale-[1.01] cursor-pointer active:scale-[0.99]'
       : ''
 
     // Padding
