@@ -5,6 +5,8 @@ import type { Produto } from '@/types/cardapio.types'
 import Card from '@/components/common/Card'
 import Badge from '@/components/common/Badge'
 import Button from '@/components/common/Button'
+import OptimizedImage from '@/components/common/OptimizedImage'
+import Tooltip from '@/components/common/Tooltip'
 
 interface ProdutoCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onClick'> {
   /**
@@ -52,10 +54,9 @@ const ProdutoCard = forwardRef<HTMLDivElement, ProdutoCardProps>(
       >
         {/* Imagem do produto */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-          <img
+          <OptimizedImage
             src={imagemUrl}
             alt={produto.nome}
-            loading="lazy"
             className={cn(
               'w-full h-full object-cover transition-transform duration-300',
               produto.disponivel && 'group-hover:scale-105'
@@ -138,15 +139,21 @@ const ProdutoCard = forwardRef<HTMLDivElement, ProdutoCardProps>(
           </div>
 
           {/* Botão de ação */}
-          <Button
-            variant={produto.disponivel ? 'primary' : 'outline'}
-            size="sm"
-            className="w-full"
-            onClick={handleVerDetalhes}
+          <Tooltip
+            content={produto.disponivel ? 'Personalizar e adicionar ao carrinho' : 'Produto indisponível no momento'}
+            position="top"
             disabled={!produto.disponivel}
           >
-            {produto.disponivel ? 'Ver detalhes' : 'Indisponível'}
-          </Button>
+            <Button
+              variant={produto.disponivel ? 'primary' : 'outline'}
+              size="sm"
+              className="w-full"
+              onClick={handleVerDetalhes}
+              disabled={!produto.disponivel}
+            >
+              {produto.disponivel ? 'Ver detalhes' : 'Indisponível'}
+            </Button>
+          </Tooltip>
         </div>
       </Card>
     )

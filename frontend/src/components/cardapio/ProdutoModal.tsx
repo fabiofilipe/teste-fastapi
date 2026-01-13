@@ -3,6 +3,7 @@ import Modal from '@/components/common/Modal'
 import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
 import QuantidadeSelector from '@/components/common/QuantidadeSelector'
+import OptimizedImage from '@/components/common/OptimizedImage'
 import VariacaoSelector from './VariacaoSelector'
 import IngredientesCustomizacao from './IngredientesCustomizacao'
 import { formatarPreco } from '@/lib/utils'
@@ -117,7 +118,7 @@ function ProdutoModal({ isOpen, onClose, produto, onAddToCart }: ProdutoModalPro
     >
       {/* Imagem do produto */}
       <div className="relative aspect-[4/3] sm:aspect-[3/2] overflow-hidden bg-gray-100">
-        <img
+        <OptimizedImage
           src={imagemUrl}
           alt={produto.nome}
           className="w-full h-full object-cover"

@@ -35,8 +35,8 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
     },
     ref
   ) => {
-    // Classes base
-    const baseStyles = 'inline-flex items-center gap-1.5 font-medium rounded-full transition-colors'
+    // Classes base com transições suaves
+    const baseStyles = 'inline-flex items-center gap-1.5 font-medium rounded-full transition-all duration-200'
 
     // Variantes de cor
     const variantStyles = {
