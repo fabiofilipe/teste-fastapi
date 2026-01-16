@@ -1,13 +1,13 @@
 # PLANO DE IMPLEMENTAÇÃO - FRONTEND DO CARDÁPIO
 
 **Data de Criação:** 13/12/2025
-**Última Atualização:** 07/01/2026 BRT
-**Fase:** 2.2 - Busca e Refinamentos
+**Última Atualização:** 12/01/2026 BRT
+**Fase:** 7.1 - Polimento e Testes
 **Objetivo:** Criar interface completa de visualização e compra de produtos
 
-**Progresso Geral:** Sprint 6 - Etapa 6.1 concluída - 100% (68%)
-**Sprint Atual:** Sprint 6 - Busca e Refinamentos [EM PROGRESSO]
-**Próxima Etapa:** Etapa 6.2 - Estados de Loading e Erro
+**Progresso Geral:** Sprint 7 - Etapa 7.1 concluída - 100% (72%)
+**Sprint Atual:** Sprint 7 - Polimento e Testes [EM PROGRESSO]
+**Próxima Etapa:** Etapa 7.2 - Acessibilidade
 
 ---
 
@@ -1577,11 +1577,91 @@ A aplicação está totalmente responsiva e otimizada para todos os tamanhos de 
 
 ### SPRINT 7: Polimento e Testes
 
-#### Etapa 7.1: UX/UI Refinements
-- [ ] Adicionar transições suaves
-- [ ] Melhorar feedback visual (hover, focus, active)
-- [ ] Adicionar tooltips informativos
-- [ ] Otimizar imagens (lazy loading)
+#### Etapa 7.1: UX/UI Refinements [CONCLUÍDO - 12/01/2026]
+- [x] Adicionar transições suaves
+- [x] Melhorar feedback visual (hover, focus, active)
+- [x] Adicionar tooltips informativos
+- [x] Otimizar imagens (lazy loading)
+
+**Arquivos criados:**
+- `frontend/src/components/common/Tooltip.tsx` - Componente de tooltip completo e acessível
+- `frontend/src/components/common/OptimizedImage.tsx` - Componente de imagem otimizada com blur placeholder
+
+**Arquivos atualizados:**
+- `frontend/src/components/common/Button.tsx` - Melhorias de feedback visual (scale, shadow)
+- `frontend/src/components/common/Card.tsx` - Transições suaves aprimoradas (duration-300)
+- `frontend/src/components/common/Badge.tsx` - Transição transition-all para todas as propriedades
+- `frontend/src/components/layout/Header.tsx` - Tooltips adicionados no logo e carrinho
+- `frontend/src/components/cardapio/ProdutoCard.tsx` - OptimizedImage + Tooltip no botão
+- `frontend/src/components/cardapio/ProdutoModal.tsx` - OptimizedImage implementada
+
+**Features implementadas:**
+- ✅ **Componente Tooltip:**
+  - 4 posições (top, bottom, left, right)
+  - Delay configurável (padrão 200ms)
+  - Animações de entrada suaves (fade + slide)
+  - Portal para z-index correto
+  - Seta indicadora posicionada automaticamente
+  - Ajuste automático quando sai da tela
+  - Acessibilidade (aria-describedby, role="tooltip")
+  - Suporte a focus (keyboard) e hover (mouse)
+  - Fechamento automático ao redimensionar/scroll
+
+- ✅ **Componente OptimizedImage:**
+  - Blur placeholder durante carregamento
+  - Transição fade-in suave (duration-500)
+  - Placeholder SVG quando há erro
+  - Lazy loading nativo (loading="lazy")
+  - Gradiente animado durante loading (animate-pulse)
+  - Callbacks onLoad e onError
+  - Reset automático ao mudar src
+
+- ✅ **Melhorias no Button:**
+  - Scale no hover: 1.02 (aumento sutil)
+  - Scale no active: 0.98 (feedback tátil)
+  - Shadow-md/sm no hover para profundidade
+  - Transições suaves (transition-all duration-200)
+  - Estados visuais mais perceptíveis
+
+- ✅ **Melhorias no Card:**
+  - Duration aumentada para 300ms (mais suave)
+  - Ease-out para transições naturais
+  - Interactive cards: shadow-lg + translate-y-1 + scale-1.01
+  - Active state: scale-0.99 para feedback
+  - Hover mais pronunciado e profissional
+
+- ✅ **Melhorias no Badge:**
+  - Transição transition-all duration-200
+  - Transições suaves em todas as propriedades
+
+- ✅ **Tooltips Implementados:**
+  - Header: Logo ("Voltar para o início")
+  - Header: Carrinho (dinâmico: "X itens no carrinho" / "Carrinho vazio")
+  - ProdutoCard: Botão "Ver detalhes" ("Personalizar e adicionar ao carrinho")
+
+- ✅ **Otimização de Imagens:**
+  - ProdutoCard: usa OptimizedImage com blur placeholder
+  - ProdutoModal: usa OptimizedImage com blur placeholder
+  - Lazy loading já implementado anteriormente mantido
+  - Transições suaves entre placeholder e imagem carregada
+
+**Validações:**
+- ✅ TypeScript sem erros
+- ✅ Build production: 345.47 kB (109.56 kB gzip)
+- ✅ Aumento desde 6.3: +3.71 kB (+1.08 kB gzip) - Esperado devido aos novos componentes
+- ✅ Todas as transições funcionando suavemente
+- ✅ Tooltips exibidos corretamente
+- ✅ Blur placeholder visível durante carregamento
+- ✅ Feedback visual perceptível em todos os botões e cards
+- ✅ Acessibilidade mantida
+
+**Impacto na UX:**
+- Microinterações mais refinadas e perceptíveis
+- Feedback visual claro em todas as ações do usuário
+- Carregamento de imagens mais agradável (blur placeholder)
+- Tooltips informativos melhoram descoberta de funcionalidades
+- Transições suaves criam sensação de qualidade e polimento
+- Experiência mais profissional e moderna
 
 #### Etapa 7.2: Acessibilidade
 - [ ] Navegação por teclado

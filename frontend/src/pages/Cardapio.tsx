@@ -163,11 +163,11 @@ function Cardapio() {
 
   return (
     <Layout maxWidth="7xl">
-      <div className="py-6 space-y-6">
+      <main className="py-6 space-y-6" role="main">
         {/* Header da página */}
-        <div className="text-center space-y-4">
+        <section className="text-center space-y-4" aria-labelledby="cardapio-title">
           <div className="space-y-2">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h1 id="cardapio-title" className="text-3xl md:text-4xl font-bold text-gray-900">
               Nosso Cardápio
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -182,7 +182,7 @@ function Cardapio() {
               placeholder="Buscar produtos no cardápio..."
             />
           </div>
-        </div>
+        </section>
 
         {/* Navegação de Categorias */}
         <div className="sticky top-16 bg-white z-10 -mx-4 px-4 py-4 shadow-sm">
@@ -197,15 +197,22 @@ function Cardapio() {
         </div>
 
         {/* Grid de Produtos */}
-        <div ref={produtosRef} className="scroll-mt-24">
+        <section
+          ref={produtosRef}
+          className="scroll-mt-24"
+          aria-labelledby="produtos-title"
+          role="region"
+          id={categoriaAtiva !== undefined ? `categoria-${categoriaAtiva}-panel` : undefined}
+          aria-label={categoriaAtiva !== undefined ? `Produtos da categoria ${categoriasAtivas.find((cat) => cat.id === categoriaAtiva)?.nome}` : 'Todos os produtos'}
+        >
           {/* Título da seção */}
           <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">
+            <h2 id="produtos-title" className="text-2xl font-semibold text-gray-900">
               {categoriaAtiva === undefined
                 ? 'Todos os Produtos'
                 : categoriasAtivas.find((cat) => cat.id === categoriaAtiva)?.nome || 'Produtos'}
             </h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-600 mt-1" role="status" aria-live="polite">
               {produtosFiltrados.length}{' '}
               {produtosFiltrados.length === 1 ? 'produto encontrado' : 'produtos encontrados'}
             </p>
@@ -236,18 +243,18 @@ function Cardapio() {
               ))}
             </div>
           )}
-        </div>
+        </section>
 
         {/* Footer informativo */}
         <div className="pt-12 pb-6 text-center border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            ✅ Sprint 6 - Etapa 6.1 completa
+            ✅ Sprint 7 - Etapa 7.2 completa
           </p>
           <p className="text-xs text-gray-400 mt-1">
-            Navegação de Categorias • Grid de Produtos • Filtros Dinâmicos • Busca de Produtos
+            Acessibilidade WCAG AA • Navegação por Teclado • ARIA Labels • Focus Visible
           </p>
         </div>
-      </div>
+      </main>
 
       {/* Modal de Produto */}
       {produtoSelecionado && (

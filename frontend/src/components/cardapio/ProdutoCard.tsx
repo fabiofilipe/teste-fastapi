@@ -38,8 +38,16 @@ const ProdutoCard = forwardRef<HTMLDivElement, ProdutoCardProps>(
 
     // Handler para ver detalhes
     const handleVerDetalhes = () => {
-      if (onVerDetalhes) {
+      if (onVerDetalhes && produto.disponivel) {
         onVerDetalhes(produto)
+      }
+    }
+
+    // Handler para navegação por teclado
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if ((e.key === 'Enter' || e.key === ' ') && produto.disponivel) {
+        e.preventDefault()
+        handleVerDetalhes()
       }
     }
 
@@ -49,7 +57,17 @@ const ProdutoCard = forwardRef<HTMLDivElement, ProdutoCardProps>(
         variant="interactive"
         padding="none"
         hoverable={produto.disponivel}
-        className={cn('overflow-hidden flex flex-col h-full', className)}
+        className={cn(
+          'overflow-hidden flex flex-col h-full',
+          produto.disponivel && 'cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2',
+          className
+        )}
+        tabIndex={produto.disponivel ? 0 : undefined}
+        role={produto.disponivel ? 'button' : undefined}
+        aria-label={produto.disponivel ? `Ver detalhes de ${produto.nome}` : undefined}
+        aria-disabled={!produto.disponivel}
+        onKeyDown={handleKeyDown}
+        onClick={produto.disponivel ? handleVerDetalhes : undefined}
         {...props}
       >
         {/* Imagem do produto */}

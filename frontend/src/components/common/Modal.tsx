@@ -80,6 +80,7 @@ function Modal({
   contentClassName,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
+  const previousActiveElement = useRef<HTMLElement | null>(null)
 
   // Bloquear scroll do body quando modal está aberto
   useEffect(() => {
@@ -114,10 +115,42 @@ function Modal({
     return () => document.removeEventListener('keydown', handleEsc)
   }, [isOpen, closeOnEsc, onClose])
 
-  // Focar no modal quando abrir (acessibilidade)
+  // Focar no modal quando abrir e implementar trap de foco
   useEffect(() => {
     if (isOpen && modalRef.current) {
+      // Salvar elemento que tinha foco antes do modal abrir
+      previousActiveElement.current = document.activeElement as HTMLElement
+
+      // Focar no modal
       modalRef.current.focus()
+
+      // Trap de foco: manter foco dentro do modal
+      const handleTabKey = (e: KeyboardEvent) => {
+        if (!modalRef.current) return
+
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        const firstElement = focusableElements[0] as HTMLElement
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement?.focus()
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement?.focus()
+          }
+        }
+      }
+
+      document.addEventListener('keydown', handleTabKey)
+      return () => document.removeEventListener('keydown', handleTabKey)
+    } else if (!isOpen && previousActiveElement.current) {
+      // Retornar foco ao elemento que abriu o modal
+      previousActiveElement.current.focus()
+      previousActiveElement.current = null
     }
   }, [isOpen])
 

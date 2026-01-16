@@ -71,6 +71,7 @@ const CategoriaNav = ({
 }: CategoriaNavProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const activeButtonRef = useRef<HTMLButtonElement>(null);
+  const buttonRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
 
   // ============================================================================
   // AUTO SCROLL TO ACTIVE CATEGORY
@@ -96,6 +97,34 @@ const CategoriaNav = ({
   }, [categoriaAtiva]);
 
   // ============================================================================
+  // KEYBOARD NAVIGATION (Arrow Left/Right)
+  // ============================================================================
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    const categoriasAtivas = categorias
+      .filter((cat) => cat.ativa)
+      .sort((a, b) => a.ordem_exibicao - b.ordem_exibicao);
+
+    if (e.key === 'ArrowLeft' && index > 0) {
+      e.preventDefault();
+      const prevCategoria = categoriasAtivas[index - 1];
+      buttonRefs.current.get(prevCategoria.id)?.focus();
+    } else if (e.key === 'ArrowRight' && index < categoriasAtivas.length - 1) {
+      e.preventDefault();
+      const nextCategoria = categoriasAtivas[index + 1];
+      buttonRefs.current.get(nextCategoria.id)?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      const firstCategoria = categoriasAtivas[0];
+      buttonRefs.current.get(firstCategoria.id)?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      const lastCategoria = categoriasAtivas[categoriasAtivas.length - 1];
+      buttonRefs.current.get(lastCategoria.id)?.focus();
+    }
+  };
+
+  // ============================================================================
   // RENDER
   // ============================================================================
 
@@ -105,28 +134,40 @@ const CategoriaNav = ({
     .sort((a, b) => a.ordem_exibicao - b.ordem_exibicao);
 
   return (
-    <nav className={cn('relative w-full bg-white border-b border-gray-200', className)}>
+    <nav
+      className={cn('relative w-full bg-white border-b border-gray-200', className)}
+      aria-label="Categorias de produtos"
+    >
       <div
         ref={scrollContainerRef}
         className="flex gap-2 px-4 py-3 overflow-x-auto scrollbar-hide scroll-smooth"
+        role="tablist"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
         }}
       >
-        {categoriasAtivas.map((categoria) => {
+        {categoriasAtivas.map((categoria, index) => {
           const isActive = categoria.id === categoriaAtiva;
           const Icon = getCategoriaIcon(categoria.nome);
 
           return (
             <button
               key={categoria.id}
-              ref={isActive ? activeButtonRef : null}
+              ref={(el) => {
+                if (el) buttonRefs.current.set(categoria.id, el);
+                if (isActive) activeButtonRef.current = el;
+              }}
               onClick={() => onCategoriaClick(categoria.id)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`categoria-${categoria.id}-panel`}
+              tabIndex={isActive ? 0 : -1}
               className={cn(
                 'flex items-center gap-2 px-4 py-2 rounded-full',
                 'whitespace-nowrap font-medium text-sm transition-all duration-200',
-                'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2',
                 isActive
                   ? 'bg-primary-600 text-white shadow-md'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'

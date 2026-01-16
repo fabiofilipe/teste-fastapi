@@ -22,14 +22,14 @@ const Header = ({
 }: HeaderProps) => {
   const { totalItens } = useCarrinho();
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md">
+    <header className="sticky top-0 z-50 bg-white shadow-md" role="banner">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo e Nome */}
           <Tooltip content="Voltar para o início" position="bottom">
             <button
               onClick={onLogoClick}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg px-2 py-1"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 rounded-lg px-2 py-1"
               aria-label="Voltar para início"
             >
               <Pizza className="text-red-600" size={32} />
